@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="HMO Solution">
+<meta name="author" content="Kylantis, Inc">
+<link href="/assets/images/icon.png" rel="shortcut icon">
+
+<link href="/assets/css/main.css" rel="stylesheet" />
+<link href="/assets/css/semantic.min.css" rel="stylesheet" />
+
+<title>HMO HQ Login</title>
+
+</head>
+
+<body>
+
+	<div class="ui active dimmer" style="visibility: hidden;">
+		<div class="ui active centered loader huge"></div>
+	</div>
+
+	<br>
+	<br>
+	<br>
+	<br>
+
+	<div class="ui raised very padded text container segment">
+
+		<form class="ui form">
+
+			<h3>LOGIN</h3>
+			<br>
+			<div class="two fields">
+
+				<div class="field">
+					<label>Email</label> <input placeholder="Enter your email"
+						name="login_identifier" type="text">
+				</div>
+			</div>
+
+
+			<br>
+
+
+			<div class="two fields">
+
+				<div class="field">
+					<label>Password</label> <input placeholder="Enter your password"
+						name="login_password" type="password">
+				</div>
+
+			</div>
+
+			<br>
+
+			<div class="inline field">
+				<div class="ui checkbox">
+					<input name="login_remember" tabindex="0" class="hidden"
+						type="checkbox"> <label>Keep me signed in</label>
+				</div>
+			</div>
+
+
+			<div class="ui primary button">Login</div>
+			<div class="ui error message"></div>
+		</form>
+
+	</div>
+
+
+
+
+
+
+
+	<script src="/assets/js/jquery-3.2.0.js"></script>
+	<script src="/assets/js/clients/profile.js"></script>
+
+	<script src="/assets/js/semantic.min.js"></script>
+
+	<script src="/assets/js/utils.js"></script>
+	<script src="/assets/js/pages/login.js" onload="load();"></script>
+
+</body>
+
+</html>

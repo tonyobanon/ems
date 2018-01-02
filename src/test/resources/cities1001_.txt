@@ -1,0 +1,11 @@
+2351943	Agege	Agege	Agege	6.61563	3.33337	P	PPLA2	NG		05	25001			0		42	Africa/Lagos	2016-01-30
+2351979	Agbor	Agbor	Afbor,Agbor,Agbor-BoIIboji,Агбор	6.25375	6.1942	P	PPLA2	NG		36	10008			67610		130	Africa/Lagos	2016-01-30
+2352379	Ado-Ekiti	Ado-Ekiti	Ado,Ado-Ekiti	7.62329	5.22087	P	PPLA	NG		54	13001			424340		439	Africa/Lagos	2016-01-30
+2352778	Abuja	Abuja	ABV,Abodza,Abodža,Abouja,Abuca,Abudz,Abudza,Abudzha,Abudża,Abudž,Abudža,Abugia,Abugo,Abuja,Abuya,Abuzha,Abuĝo,Abùjá,Ampouza,Gorad Abudzha,a bu gu,a bu jia,abuja,abwja,apuja,xabu ca,yەbwwja,ʼbwgh,Αμπούζα,Абуджа,Абужа,Абуџа,Абуҷа,Горад Абуджа,Աբուջա,אבוגה,אבודזשא,آبوجا,أبوجا,ئەبووجا,ابوجا,अबुजा,আবুজা,ਅਬੁਜਾ,ଅବୁଜା,அபுஜா,അബുജ,อาบูจา,ཨ་པུ་ཅ།,အဘူဂျာမြို့,აბუჯა,አቡጃ,アブジャ,阿布賈,阿布贾,아부자	9.05785	7.49508	P	PPLC	NG		11	15006			590400		476	Africa/Lagos	2016-01-30
+2352789	Abudu	Abudu	Abudu	6.29489	6.02995	P	PPLA2	NG		37	12013			0		57	Africa/Lagos	2016-01-30
+2352947	Abeokuta	Abeokuta	Abeokuta,Abẹ́òkúta,QAT,a bei ao ku ta,abe-okuta,abeokuta,abwkata,abywkwta,Абеокута,אבאוקוטה,أبيوكوتا,ابوکاتا,ابیوکوتا,アベオクタ,阿贝奥库塔,아베오쿠타	7.15571	3.34509	P	PPLA	NG		16	28002			593100		64	Africa/Lagos	2016-01-30
+2353099	Abakaliki	Abakaliki	Abakaliki,a ba ka li ji,阿巴卡利基	6.32485	8.11368	P	PPLA	NG		53	11004			134102		65	Africa/Lagos	2016-01-30
+2353151	Aba	Aba	Aba,Aba i Nigeria,Abá,QAX,a ba,aba,aba  abya,Аба,Աբա,אבה,آبا,آبا، ابیا,აბა,アバ,阿巴,아바	5.10658	7.36667	P	PPLA2	NG		45	1002			897560		64	Africa/Lagos	2016-01-30
+2566636	Ajegunle	Ajegunle	Ajegunle	6.45197	3.33115	P	PPLA2	NG		05	25002			0		2	Africa/Lagos	2016-02-07
+2566680	Ojota	Ojota		6.57806	3.38686	P	PPLA2	NG		05	25013			0		19	Africa/Lagos	2016-01-30
+2566695	Ifako	Ifako		6.64423	3.32488	P	PPLA2	NG		05	25010			0		52	Africa/Lagos	2016-01-30

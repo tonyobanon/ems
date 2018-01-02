@@ -1,0 +1,27 @@
+
+@media only screen and (min-width: 991px){
+	body > .ui.container {
+	  width: 50% !important;
+	}
+}
+
+@media only screen and (max-width: 1120px){
+	
+}
+
+  .ui.steps {
+	width: 100%;
+  }
+
+  .ui.steps .step {
+	display: block !important;
+}
+
+  .two.wide.column :hover{
+	background-color: whitesmoke;
+}
+
+#parent_container {
+	
+}
+

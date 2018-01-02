@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="HMO Solution">
+<meta name="author" content="Kylantis, Inc">
+<link href="/assets/images/icon.png" rel="shortcut icon">
+
+<link href="/assets/css/main.css" rel="stylesheet" />
+<link href="/assets/css/semantic.min.css" rel="stylesheet" />
+
+<title> HMO HQ Registration </title>
+
+</head>
+
+<body>
+
+	<br>
+	
+	<div class="ui raised very padded text container segment">
+
+		<form class="ui form">
+
+		<h3>NEW ACCOUNT</h3>
+		<br>
+			<div class="two fields">
+				<div class="field">
+					<label>First Name</label> <input placeholder="First Name"
+						name="profile_fname" type="text">
+				</div>
+				<div class="field">
+					<label>Last Name</label> <input placeholder="Last Name"
+						name="profile_lname" type="text">
+				</div>
+			</div>
+
+
+			<div class="two fields">
+				<div class="field">
+					<label>Password</label> <input placeholder="Password"
+						name="profile_pass" type="password">
+				</div>
+				<div class="field">
+					<label>Verify Password</label> <input placeholder="Verify Password"
+						name="profile_passv" type="password">
+				</div>
+			</div>
+
+
+
+			<div class="fields">
+
+				<div class="seven wide field">
+					<label>Email</label> <input type="text" name="profile_email"
+						placeholder="Email">
+				</div>
+
+				<div class="nine wide field">
+
+					<label>Date of Birth</label>
+
+					<div class="three fields">
+
+						<div class="field">
+							<input type="text" name="profile_dob_day" maxlength="2"
+								placeholder="Day">
+						</div>
+
+						<div class="field">
+							<input type="text" name="profile_dob_month" maxlength="2"
+								placeholder="Month">
+						</div>
+
+						<div class="field">
+							<input type="text" name="profile_dob_year" maxlength="4"
+								placeholder="Year">
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="two fields">
+				<div class="field">
+					<label>Address</label> 
+					<input placeholder="Address" name="profile_address" type="text">
+				</div>
+				<div class="field">
+					<label>Phone</label> 
+					<input placeholder="Phone" name="profile_phone" type="text" maxlength="15">
+				</div>
+			</div>
+			
+
+			<div class="three fields">
+
+				<div class="field">
+					<label>Country</label>
+					<div class="ui fluid search selection dropdown">
+						<input type="hidden" name="profile_country"> <i
+							class="dropdown icon"></i>
+						<div class="default text">Select Country</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+
+				<div class="field">
+					<label>State</label>
+					<div class="ui fluid search selection dropdown disabled">
+						<input type="hidden" name="profile_territory"> <i
+							class="dropdown icon"></i>
+						<div class="default text">Select State</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+
+				<div class="field">
+					<label>City</label>
+					<div class="ui fluid search selection dropdown disabled">
+						<input type="hidden" name="profile_city"> <i
+							class="dropdown icon"></i>
+						<div class="default text">Select City</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+
+			</div>
+
+			<br>
+
+			<div class="ui primary button">Finish</div>
+			<div class="ui error message"></div>
+			
+		</form>
+
+
+	</div>
+	
+	
+
+	<script src="/assets/js/jquery-3.2.0.js"></script>
+	<script src="/assets/js/clients/profile.js"></script>
+	<script src="/assets/js/clients/locations.js"></script>
+
+	<script src="/assets/js/semantic.min.js"></script>
+
+	<script src="/assets/js/utils.js"></script>
+	<script src="/assets/js/pages/register.js" onload="load();"></script>
+
+</body>
+
+</html>
+
