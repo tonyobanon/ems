@@ -37,7 +37,7 @@ public class InvoiceFactory {
 			Table companyAddressSection = new Table(new TableConfig(30));
 			companyAddressSection
 				.withRow(new Row(headerSize)
-						.withColumn(new Column(new Image(order.getCompanyLogo())).withPercentileWidth(20))
+						.withColumn(new Column(new Image(order.getCompanyLogo().toString())).withPercentileWidth(20))
 						.withColumn(new Column("[" + order.getCompanyName() + "]").withPercentileWidth(80)))
 				.withRow(new Row(bodySize))
 				.withRow(new Row(bodySize).withColumn(new Column(order.getCompanyAddress())))

@@ -12,7 +12,7 @@ public class InstallOptions {
 	public String companyName;
 	public String companyLogoUrl;
 	
-	public Audience audience;
+	public String audience;
 	public String country;
 	
 	public Integer studentCount;
@@ -23,20 +23,18 @@ public class InstallOptions {
 	//Administrators
 	public ArrayList<UserProfileSpec> admins;
 
-	
+	  
 	//Mail Credentials -->
 	public MailCredentialSpec mailCredentials;
-	
+	 
 
 	//System Settings
 	public String currency;
 	public String timezone;
-	public String locale;
+	public String language;
 	
 	
 	
-	
-
 	public String getCompanyName() {
 		return companyName;
 	}
@@ -46,7 +44,7 @@ public class InstallOptions {
 	}
 
 
-	public Audience getAudience() {
+	public String getAudience() {
 		return audience;
 	}
 
@@ -85,7 +83,7 @@ public class InstallOptions {
 		return timezone;
 	}
 
-	public String getLocale() {
-		return locale;
+	public String getLanguage() {
+		return language;
 	}
 }

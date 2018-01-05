@@ -1,0 +1,15 @@
+package com.ce.ems.utils;
+
+import java.util.Locale;
+
+public class LocaleUtils {
+
+	public static String buildLocaleString(String language, String country) {
+		return language + "-" + country;
+	}
+	
+	public static String buildLocaleString(Locale locale) {
+		return buildLocaleString(locale.getLanguage(), locale.getCountry());
+	}
+	
+}

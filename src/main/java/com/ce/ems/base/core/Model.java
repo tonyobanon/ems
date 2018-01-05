@@ -13,6 +13,8 @@ public @interface Model {
 	
 	boolean enabled() default true;
 
+	String version() default BaseModel.DEFAULT_MODEL_VERSION;
+	
 	Class<? extends BaseModel>[] dependencies() default {};
 	
 }

@@ -1,15 +1,25 @@
 package com.ce.ems.base.core;
 
+import com.ce.ems.base.classes.ObjectWrapper;
 import com.ce.ems.base.core.Logger.verboseLevel;
 import com.ce.ems.models.BaseModel;
+import com.ce.ems.models.ConfigModel;
 import com.ce.ems.models.PlatformModel;
+import com.github.zafarkhaja.semver.Version;
+import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.annotation.Entity;
+import com.kylantis.eaa.core.fusion.APIRoutes;
+import com.kylantis.eaa.core.fusion.WebRoutes;
+import com.kylantis.eaa.core.keys.ConfigKeys;
 
 public class Application {
 
-	public static Boolean isInstalled;
+	public static final String SOFTRWARE_VENDER_NAME = "Compute Essentials, Inc";
+	public static final String SOFTRWARE_VENDER_EMAIL = "corporate@compute-essentials.com";
+	
+	private static Boolean isProduction;
 	private static boolean isStarted = false;
 
 	public static void start() {
@@ -18,14 +28,19 @@ public class Application {
 			return;
 		}
 
+		// Detect runtime environment
+		
+		isProduction = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
+		
+		
 		Logger.debug("Starting Engine ..");
-
-		Logger.enableSystemOutput();
 
 		// @DEV
 		Logger.enableSystemOutput();
-		Logger.verboseMode(verboseLevel.DEBUG.toString());
-
+		
+		Logger.verboseMode(isProduction ? verboseLevel.TRACE : verboseLevel.DEBUG);
+		
+		
 		Logger.debug("Scanning for entities");
 
 		new ClasspathScanner<>("Entity", Entity.class, ClassIdentityType.ANNOTATION).scanClasses().forEach(e -> {
@@ -33,15 +48,18 @@ public class Application {
 			Logger.debug("Registering " + e.getSimpleName());
 			ObjectifyService.register(e);
 		});
+		
+		
+		APIRoutes.scanRoutes();
+		
+		WebRoutes.scanRoutes();
 
 		BaseModel.scanModels();
 
 		ObjectifyService.run(new VoidWork() {
 			public void vrun() {
 
-				Application.isInstalled = PlatformModel.isInstalled();
-
-				if (!isInstalled) {
+				if (!PlatformModel.isInstalled()) {
 
 					Logger.debug("Preinstalling Models");
 
@@ -52,7 +70,49 @@ public class Application {
 						e.preInstall();
 					});
 
+					ConfigModel.put(ConfigKeys.CURRENT_PLATFORM_VERSION, "0.0.1-rc.1+build.1");					
+
 				} else {
+
+					Version platformVersion = Version.valueOf(ConfigModel.get(ConfigKeys.CURRENT_PLATFORM_VERSION));
+					ObjectWrapper<Version> newPlatformVersion = new ObjectWrapper<Version>().set(platformVersion);
+					
+					// Check for model updates
+					BaseModel.getModels().forEach(e -> {
+						
+						Class<?> c = e.getClass();
+						
+						// Silently ignore
+						if (!c.isAnnotationPresent(Model.class)) {
+							return;
+						}
+
+						Model classAnnotation = c.getAnnotation(Model.class);
+						if(classAnnotation.version().equals(BaseModel.DEFAULT_MODEL_VERSION)) {
+							return;
+						}
+						
+						Version modelVersion = Version.valueOf(classAnnotation.version());
+						
+						if(modelVersion.greaterThan(platformVersion)) {
+							
+							Logger.debug("Updating " + c.getSimpleName());
+							
+							e.update();
+							
+							if(modelVersion.greaterThan(newPlatformVersion.get())){
+								newPlatformVersion.set(modelVersion);
+							}
+							
+						}
+						
+					});
+					
+					if(newPlatformVersion.get().greaterThan(platformVersion)) {
+
+						Logger.debug("Updating platform version to: " + newPlatformVersion.get().toString());
+						ConfigModel.put(ConfigKeys.CURRENT_PLATFORM_VERSION, newPlatformVersion.get().toString());	
+					}
 
 					// Start models
 
@@ -63,6 +123,8 @@ public class Application {
 				}
 			}
 		});
+		
+		
 
 		// Logger.info("Launching API web server ..");
 		//
@@ -78,4 +140,8 @@ public class Application {
 		isStarted = true;
 	}
 
+	public static Boolean isProduction() {
+		return isProduction;
+	}
+	
 }

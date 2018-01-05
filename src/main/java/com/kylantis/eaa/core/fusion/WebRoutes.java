@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,8 @@ import com.ce.ems.base.core.UsesMock;
 import com.ce.ems.models.PlatformModel;
 import com.ce.ems.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.kylantis.eaa.core.users.Functionality;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
@@ -38,6 +41,9 @@ public class WebRoutes {
 	protected static Path webFolderURI = AppUtils.getPath("web/public_html");
 
 	public static String DEFAULT_INDEX_URI = "/";
+	
+	public static String NOT_FOUND_URI = "/404";
+	
 	public static String DEFAULT_SETUP_URI = "/setup/one";
 
 	public static String DEFAULT_CONSOLE_URI = "/dashboard";
@@ -49,57 +55,104 @@ public class WebRoutes {
 	// Let's be lenient a little with the fileName
 	// .compile("\\A[a-zA-Z]+(\\Q_\\E[a-zA-Z]+)*\\Q.\\E[a-zA-Z]+\\z");
 
+	public static Pattern webpageUriPattern = Pattern.compile("\\A\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+(\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+)*\\z");
+	
 	public static Tika TIKA_INSTANCE = new Tika();
 
-	static Map<Object, WebRouteSpec> routesMappings = new HashMap<>();
-	private static Map<String, String> routes = new HashMap<>();
+	
+	protected static final Map<String, List<String>> routeParams = new HashMap<>();
+	
+	protected static final Map<Integer, String> functionalityToRoutesMappings = new HashMap<>();
+	
+	static final Map<Object, WebRouteSpec> routesMappings = new HashMap<>();
+	
+	private static final Map<String, String> routes = new HashMap<>();
 
 	public static final String USER_ID_PARAM_NAME = "x_uid";
 
 	@Todo("Create util for wallking file tree")
-	private static void scanRoutes() throws IOException {
+	public static void scanRoutes() {
 
-		//Logger.info("Scanning for Web routes");
+		Logger.debug("Scanning for web routes");
 
+		try {
+
+		 Gson gson = GsonFactory.newInstance();
+
+		 
 		// Get Route mappings
 
-		JsonObject o = new JsonObject(
+		JsonObject route_mappings = new JsonObject(
 				Utils.getString(Files.newInputStream(webFolderURI.resolve("route_mapping.json"))));
 
-		Gson gson = GsonFactory.newInstance();
-
-		o.forEach(e -> {
-			routesMappings.put(e.getKey(), gson.fromJson(e.getValue().toString(), WebRouteSpec.class));
+		route_mappings.forEach(e -> {
+			
+			// Map functionality to route. Note: only some routes have this mapping
+			
+			WebRouteSpec spec = gson.fromJson(e.getValue().toString(), WebRouteSpec.class).setUri(e.getKey());
+			
+			spec.getMin().forEach(i -> {
+				functionalityToRoutesMappings.put(i, spec.getUri());
+			});
+			
+			spec.getMax().forEach(i -> {
+				functionalityToRoutesMappings.put(i, spec.getUri());
+			});
+			
+			routesMappings.put(e.getKey(), spec);
 		});
+		
+		
+		
+		// Get Route params
+
+		JsonObject route_params = new JsonObject(
+						Utils.getString(Files.newInputStream(webFolderURI.resolve("route_params.json"))));
+		
+		route_params.forEach(e -> {
+
+			List<String> params = gson.fromJson(e.getValue().toString(), new TypeToken<List<String>>(){}.getType());
+			routeParams.put(e.getKey(), params);
+		});
+		
+		
 
 		// Walk tree inorder to expose all files in the web folder
 
-		Files.walkFileTree(webFolderURI, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			Files.walkFileTree(webFolderURI, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-				Path path = webFolderURI.relativize(file);
+					Path path = webFolderURI.relativize(file);
 
-				String uri = path.toString().replaceAll("\\\\", "/");
+					String uri = path.toString().replaceAll("\\\\", "/");
 
-				if (webpagePattern.matcher(uri).matches()) {
-					uri = toCanonicalURI(uri);
-				}
+					if (webpagePattern.matcher(uri).matches()) {
+						uri = toCanonicalURI(uri);
+					} else {
+						uri = "/" + uri;
+					} 
 
-				routes.put(uri, path.toString());
-				return FileVisitResult.CONTINUE;
-			}
-
-			@Override
-			public FileVisitResult postVisitDirectory(Path file, IOException e) throws IOException {
-				if (e == null) {
+					Logger.trace(uri + ": " + path.toString());
+					routes.put(uri, path.toString());
+					
 					return FileVisitResult.CONTINUE;
-				} else {
-					// directory iteration failed
-					throw e;
 				}
-			}
-		});
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path file, IOException e) throws IOException {
+					if (e == null) {
+						return FileVisitResult.CONTINUE;
+					} else {
+						// directory iteration failed
+						throw e;
+					}
+				}
+			});
+			
+		} catch (IOException ex) {
+			Exceptions.throwRuntime(ex);
+		}
 		
 		routes.put("/", "index.html");
 	}
@@ -162,9 +215,9 @@ public class WebRoutes {
 
 	@BlockerTodo("Stop parsing content type with TIKA on each request")
 	public static final void get(RoutingContext ctx) {
-
+ 
 		String uri = ctx.request().path();
-
+		
 		if(uri.equals("/")) {
 			if(!PlatformModel.isInstalled()) {
 				uri = DEFAULT_SETUP_URI;
@@ -172,18 +225,25 @@ public class WebRoutes {
 		}
 		
 		if (!routes.containsKey(uri)) {
-			ctx.response().setStatusCode(HttpServletResponse.SC_FOUND).putHeader("Location", "/404").end();
+
+			if(webpageUriPattern.matcher(uri).matches()) {
+				ctx.response().setStatusCode(HttpServletResponse.SC_FOUND).putHeader("Location", NOT_FOUND_URI).end();
+			} else {
+				ctx.response().setStatusCode(HttpServletResponse.SC_NOT_FOUND);
+			}
 			return;
 		}
 
 		// Improve security
 		ctx.response()
+		
 				// allow proxies to cache the data
 				// .putHeader("Cache-Control", "public,
-				// max-age=31536000")
+				// max-age=31536000") //change to 600 secs
 
 				// @DEV
-				.putHeader("Cache-Control", "no-cache")
+				.putHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+				
 				
 				// prevents Internet Explorer from MIME -
 				// sniffing a
@@ -210,7 +270,7 @@ public class WebRoutes {
 					return;
 				}
 			}
-		}
+		} 
 
 		if ((uri.equals(DEFAULT_LOGIN_URI)) && handleAuth(DEFAULT_LOGIN_URI, ctx, 0)) {
 			String returnUrl = ctx.request().getParam("returnUrl");
@@ -219,12 +279,12 @@ public class WebRoutes {
 			}
 			ctx.response().setStatusCode(HttpServletResponse.SC_FOUND).putHeader("Location", returnUrl).end();
 			return;
-		}
+		} 
 
 		ctx.request().params().forEach(e -> {
 			ctx.addCookie(new CookieImpl(e.getKey(), e.getValue()).setPath(ctx.request().path()));
 		});
-
+   
 		String file = routes.get(uri);
 		Path p = webFolderURI.resolve(file);
 
@@ -235,12 +295,16 @@ public class WebRoutes {
 			Exceptions.throwRuntime(e1);
 		}
 	}
+	
+	public static List<String> getUriParams(String uri) {
+		return routeParams.get(uri);
+	}
+
+	public static String getUri(Functionality f) {
+		return functionalityToRoutesMappings.get(f.getId());
+	}
 
 	static {
-		try {
-			scanRoutes();
-		} catch (IOException e) {
-			Exceptions.throwRuntime(e);
-		}
+		
 	}
 }

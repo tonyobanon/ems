@@ -14,7 +14,7 @@ public class RPCFactory {
 	public static void setPrependDomainVariableToUrl(Boolean prependDomainVariableToUrl) {
 		RPCFactory.prependDomainVariableToUrl = prependDomainVariableToUrl;
 	}
-	
+	 
 	/**
 	 * Generate javascript client stubs
 	 * */
@@ -32,9 +32,6 @@ public class RPCFactory {
 		clientFunction.append(" function " + method.getName() + " (");
 
 		List<String> headerParamList = Lists.newArrayList(methodAnnotation.headerParams());
-		if (functionalityId >= 0) {
-			headerParamList.add(FusionHelper.sessionTokenName());
-		}
 
 		String[] headerParams = functionalityId >= 0 ? headerParamList.toArray(new String[headerParamList.size()])
 				: methodAnnotation.headerParams();
@@ -85,10 +82,15 @@ public class RPCFactory {
 		clientFunction.append("\n");
 
 		if (methodAnnotation.bodyParams().length > 0 && !methodAnnotation.enableMultipart()) {
+			
+			clientFunction.append("\t\t\t contentType : 'application/json', ");
+
+			clientFunction.append("\n");
+			
 			clientFunction.append("\t\t\t data :");
 
 			clientFunction.append(" JSON.stringify(");
-
+ 
 			clientFunction.append("{");
 
 			for (int i = 0; i < methodAnnotation.bodyParams().length; i++) {
@@ -116,7 +118,7 @@ public class RPCFactory {
 
 			clientFunction.append("\n");
 
-			clientFunction.append("\t\t\t contentType : false, ");
+			clientFunction.append("\t\t\t contentType : 'multipart/form-data', ");
 
 			clientFunction.append("\n");
 
@@ -155,20 +157,20 @@ public class RPCFactory {
 		} else {
 			requestParams.append("\"");
 		}
-
+  
 		clientFunction.append(
 				"\t\t\t url: " + (prependDomainVariableToUrl ? "FUSION_API_URL + " : "") + " \" " + APIRoutes.BASE_PATH + classAnnotation.uri() + methodAnnotation.uri() + requestParams.toString());
 
 		clientFunction.append("\n");
 
 		clientFunction.append("\t\t\t }).done(function(o) {");
-
+ 
 		clientFunction.append("\n");
 
-		clientFunction.append("\t\t\t\t resolve(JSON.parse(o));");
+		clientFunction.append("\t\t\t\t resolve(o);");
 
 		clientFunction.append("\n");
-
+ 
 		clientFunction.append("\t\t\t })");
 
 		clientFunction.append(".fail(function(jqXHR, status, error){");

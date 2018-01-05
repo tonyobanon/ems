@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,18 +28,27 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.kylantis.eaa.core.keys.AppConfigKey;
+import com.kylantis.eaa.core.users.Functionality;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 
 @BlockerTodo("Create optionalRequestParams setting, Validate request params in fusion. Do in main ctx handler")
 public class APIRoutes {
+	
+
+	public static Pattern endpointClassUriPattern = Pattern.compile("\\A\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+(\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+)*\\z");
+
+	public static Pattern endpointMethodUriPattern = Pattern.compile("\\A\\Q/\\E[a-zA-Z-]+[-]*[a-zA-Z]+\\z");
+
 
 	private static Multimap<String, RouteHandler> routeKeys = LinkedHashMultimap.create();
 	private static Multimap<Route, RouteHandler> routes = LinkedHashMultimap.create();
 
 	protected static Map<Object, Integer> routesMappings = new HashMap<>();
 
+	protected static Map<Integer, List<String>> functionalityToRoutesMappings = new HashMap<>();
+	
 	protected static final String USER_ID_PARAM_NAME = "x_uid";
 	public static final String BASE_PATH = "/api";
 
@@ -67,11 +79,11 @@ public class APIRoutes {
 
 			EndpointClass classAnnotation = service.getAnnotation(EndpointClass.class);
 
-			if (!WebServer.endpointClassUriPattern.matcher(classAnnotation.uri()).matches()) {
+			if (!endpointClassUriPattern.matcher(classAnnotation.uri()).matches()) {
 				throw new RuntimeException("Improper URI format for " + service.getName());
 			}
 
-			Method[] methods = service.getMethods();
+			Method[] methods = service.getDeclaredMethods();
 
 			for (int i = 0; i < methods.length; i++) {
 
@@ -84,10 +96,10 @@ public class APIRoutes {
 
 				EndpointMethod methodAnnotation = method.getAnnotation(EndpointMethod.class);
 
-				if (!WebServer.endpointMethodUriPattern.matcher(methodAnnotation.uri()).matches()) {
+				if (!endpointMethodUriPattern.matcher(methodAnnotation.uri()).matches()) {
 					throw new RuntimeException("Improper URI format for " + service.getName() + "/" + method.getName());
 				}
-
+				
 				consumer.accept(new FusionServiceContext(classAnnotation, methodAnnotation, serviceInstance, method,
 						i == methods.length - 1));
 			}
@@ -101,7 +113,7 @@ public class APIRoutes {
 		String path = "/tmp/ems/fusion-service-clients/" + name.replace("Service", "").toLowerCase() + ".js";
 
 		File clientStubFile = new File(path);
-
+		
 		clientStubFile.mkdirs();
 		try {
 			if (clientStubFile.exists()) {
@@ -110,7 +122,7 @@ public class APIRoutes {
 
 			clientStubFile.createNewFile();
 
-			Logger.debug("Saving service client for " + name + " to " + clientStubFile.getAbsolutePath());
+			Logger.trace("Saving service client for " + name + " to " + clientStubFile.getAbsolutePath());
 
 			Utils.saveString(buffer, Files.newOutputStream(clientStubFile.toPath()));
 
@@ -128,9 +140,9 @@ public class APIRoutes {
 	 * all fusion endpoints.
 	 * 
 	 */
-	private static void scanRoutes() {
+	public static void scanRoutes() {
 
-		Logger.info("Scanning for API routes");
+		Logger.debug("Scanning for API routes");
 
 		routes = ArrayListMultimap.create();
 
@@ -160,16 +172,25 @@ public class APIRoutes {
 
 			methodNames.put(methodName, className);
 
+			Functionality functionality = context.getEndpointMethod().functionality();
+			
 			String uri = context.getEndpointClass().uri() + context.getEndpointMethod().uri();
 			HttpMethod httpMethod = context.getEndpointMethod().method();
 
 			Route route = new Route(uri, httpMethod);
 
 			Logger.trace("Mapping route: " + uri + " (" + httpMethod + ") to functionality: "
-					+ context.getEndpointMethod().functionality());
+					+ functionality);
 
 			routesMappings.put(route.toString(), context.getEndpointMethod().functionality().getId());
 
+			
+			if(!functionalityToRoutesMappings.containsKey(functionality.getId())) {
+				functionalityToRoutesMappings.put(functionality.getId(), new ArrayList<>());
+			}
+			
+			functionalityToRoutesMappings.get(functionality.getId()).add(uri);			
+			
 			if (context.getEndpointMethod().createXhrClient()) {
 				// Generate XHR clients
 				serviceCientBuffer.get().append(RPCFactory.generateXHRClient(context.getEndpointClass(),
@@ -197,6 +218,8 @@ public class APIRoutes {
 
 			registerRoute(route, handler);
 
+			
+			
 			// Generate Javascript client
 
 			if (context.isClassEnd()) {
@@ -285,8 +308,12 @@ public class APIRoutes {
 		}
 		return routes;
 	}
+	
+	public static List<String> getUri(Functionality functionality){
+		return functionalityToRoutesMappings.get(functionality.getId());
+	}
 
 	static {
-		scanRoutes();
+			
 	}
 }

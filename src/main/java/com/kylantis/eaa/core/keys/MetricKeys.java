@@ -22,9 +22,16 @@ public class MetricKeys {
 
 	
 	
-	
-	
 
 	public static final String USERS_COUNT = "USERS_COUNT";
+	
+	
+	public static final String AVERAGE_STUDENT_PERFORMANCE = "SYSTEM_LOAD";
+	
+	
+	
+	public static final String SYSTEM_LOAD = "SYSTEM_LOAD";
+	public static final String APPLICATION_INFLOW = "APPLICATION_INFLOW";
+	public static final String NEW_USERS = "NEW_USERS";
 	
 }

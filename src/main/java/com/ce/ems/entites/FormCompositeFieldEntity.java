@@ -55,12 +55,12 @@ public class FormCompositeFieldEntity {
 		return this;
 	}
 
-	public Long getSection() {
-		return Long.parseLong(section);
+	public String getSection() {
+		return section;
 	}
 
-	public FormCompositeFieldEntity setSection(Long section) {
-		this.section = section.toString();
+	public FormCompositeFieldEntity setSection(String section) {
+		this.section = section;
 		return this;
 	}
 	

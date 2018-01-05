@@ -15,11 +15,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
+
 import com.ce.ems.base.classes.FluentArrayList;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.core.Exceptions;
-import com.ce.ems.base.core.Logger;
-import com.ce.ems.utils.Utils;
 
 import io.netty.handler.codec.http2.DefaultHttp2Headers;
 import io.vertx.core.Handler;
@@ -101,7 +101,7 @@ public class GAEHttp2ServerRequestMock implements HttpServerRequest {
 
 		while (_formAttributeNames.hasMoreElements()) {
 			String o = _formAttributeNames.nextElement();
-			_formAttributes.put(o, (String) req.getAttribute(o));
+			_formAttributes.put(o, req.getAttribute(o).toString());
 		}
 		this.formAttributesMap.addAll(_formAttributes);
 
@@ -116,24 +116,25 @@ public class GAEHttp2ServerRequestMock implements HttpServerRequest {
 		this.remoteAddr = SocketAddress.inetSocketAddress(request.getRemotePort(), request.getRemoteHost());
 
 		// Add cookies
-
-		for (javax.servlet.http.Cookie c : request.getCookies()) {
-			cookies.put(c.getName(), HelperUtils.toVertxCookie(c));
+ 
+		if(request.getCookies() != null) {
+			for (javax.servlet.http.Cookie c : request.getCookies()) {
+				cookies.put(c.getName(), HelperUtils.toVertxCookie(c));
+			}
 		}
-
+		
 		// Add request body
-		String bodyString = null;
 		try {
-			bodyString = Utils.getString(request.getInputStream());
+			this.body = Buffer.buffer(IOUtils.toByteArray(request.getInputStream()));
+		
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
-		this.body = Buffer.buffer(bodyString);
 		
 		
 		//Add multi-part data, if available
 		
-		if(request.getContentType() != null && request.getContentType().equals("multipart/form-data")) {
+		if (request.getContentType() != null && request.getContentType().equals("multipart/form-data")) {
 
 			try {
 				Collection<Part> parts = request.getParts();

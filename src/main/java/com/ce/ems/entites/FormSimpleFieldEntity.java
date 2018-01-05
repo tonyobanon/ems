@@ -43,12 +43,12 @@ public class FormSimpleFieldEntity {
 		return this;
 	}
 
-	public Long getSection() {
-		return Long.parseLong(section);
+	public String getSection() {
+		return section;
 	}
 
-	public FormSimpleFieldEntity setSection(Long section) {
-		this.section = section.toString();
+	public FormSimpleFieldEntity setSection(String section) {
+		this.section = section;
 		return this;
 	}
 

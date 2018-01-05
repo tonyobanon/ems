@@ -32,7 +32,7 @@ public class WebServer {
 
 	public static final Set<String> allowedHeaders = Sets.newHashSet(new String[] { "X-XSRF-TOKEN" });
 
-	protected static Vertx vertX = Vertx.vertx(new VertxOptions().setWorkerPoolSize(100));
+	protected static Vertx vertX;
 
 	public static Router router;
 
@@ -48,6 +48,8 @@ public class WebServer {
 	@BlockerTodo("Revisit shutdown Hook to JVM")
 	public static void start(MicroServiceOptions options) throws IOException {
 
+		vertX = Vertx.vertx(new VertxOptions().setWorkerPoolSize(100));
+		
 		WebServer.options = options;
 
 		setupRouter();

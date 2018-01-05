@@ -13,6 +13,7 @@ import com.ce.ems.base.classes.IndexedNameType;
 import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.classes.SystemErrorCodes;
 import com.ce.ems.base.core.BlockerTodo;
+import com.ce.ems.base.core.Model;
 import com.ce.ems.base.core.ModelMethod;
 import com.ce.ems.base.core.SystemValidationException;
 import com.ce.ems.base.core.Todo;
@@ -28,6 +29,7 @@ import com.kylantis.eaa.core.users.RoleRealm;
 import com.kylantis.eaa.core.users.UserProfileSpec;
 
 @Todo("stop storing passwords as plain text, hash it instead")
+@Model(dependencies = RoleModel.class)
 public class BaseUserModel extends BaseModel {
 	
 	@Override
@@ -73,7 +75,7 @@ public class BaseUserModel extends BaseModel {
 
 	@ModelMethod(functionality = Functionality.EMAIL_LOGIN_USER)
 	public static Long loginByEmail(String email, String password) {
-
+		
 		if (!doesEmailExist(email)) {
 			// Incorrect email
 			throw new SystemValidationException(SystemErrorCodes.EMAIL_DOES_NOT_EXIST);
@@ -88,6 +90,7 @@ public class BaseUserModel extends BaseModel {
 		}
 	}
 
+	@BlockerTodo("Phone Index is currently not used on the frontend. Indexes are expensive remember")
 	@ModelMethod(functionality = Functionality.PHONE_LOGIN_USER)
 	public static Long loginByPhone(Long phone, String password) {
 
@@ -252,4 +255,10 @@ public class BaseUserModel extends BaseModel {
 		return names;
 	}
 	
+	@Unexposed
+	@ModelMethod(functionality = Functionality.GET_PERSON_NAMES)
+	public static String getPersonName(Long id) {
+		BaseUserEntity v = ofy().load().type(BaseUserEntity.class).id(id).safe();
+		return v.getFirstName() + " " + v.getMiddleName() + " " + v.getLastName();
+	}
 }

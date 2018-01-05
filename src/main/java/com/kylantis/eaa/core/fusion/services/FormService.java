@@ -64,7 +64,7 @@ public class FormService extends BaseService {
 			functionality = Functionality.VIEW_APPLICATION_FORM)
 	public void listApplicationFormFields(RoutingContext ctx) {
 
-		Long sectionId = Long.parseLong(ctx.request().getParam("sectionId"));
+		String sectionId = ctx.request().getParam("sectionId");
 		
 		List<Question> fields = FormModel.getFields(FormSectionType.APPLICATION_FORM, sectionId);
 		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(fields)).end();
@@ -76,9 +76,9 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		List<Long> sectionIds = body.getJsonArray("sectionIds").getList();
+		List<String> sectionIds = body.getJsonArray("sectionIds").getList();
 		
-		Map<Long, List<Question>> fields = FormModel.getAllFields(FormSectionType.APPLICATION_FORM, sectionIds);
+		Map<String, List<Question>> fields = FormModel.getAllFields(FormSectionType.APPLICATION_FORM, sectionIds);
 		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(fields)).end();
 	}
 	
@@ -86,7 +86,7 @@ public class FormService extends BaseService {
 			functionality = Functionality.VIEW_SYSTEM_CONFIGURATION)
 	public void listSystemConfigurationFields(RoutingContext ctx) {
 
-		Long sectionId = Long.parseLong(ctx.request().getParam("sectionId"));
+		String sectionId = ctx.request().getParam("sectionId");
 		
 		List<Question> fields = FormModel.getFields(FormSectionType.SYSTEM_CONFIGURATION, sectionId);
 		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(fields)).end();
@@ -98,9 +98,9 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		List<Long> sectionIds = body.getJsonArray("sectionIds").getList();
+		List<String> sectionIds = body.getJsonArray("sectionIds").getList();
 		
-		Map<Long, List<Question>> fields = FormModel.getAllFields(FormSectionType.SYSTEM_CONFIGURATION, sectionIds);
+		Map<String, List<Question>> fields = FormModel.getAllFields(FormSectionType.SYSTEM_CONFIGURATION, sectionIds);
 		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(fields)).end();
 	}
 	
@@ -115,7 +115,7 @@ public class FormService extends BaseService {
 			functionality = Functionality.MANAGE_APPLICATION_FORMS)
 	public void deleteApplicationFormSection(RoutingContext ctx) {
 		
-		Long sectionId = Long.parseLong(ctx.request().getParam("sectionId"));
+		String sectionId = ctx.request().getParam("sectionId");
 		FormModel.deleteSection(sectionId, FormSectionType.APPLICATION_FORM);
 	}
 	
@@ -123,7 +123,7 @@ public class FormService extends BaseService {
 			functionality = Functionality.MANAGE_SYSTEM_CONFIGURATION_FORM)
 	public void deleteSystemConfigurationSection(RoutingContext ctx) {
 		
-		Long sectionId = Long.parseLong(ctx.request().getParam("sectionId"));
+		String sectionId = ctx.request().getParam("sectionId");
 		FormModel.deleteSection(sectionId, FormSectionType.SYSTEM_CONFIGURATION);
 	}
 	
@@ -159,7 +159,7 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		Long sectionId = body.getLong("sectionId");
+		String sectionId = body.getString("sectionId");
 		SimpleEntry spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), SimpleEntry.class);
 		
 		String id = FormModel.newSimpleField(FormSectionType.APPLICATION_FORM, sectionId, spec);
@@ -173,7 +173,7 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		Long sectionId = body.getLong("sectionId");
+		String sectionId = body.getString("sectionId");
 		CompositeEntry spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), CompositeEntry.class);
 		
 		String id = FormModel.newCompositeField(FormSectionType.APPLICATION_FORM, sectionId, spec);
@@ -191,7 +191,7 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		Long sectionId = body.getLong("sectionId");
+		String sectionId = body.getString("sectionId");
 		SimpleEntry spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), SimpleEntry.class);
 		
 		String id = FormModel.newSimpleField(FormSectionType.SYSTEM_CONFIGURATION, sectionId, spec);
@@ -205,7 +205,7 @@ public class FormService extends BaseService {
 
 		JsonObject body = ctx.getBodyAsJson();
 		
-		Long sectionId = body.getLong("sectionId");
+		String sectionId = body.getString("sectionId");
 		CompositeEntry spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), CompositeEntry.class);
 		
 		String id = FormModel.newCompositeField(FormSectionType.SYSTEM_CONFIGURATION, sectionId, spec);

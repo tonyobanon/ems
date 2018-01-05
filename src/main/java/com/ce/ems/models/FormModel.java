@@ -18,6 +18,8 @@ import com.ce.ems.base.core.ResourceException;
 import com.ce.ems.entites.FormCompositeFieldEntity;
 import com.ce.ems.entites.FormSectionEntity;
 import com.ce.ems.entites.FormSimpleFieldEntity;
+import com.ce.ems.models.helpers.FormFieldRepository;
+import com.ce.ems.utils.Utils;
 import com.googlecode.objectify.Key;
 import com.kylantis.eaa.core.forms.CompositeEntry;
 import com.kylantis.eaa.core.forms.Question;
@@ -43,9 +45,10 @@ public class FormModel extends BaseModel {
 	}
 
 	@PlatformInternal
-	protected static Map<RoleRealm, Long> newSection(String name, FormSectionType type) {
+	public
+	static Map<RoleRealm, String> newSection(String name, FormSectionType type) {
 
-		Map<RoleRealm, Long> result = new FluentHashMap<>();
+		Map<RoleRealm, String> result = new FluentHashMap<>();
 		for(RoleRealm realm : RoleRealm.values()) {
 			result.put(realm, newSection(name, type, realm));
 		}
@@ -56,8 +59,9 @@ public class FormModel extends BaseModel {
 	 * This creates a new section, for the given realm
 	*/
 	@ModelMethod(functionality = {Functionality.MANAGE_APPLICATION_FORMS, Functionality.MANAGE_SYSTEM_CONFIGURATION_FORM})
-	public static Long newSection(String name, FormSectionType type, RoleRealm realm) {
+	public static String newSection(String name, FormSectionType type, RoleRealm realm) {
 		FormSectionEntity e = new FormSectionEntity()
+				.setId(Utils.newShortRandom())
 				.setName(name)
 				.setType(type.getValue())
 				.setRealm(realm != null ? realm.getValue() : null);
@@ -65,7 +69,7 @@ public class FormModel extends BaseModel {
 		return e.getId();
 	}
 	
-	private static Integer getSectionType(Long sectionId) {
+	private static Integer getSectionType(String sectionId) {
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
 		return e.getType();
 	}
@@ -95,7 +99,7 @@ public class FormModel extends BaseModel {
 	}
 
 	@ModelMethod(functionality = Functionality.MANAGE_APPLICATION_FORMS)
-	public static void deleteSection(Long sectionId, FormSectionType type) {
+	public static void deleteSection(String sectionId, FormSectionType type) {
 		
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
 		
@@ -109,7 +113,7 @@ public class FormModel extends BaseModel {
 	/**
 	 * This deletes a section
 	 */
-	protected static void deleteSection(Long sectionId) {
+	protected static void deleteSection(String sectionId) {
 
 		// Delete fields
 
@@ -126,7 +130,7 @@ public class FormModel extends BaseModel {
 	/**
 	 * This creates a new simple field
 	 */
-	protected static String newSimpleField(FormSectionType type, Long sectionId, SimpleEntry spec, Boolean isDefault) {
+	protected static String newSimpleField(FormSectionType type, String sectionId, SimpleEntry spec, Boolean isDefault) {
 		
 		if(!getSectionType(sectionId).equals(type.getValue())) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
@@ -155,12 +159,12 @@ public class FormModel extends BaseModel {
 	 * This creates a new simple field
 	 */
 	@ModelMethod(functionality = Functionality.MANAGE_APPLICATION_FORMS)
-	public static String newSimpleField(FormSectionType type, Long sectionId, SimpleEntry spec) {
+	public static String newSimpleField(FormSectionType type, String sectionId, SimpleEntry spec) {
 		return newSimpleField(type, sectionId, spec, false);
 	}
 
 	// Created for FormFieldRepository
-	protected static String newSimpleField(Long sectionId, SimpleEntry spec) {
+	public static String newSimpleField(String sectionId, SimpleEntry spec) {
 		return newSimpleField(FormSectionType.APPLICATION_FORM, sectionId, spec);
 	}
 	
@@ -181,7 +185,7 @@ public class FormModel extends BaseModel {
 	/**
 	 * This creates a new composite field
 	 */
-	protected static String newCompositeField(FormSectionType type, Long sectionId, CompositeEntry spec, Boolean isDefault) {
+	protected static String newCompositeField(FormSectionType type, String sectionId, CompositeEntry spec, Boolean isDefault) {
 
 
 		if(!getSectionType(sectionId).equals(type.getValue())) {
@@ -212,12 +216,12 @@ public class FormModel extends BaseModel {
 	 * This creates a new composite field
 	 */
 	@ModelMethod(functionality = Functionality.MANAGE_APPLICATION_FORMS)
-	public static String newCompositeField(FormSectionType type, Long sectionId, CompositeEntry spec) {
+	public static String newCompositeField(FormSectionType type, String sectionId, CompositeEntry spec) {
 		return newCompositeField(type, sectionId, spec, false);
 	}
 	
 	// Created for FormFieldRepository
-	protected static String newCompositeField(Long sectionId, CompositeEntry spec) {
+	public static String newCompositeField(String sectionId, CompositeEntry spec) {
 		return newCompositeField(FormSectionType.APPLICATION_FORM, sectionId, spec);
 	}
 
@@ -268,7 +272,7 @@ public class FormModel extends BaseModel {
 	/**
 	 * This lists the keys for all simple and composite fields that exists in a section
 	 */
-	private static List<Key<?>> listFieldKeys(long sectionId) {
+	private static List<Key<?>> listFieldKeys(String sectionId) {
 
 		List<Key<?>> keys = new FluentArrayList<>();
 
@@ -287,7 +291,7 @@ public class FormModel extends BaseModel {
 	 * This gets fields available in the given section
 	 */
 	@ModelMethod(functionality = {Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION})
-	public static List<Question> getFields(FormSectionType type, long sectionId) {
+	public static List<Question> getFields(FormSectionType type, String sectionId) {
 
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
 		
@@ -312,9 +316,9 @@ public class FormModel extends BaseModel {
 	 * This gets all fields available in the given section(s)
 	 */
 	@ModelMethod(functionality = {Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION})
-	public static Map<Long, List<Question>> getAllFields(FormSectionType type, List<Long> sectionIds) {
+	public static Map<String, List<Question>> getAllFields(FormSectionType type, List<String> sectionIds) {
 
-		Map<Long, List<Question>> result = new FluentHashMap<>();
+		Map<String, List<Question>> result = new FluentHashMap<>();
 
 		sectionIds.forEach(sectionId -> {
 

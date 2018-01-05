@@ -21,10 +21,15 @@ public class Image {
 	private int height;
 	private int width;
 
-	public Image(URL url) {
+	public Image(String url) {
 
+		if(url == null) {
+			return;
+		}
+		
 		try {
-			image = ImageIO.read(url);
+			URL imageUrl = new URL(url);
+			image = ImageIO.read(imageUrl);
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}

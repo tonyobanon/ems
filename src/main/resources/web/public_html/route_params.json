@@ -1,0 +1,53 @@
+{
+
+	"/view-application-form": ["realm"],
+
+	"/update-application": ["applicationId"],
+
+	"/user-login": ["returnUrl"],
+
+	"/own-profile": [],
+
+	"/course-search": ["query"],
+
+	"/manage-application-form": ["realm"],
+
+	"/manage-system-configuration-form": [],
+
+	"/applications-search": ["query"],
+
+	"/applications": ["applicationId"],
+
+	"/users-search": ["query"],
+
+	"/users": ["userId"],
+
+	"/media-manager": [],
+
+	"/roles": ["roleName"],
+
+	"/system-caches": ["cacheType"],
+
+	"/system-configuration": ["id"],
+
+	"/dashboard": [],
+
+	"/departments": ["departmentId", "facultyId"],
+
+	"/students": ["studentId", "departmentLevelId"],
+
+	"/lecturers": ["lecturerId"],
+
+	"/courses": ["courseCode", "departmentLevelId"],
+
+	"/register-courses": ["studentId"],
+
+	"/result-sheet": ["courseCode", "semesterCourseId"],
+
+	"/assessment-totals": ["id", "levelSemesterId"],
+
+	"/course-results": ["courseCode", "academicSemesterId"],
+
+	"/student-results": ["studentId", "academicSemesterId"]
+
+}

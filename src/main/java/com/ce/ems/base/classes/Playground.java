@@ -1,11 +1,33 @@
 package com.ce.ems.base.classes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import com.ce.ems.base.classes.activitystreams.Preposition;
+import com.ce.ems.utils.Utils;
 
 public class Playground {
 
 	public static void main(String[] args) {
 		
+		
+		
+		Map<Preposition, String> v = new HashMap<>();
+		
+		v.put(Preposition.ABOUT, "1");
+		
+		
+		System.out.println(v.get(Preposition.ABOUT));
+		
+		
+//		Locale l = Locale.forLanguageTag("en-US");
+//	
+//		System.out.println(l.getDisplayName());
+//		System.out.println(l.getDisplayScript());
+//		System.out.println(l.getISO3Language() + "-" + l.getISO3Country());
+//		
 		
 //		int duration = 5;
 //		

@@ -30,7 +30,9 @@ public class PDFForm  {
 	}
 	
 	public PDFForm withSection(Section section) {
-	    this.sections.add(section);
+		if(!section.getEntries().isEmpty()) {
+		    this.sections.add(section);
+		}
 	    return this;
 	}
 	

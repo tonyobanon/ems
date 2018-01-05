@@ -1,83 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+    <head>
 
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="HMO Solution">
-<meta name="author" content="Kylantis, Inc">
-<link href="/assets/images/icon.png" rel="shortcut icon">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="EMS Solution">
+        <meta name="author" content="Compute Essentials Inc">
+        <link href="/assets/images/icon.png" rel="shortcut icon">
 
-<link href="/assets/css/main.css" rel="stylesheet" />
-<link href="/assets/css/semantic.min.css" rel="stylesheet" />
+        <link href="/assets/css/main.css" rel="stylesheet" />
+        <link href="/assets/css/semantic.min.css" rel="stylesheet" />
 
-<title>HMO HQ Installation</title>
+        <title>EMS HQ Installation</title>
 
+    </head>
 
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <body>
+        <div class="ui active dimmer" style="visibility: hidden;">
+            <div class="ui active centered loader huge"></div>
+        </div>
 
-</head>
+        <br>
 
-<body>
-
-    <div class="ui active dimmer" style="visibility: hidden;">
-   		<div class="ui active centered loader huge"></div>
-  	</div>
-
-	<br>
-
-	<div class="ui tablet stackable  steps">
-		<div class="completed step">
-			<div class="content">
-				<div class="title">Company Information</div>
-				<div class="description">Enter some basic info about your
-					business</div>
-			</div>
-		</div>
-		<div class="completed step">
-			<div class="content">
-				<div class="title">Adminstrator</div>
-				<div class="description">Create a new Admin Account</div>
-			</div>
-		</div>
-		<div class="active step">
-			<div class="content">
-				<div class="title">Finish</div>
-				<div class="description">Complete setup</div>
-			</div>
-		</div>
-	</div>
+        <!--	<div class="ui tablet stackable steps">-->
+        <div class="ui ordered steps">
+            <div class="completed step">
+                <div class="content">
+                    <div class="title">Company Information</div>
+                    <div class="description">Enter some basic info about your
+                        institution</div>
+                </div>
+            </div>
+            <div class="completed step"> 
+                <div class="content">
+                    <div class="title">Administrator Account</div>
+                    <div class="description">Create a new Administrator Account</div>
+                </div>
+            </div>
+            <div class="active step">
+                <div class="content">
+                    <div class="title">System Configuration</div>
+                    <div class="description">Update system settings</div>
+                </div>
+            </div>
+            <div class="step">
+                <div class="content">
+                    <div class="title">Finish</div>
+                    <div class="description">Complete setup</div>
+                </div>
+            </div>
+        </div>
 
 
+        <div class="ui raised very padded text container segment">
 
-	<div class="ui very padded text container segment">
+            <form class="ui form">
 
-		<h3>Thank you. Click finish to proceed.</h3>
+                <p>Emailing Credentials</p>
+                <br>
 
-		<br> <br> <br>
-		<button class="positive ui button" onclick="finish();">Finish</button>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Provider URL: </label> <input placeholder="Provider URL"
+                                                             name="email_provider_url" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Email Username</label> <input placeholder="Enter a URL"
+                                                             name="email_username" type="text">
+                    </div>
+                </div>
 
-	</div>
+
+                <div class="two fields">
+
+                    <div class="field">
+                        <label>Password</label> <input placeholder="Email Password"
+                                                       name="email_pass" type="password">
+                    </div>
+                    <div class="field">
+                        <label>Verify Password</label> <input placeholder="Verify Email Password"
+                                                              name="email_passv" type="password">
+                    </div>
+
+                </div>
+
+
+                <br>
 
 
 
+                <p> Academic Session </p>
+                <br>
+
+                <div class="field fields">
+
+                    <div class="seven wide field">
+                        <label>Current Semester</label>
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="semester_value"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Select Current Semester</div>
+                            <div class="menu">
+                                <div class="item" data-value="1">First Semester</div>
+                                <div class="item" data-value="2">Second Semester</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nine wide field">
+
+                        <label> Academic Session </label>
+
+                        <div class="three fields">
+
+                            <div class="field">
+                                <input type="text" name="semester_session_start_year" maxlength="4"
+                                       placeholder="Start Year" disabled>
+                            </div>
+
+                            <div class="field">
+                                <input type="text" name="semester_session_end_year" maxlength="4"
+                                       placeholder="End Year" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fields">
+
+                    <div class="nine wide field">
+
+                        <label>Start Date</label>
+
+                        <div class="three fields">
+
+                            <div class="field">
+                                <input type="text" name="semester_start_day" maxlength="2"
+                                       placeholder="Day">
+                            </div>
+
+                            <div class="field">
+                                <input type="text" name="semester_start_month" maxlength="2"
+                                       placeholder="Month">
+                            </div>
+
+                            <div class="field">
+                                <input type="text" name="semester_start_year" maxlength="4"
+                                       placeholder="Year" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="ui primary button">Next</div>
+                <div class="ui error message"></div>
+            </form>
+
+        </div>
 
 
 
-	<script src="/assets/js/jquery.js"></script>
-	<script src="/assets/js/clients/platform.js"></script>
-	
-	<script src="/assets/js/utils.js"></script>
-	<script src="/assets/js/pages/setup_three.js"></script>
+        <script src="/assets/js/jquery.js"></script>
+        <script src="/assets/js/clients/location.js"></script>
+        <script src="/assets/js/semantic.min.js"></script>
 
-</body>
+        <script src="/assets/js/utils.js"></script>
+        <script src="/assets/js/pages/setup_three.js"></script>
+
+
+        <script>
+
+            $(document).ready(function () {
+                load();
+            });
+
+        </script>
+
+
+    </body>
 
 </html>
 

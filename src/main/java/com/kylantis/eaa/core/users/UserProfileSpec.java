@@ -14,7 +14,7 @@ public class UserProfileSpec {
 	String lastName;
 	String image;
 
-	long phone;
+	Long phone;
 	Date dateOfBirth;
 	Gender gender;
 
@@ -26,7 +26,7 @@ public class UserProfileSpec {
 
 	public String getEmail() {
 		return email;
-	}
+	} 
 
 	public UserProfileSpec setEmail(String email) {
 		this.email = email;

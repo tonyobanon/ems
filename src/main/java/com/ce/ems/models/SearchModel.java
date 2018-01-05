@@ -28,6 +28,7 @@ import com.ce.ems.base.core.ModelMethod;
 import com.ce.ems.base.core.ResourceException;
 import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.IndexedNameEntity;
+import com.ce.ems.models.helpers.CacheHelper;
 import com.ce.ems.utils.ObjectUtils;
 import com.ce.ems.utils.Utils;
 import com.googlecode.objectify.Key;
@@ -86,13 +87,13 @@ public class SearchModel extends BaseModel {
 	}
 
 	private static List<String> getListKeys() {
-		return CacheModel.getListOrDefault(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, () -> {
+		return CacheHelper.getListOrDefault(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, () -> {
 			return new FluentArrayList<>();
 		});
 	}
 
 	private static List<String> getSearchKeys() {
-		return CacheModel.getListOrDefault(CacheType.PERSISTENT, CACHE_KEY_SEARCH_ENTRIES, () -> {
+		return CacheHelper.getListOrDefault(CacheType.PERSISTENT, CACHE_KEY_SEARCH_ENTRIES, () -> {
 			return new FluentArrayList<>();
 		});
 
@@ -120,8 +121,8 @@ public class SearchModel extends BaseModel {
 	 */
 	private static final List<String> _list(IndexedNameType type, Map<String, Object> filtersMap) {
 		String key = buildCacheListKey(type, filtersMap);
-		return CacheModel.getListOrDefault(CacheType.PERSISTENT, key, () -> {
-			CacheModel.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, key);
+		return CacheHelper.getListOrDefault(CacheType.PERSISTENT, key, () -> {
+			CacheHelper.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, key);
 			return list(type, filtersMap);
 		});
 	}
@@ -131,8 +132,8 @@ public class SearchModel extends BaseModel {
 	 */
 	private static final List<String> _search(IndexedNameType type, String phrase) {
 		String key = buildCacheSearchKey(type, phrase);
-		return CacheModel.getListOrDefault(CacheType.SHORT_LIVED, key, () -> {
-			CacheModel.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_SEARCH_ENTRIES, key);
+		return CacheHelper.getListOrDefault(CacheType.SHORT_LIVED, key, () -> {
+			CacheHelper.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_SEARCH_ENTRIES, key);
 			return search(type, phrase);
 		});
 	}
@@ -150,7 +151,7 @@ public class SearchModel extends BaseModel {
 	 */
 	public static void addCachedListKey(IndexedNameType type, Map<String, Object> filtersMap, Object elem) {
 		String key = buildCacheListKey(type, filtersMap);
-		CacheModel.addToList(CacheType.PERSISTENT, key, elem.toString());
+		CacheHelper.addToList(CacheType.PERSISTENT, key, elem.toString());
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class SearchModel extends BaseModel {
 	 */
 	public static void removeCachedListKey(IndexedNameType type, Map<String, Object> filtersMap, Object elem) {
 		String key = buildCacheListKey(type, filtersMap);
-		CacheModel.removeFromList(CacheType.PERSISTENT, key, elem.toString());
+		CacheHelper.removeFromList(CacheType.PERSISTENT, key, elem.toString());
 	}
 
 	private static final String getCacheContextKey(String key) {

@@ -30,6 +30,10 @@ public enum Functionality {
 	
 	// Core Module
 	GET_LOCATION_DATA(-120, "Get location data"),
+	GET_COUNTRY_NAMES(-121, "Get country names"),
+	GET_TERRITORY_NAMES(-122, "Get territory names"),
+	GET_CITY_NAMES(-123, "Get city names"),
+	
 	GET_BINARY_DATA(-130, "Get binary data"),
 	SAVE_BINARY_DATA(-140, "Save binary data"),
 	
@@ -166,6 +170,12 @@ public enum Functionality {
 			return Functionality.PHONE_LOGIN_USER;
 		case -120:
 			return Functionality.GET_LOCATION_DATA;
+		case -121:
+			return Functionality.GET_COUNTRY_NAMES;
+		case -122:
+			return Functionality.GET_TERRITORY_NAMES;
+		case -123:
+			return Functionality.GET_CITY_NAMES;
 		case -130:
 			return Functionality.GET_BINARY_DATA;
 		case -140:

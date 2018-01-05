@@ -4,20 +4,36 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.ce.ems.base.classes.FluentArrayList;
 import com.ce.ems.base.classes.InstallOptions;
+import com.ce.ems.base.core.Application;
+import com.ce.ems.base.core.Model;
+import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.MetricEntity;
 import com.googlecode.objectify.Key;
 
+@Model(version = "0.0.3-rc.1+build.1")
 public class MetricsModel extends BaseModel {
 
-	public static final String TIMESERIES_SUFFIX = "_TIMESERIES";
-	public static final String CURRENT_SUFFIX = "_CURRENT";
 
 	@Override
 	public String path() {
 		return "core/metrics";
+	}
+	
+	@Override
+	public void update() {
+		
+		
+		
+	}
+	
+	@Override
+	public void preInstall() {
+		
 	}
 	
 	@Override
@@ -26,9 +42,25 @@ public class MetricsModel extends BaseModel {
 	}
 
 	@Override
+	@Todo
 	public void start() {
 		
 		// Start a socket server, that gets written to when metric is updated
+		
+		if(!Application.isProduction()) {
+
+			// Start a cron job that updates metrics database with test data
+			Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					
+					
+					
+				}
+			}, 0, 1, TimeUnit.MINUTES);
+			
+		}
+		
 	}
 
 	private static void doIncrement(String key, String parentKey) {

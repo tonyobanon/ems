@@ -36,6 +36,10 @@ public class Utils {
 	public static final String newRandom() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
+	
+	public static final String newShortRandom() {
+		return newRandom().substring(0, 6);
+	}
 
 	public static String join(String arr[], int startIndex) {
 		StringBuilder sb = new StringBuilder(24);
@@ -247,7 +251,7 @@ public class Utils {
 
 	public static final String prettify(String input) {
 
-		input = input.replace("_", " ");
+		input = input.toLowerCase().replace("_", " ");
 		
 		if(!input.contains(" ")) {
 			return input.substring(0, 1).toUpperCase() + input.substring(1);

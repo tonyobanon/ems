@@ -48,7 +48,6 @@ public class RoleModel extends BaseModel {
 	@Override
 	public void install(InstallOptions options) {
 
-
 	}
 
 	@ModelMethod(functionality = Functionality.MANAGE_ROLES)
@@ -58,7 +57,7 @@ public class RoleModel extends BaseModel {
 
 	protected static void newRole(String name, Boolean isDefault, RoleRealm realm) {
 		Logger.info("Creating role: " + name);
-		ofy().save().entity(new UserRoleEntity().setName(name).setRealm(realm.getValue()).setSpec(realm.spec())
+		ofy().save().entity(new UserRoleEntity().setName(name).setIsDefault(isDefault).setRealm(realm.getValue()).setSpec(realm.spec())
 				.setDateCreated(new Date())).now();
 	}
 

@@ -14,20 +14,20 @@ public class AcademicSemesterSpec {
 	private Date startDate;
 	private Date endDate;
 	
-	
+	 
 	public Short getLowerYearBound() {
-		return lowerYearBound;
+		return lowerYearBound; 
 	}
 
 	public AcademicSemesterSpec setLowerYearBound(Short lowerYearBound) {
 		this.lowerYearBound = lowerYearBound;
 		return this;
-	}
+	}  
 
 	public Short getUpperYearBound() {
 		return upperYearBound;
-	}
-
+	} 
+ 
 	public AcademicSemesterSpec setUpperYearBound(Short upperYearBound) {
 		this.upperYearBound = upperYearBound;
 		return this;

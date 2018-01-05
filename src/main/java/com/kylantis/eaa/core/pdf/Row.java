@@ -21,7 +21,9 @@ public class Row implements Iterable<Column> {
 	}
 
 	public Row withColumn(Column o) {
-		this.columnValues.add(o);
+		if(o != null) {
+			this.columnValues.add(o);
+		}
 		return this;
 	}
 

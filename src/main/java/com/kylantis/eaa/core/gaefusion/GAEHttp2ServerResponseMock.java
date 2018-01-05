@@ -46,7 +46,6 @@ public class GAEHttp2ServerResponseMock implements HttpServerResponse {
 		// Add cookies
 		
 		cookies.values().forEach(cookie -> {
-			System.out.println("--> " + cookie);
 			response.addCookie(HelperUtils.toServletCookie((CookieImpl) cookie));
 		});
 		

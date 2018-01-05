@@ -18,14 +18,15 @@
 </head>
 
 <body>
-
 	<div class="ui active dimmer" style="visibility: hidden;">
 		<div class="ui active centered loader huge"></div>
 	</div>
 
 	<br>
-
-	<div class="ui tablet stackable steps">
+ 
+	 
+<!--	<div class="ui tablet stackable steps">-->
+                <div class="ui ordered steps">
 		<div class="active step">
 			<div class="content">
 				<div class="title">Company Information</div>
@@ -35,8 +36,14 @@
 		</div>
 		<div class="step">
 			<div class="content">
-				<div class="title">Adminstrator Account</div>
-				<div class="description">Create a new Admin Account</div>
+				<div class="title">Administrator Account</div>
+				<div class="description">Create a new Administrator Account</div>
+			</div>
+		</div>
+                <div class="step">
+			<div class="content">
+				<div class="title">System Configuration</div>
+				<div class="description">Update system settings</div>
 			</div>
 		</div>
 		<div class="step">
@@ -79,6 +86,62 @@
 						name="company_staff_count" type="text">
 				</div>
 
+			</div>
+
+			<br>
+                        
+                        
+			<div class="two fields">
+
+				<div class="field">
+					<label>Country</label>
+					<div class="ui fluid search selection dropdown">
+						<input type="hidden" name="company_country"> <i class="dropdown icon"></i>
+						<div class="default text">Select Country</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+
+				<div class="field">
+					<label>Language</label>
+					<div class="ui fluid search selection dropdown disabled">
+						<input type="hidden" name="company_language"> <i class="dropdown icon"></i>
+						<div class="default text">Select Language</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+
+			</div>
+                        
+			<div class="two fields">
+				<div class="field">
+					<label>Audience</label>
+					<div class="ui fluid search selection dropdown">
+						<input type="hidden" name="company_audience"> <i class="dropdown icon"></i>
+						<div class="default text">Audience</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+                                <div class="field">
+					<label>Timezone</label>
+					<div class="ui fluid search selection dropdown">
+						<input type="hidden" name="company_timezone"> <i class="dropdown icon"></i>
+						<div class="default text">Timezone</div>
+						<div class="menu"></div>
+					</div>
+				</div>
+			</div>
+                        
+                        
+                        <div class="two fields">
+				<div class="field">
+					<label>Currency</label>
+					<div class="ui fluid search selection dropdown disabled">
+						<input type="hidden" name="company_currency"> <i class="dropdown icon"></i>
+						<div class="default text">Currency</div>
+						<div class="menu"></div>
+					</div>
+				</div>
 			</div>
 
 			<br>
@@ -126,10 +189,21 @@
 	</div>
 
 	<script src="/assets/js/jquery.js"></script>
+        <script src="/assets/js/clients/location.js"></script>
 	<script src="/assets/js/semantic.min.js"></script>
 
 	<script src="/assets/js/utils.js"></script>
-	<script src="/assets/js/pages/setup_one.js" onload="load();"></script>
+	<script src="/assets/js/pages/setup_one.js"></script>
+        
+        
+        <script>
+        
+        $( document ).ready(function() {
+            load();
+        });
+    
+         </script>
+        
 
 </body>
 

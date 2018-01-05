@@ -18,6 +18,14 @@ public class BaseWebServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		String path = req.getServletPath() + (req.getPathInfo() != null ? req.getPathInfo() : "");
+		
+		if(path.startsWith("/api")) {
+			//GAE Fix: In the cloud, this servlet is called for /api/*, but not on local dev. server
+			return;
+		}
+		
 		GAERouteContext ctx = new GAERouteContext(req);
 		WebRoutes.get(ctx);
 		ctx.response().transform(resp);

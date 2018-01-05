@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AcademicSemesterSpec;
+import com.ce.ems.base.classes.spec.ActivitySpec;
 import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
 import com.ce.ems.base.classes.spec.BlobSpec;
 import com.ce.ems.base.classes.spec.CourseResultReportSpec;
@@ -18,6 +19,7 @@ import com.ce.ems.base.classes.spec.ResultRecordSheetSpec;
 import com.ce.ems.base.classes.spec.StudentResultReportSpec;
 import com.ce.ems.base.classes.spec.StudentSemesterCoursesSpec;
 import com.ce.ems.base.classes.spec.StudentSpec;
+import com.ce.ems.entites.ActivityEntity;
 import com.ce.ems.entites.BaseUserEntity;
 import com.ce.ems.entites.BlobEntity;
 import com.ce.ems.entites.FormCompositeFieldEntity;
@@ -66,7 +68,7 @@ public class EntityHelper {
 		return o;
 	}
 
-	public static FormCompositeFieldEntity fromObjectModel(long sectionId, Boolean isInternal, CompositeEntry spec) {
+	public static FormCompositeFieldEntity fromObjectModel(String sectionId, Boolean isInternal, CompositeEntry spec) {
 
 		FormCompositeFieldEntity o = new FormCompositeFieldEntity()
 				
@@ -113,7 +115,7 @@ public class EntityHelper {
 		return o;
 	}
 
-	public static FormSimpleFieldEntity fromObjectModel(long sectionId, Boolean isDefault, SimpleEntry spec) {
+	public static FormSimpleFieldEntity fromObjectModel(String sectionId, Boolean isDefault, SimpleEntry spec) {
 
 		FormSimpleFieldEntity o = new FormSimpleFieldEntity()
 				
@@ -688,6 +690,38 @@ public class EntityHelper {
 	}
 	
 	/////////////////	ResultRecordSheetEntity   ///////////////////	
+	
+	
+	
+	
+	
+	
+
+	/////////////////	ActivityEntity   ///////////////////
+	
+	public static ActivitySpec toObjectModel(ActivityEntity entity) {
+		
+		ActivitySpec o = new ActivitySpec()
+				.setId(entity.getId())
+				.setText(entity.getText())
+				.setImage(entity.getImage())
+				.setDate(entity.getDate());
+		
+		return o;
+	}
+	
+	public static ActivityEntity fromObjectModel(ActivitySpec spec) {
+
+		ActivityEntity o = new ActivityEntity()
+				.setId(spec.getId())
+				.setText(spec.getText())
+				.setImage(spec.getImage())
+				.setDate(new Date());
+		
+		return o;
+	}
+	
+	/////////////////	ActivityEntity   ///////////////////	
 	
 	
 }

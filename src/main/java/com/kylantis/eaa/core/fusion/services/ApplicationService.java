@@ -28,6 +28,10 @@ public class ApplicationService extends BaseService {
 		
 		Long applicationId = ApplicationModel.newApplication(roleName);
 		
+		
+		// Add to activity stream
+		
+		
 		ctx.response().write(applicationId.toString()).setChunked(true).end();
 	}
 	

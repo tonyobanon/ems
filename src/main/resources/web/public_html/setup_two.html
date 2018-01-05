@@ -17,7 +17,7 @@
 <!-- <link href="/assets/css/font-awesome.min.css" rel="stylesheet" /> -->
 
 
-<title>HMO HQ Installation</title>
+<title>EMS HQ Installation</title>
 
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -34,8 +34,10 @@
 
 	<br>
 
-	<div class="ui tablet stackable steps">
-		<div class="step">
+	 
+<!--	<div class="ui tablet stackable steps">-->
+                <div class="ui ordered steps">
+		<div class="completed step">
 			<div class="content">
 				<div class="title">Company Information</div>
 				<div class="description">Enter some basic info about your business</div>
@@ -43,8 +45,14 @@
 		</div>
 		<div class="active step">
 			<div class="content">
-				<div class="title">Adminstrator Account</div>
-				<div class="description">Create a new Admin Account</div>
+				<div class="title">Administrator Account</div>
+				<div class="description">Create a new Administrator Account</div>
+			</div>
+		</div>
+                <div class="step">
+			<div class="content">
+				<div class="title">System Configuration</div>
+				<div class="description">Update system settings</div>
 			</div>
 		</div>
 		<div class="step">
@@ -59,19 +67,22 @@
 
 
 
-
 	<div class="ui raised very padded text container segment">
 
 
 		<form class="ui form">
 
-			<p>Create Admin</p>
+			<p>Create Administrator Account</p>
 			<br>
 
-			<div class="two fields">
+			<div class="three fields">
 				<div class="field">
 					<label>First Name</label> <input placeholder="First Name"
 						name="profile_fname" type="text">
+				</div>
+                                <div class="field">
+					<label>Middle Name</label> <input placeholder="Middle Name"
+						name="profile_mname" type="text">
 				</div>
 				<div class="field">
 					<label>Last Name</label> <input placeholder="Last Name"
@@ -125,7 +136,7 @@
 			</div>
 
 
-			<div class="two fields">
+			<div class="three fields">
 				<div class="field">
 					<label>Address</label> 
 					<input placeholder="Address" name="profile_address" type="text">
@@ -133,6 +144,18 @@
 				<div class="field">
 					<label>Phone</label> 
 					<input placeholder="Phone" name="profile_phone" type="text" maxlength="15">
+				</div>
+                                <div class="field">
+					<label>Gender</label>
+					<div class="ui fluid search selection dropdown">
+						<input type="hidden" name="profile_gender"> <i
+							class="dropdown icon"></i>
+						<div class="default text">Select Gender</div>
+                                                <div class="menu">
+                                                    <div class="item" data-value="1">Female</div>
+                                                    <div class="item" data-value="2">Male</div>
+                                                </div>
+					</div>
 				</div>
 			</div>
 			
@@ -188,10 +211,9 @@
 
 
 	<script src="/assets/js/jquery.js"></script>
-	<script src="/assets/js/clients/locations.js"></script>
+	<script src="/assets/js/clients/location.js"></script>
 
 	<script src="/assets/js/semantic.min.js"></script>
-	<!-- <script src="/assets/js/jquery.contextMenu.min.js"></script> -->
 	
 	<script src="/assets/js/utils.js"></script>
 	<script src="/assets/js/pages/setup_two.js" onload="load();"></script>

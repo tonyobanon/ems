@@ -24,6 +24,7 @@ import com.ce.ems.base.classes.spec.DepartmentalHeadSpec;
 import com.ce.ems.base.classes.spec.FacultyDeanSpec;
 import com.ce.ems.base.classes.spec.LecturerSpec;
 import com.ce.ems.base.classes.spec.StudentSpec;
+import com.ce.ems.base.core.Application;
 import com.ce.ems.base.core.Exceptions;
 import com.ce.ems.base.core.Logger;
 import com.ce.ems.base.core.Model;
@@ -32,7 +33,8 @@ import com.ce.ems.base.core.ResourceException;
 import com.ce.ems.entites.ApplicationEntity;
 import com.ce.ems.entites.ApplicationFormValueEntity;
 import com.ce.ems.entites.DeclinedApplicationEntity;
-import com.ce.ems.models.FormFieldRepository.FieldType;
+import com.ce.ems.models.helpers.FormFieldRepository;
+import com.ce.ems.models.helpers.FormFieldRepository.FieldType;
 import com.ce.ems.utils.FrontendObjectMarshaller;
 import com.ce.ems.utils.Utils;
 import com.googlecode.objectify.Key;
@@ -44,7 +46,7 @@ import com.kylantis.eaa.core.users.Functionality;
 import com.kylantis.eaa.core.users.RoleRealm;
 import com.kylantis.eaa.core.users.UserProfileSpec;
 
-@Model(dependencies = { FormModel.class, PlatformModel.class })
+@Model(dependencies = { ConfigModel.class, FormModel.class})
 public class ApplicationModel extends BaseModel {
 
 	@Override
@@ -54,19 +56,20 @@ public class ApplicationModel extends BaseModel {
 
 	@Override
 	public void preInstall() {
+		
 	}
 
 	@Override
-	public void install(InstallOptions options) {
+	public void install(InstallOptions options) { 
 
-		Logger.info("Generating application questionnaires for all role realms");
-
-		for (RoleRealm realm : RoleRealm.values()) {
+		Logger.debug("Generating application questionnaires for all role realms");
+		 
+		for(RoleRealm realm : RoleRealm.values()) {
 
 			String blobId = generatePDFQuestionnaire(realm);
 			ConfigModel.put(ConfigKeys.$REALM_APPLICATION_FORM_BLOB_ID.replace("$REALM", realm.name()), blobId);
 
-			Logger.info("Generated Questionnaire for " + realm.toString() + " with blob-id: " + blobId);
+			Logger.debug("Generated Questionnaire for " + realm.toString() + " with blob-id: " + blobId);
 		}
 	}
 
@@ -204,19 +207,23 @@ public class ApplicationModel extends BaseModel {
 
 	private static String generatePDFQuestionnaire(RoleRealm realm) {
 
-		PDFForm form = new PDFForm().setLogoURL(ConfigModel.get(ConfigKeys.ORGANIZATION_LOGO).toString())
-				.setSubtitleLeft(Utils.prettify(realm.name().toLowerCase())).setTitle("Registration")
-				.setSubtitleRight(ConfigModel.get(ConfigKeys.ORGANIZATION_NAME).toString());
+		String orgenizationName = ConfigModel.get(ConfigKeys.ORGANIZATION_NAME);
+		
+		PDFForm form = new PDFForm().setLogoURL(ConfigModel.get(ConfigKeys.ORGANIZATION_LOGO_URL))
+				.setSubtitleLeft(orgenizationName).setTitle(Utils.prettify(realm.name().toLowerCase() + "  e-Registration"))
+				.setSubtitleRight(Application.SOFTRWARE_VENDER_EMAIL);
 
 		FormModel.listSections(FormSectionType.APPLICATION_FORM, realm).forEach((section) -> {
 
-			section.withEntries(FormModel.getFields(FormSectionType.APPLICATION_FORM, Long.parseLong(section.getId())));
+			section.withEntries(FormModel.getFields(FormSectionType.APPLICATION_FORM, section.getId()));
 
 			form.withSection(section);
 		});
 
-		File tmp = FormFactory.toPDF(new SizeSpec(12), new SizeSpec(14), form);
+		File tmp = FormFactory.toPDF(new SizeSpec(4), new SizeSpec(5), new SizeSpec(3), form);
 
+		Logger.debug("Saving questionairre form for " + realm.name() + " to " + tmp.toString());
+		
 		try {
 
 			String blobId = BlobStoreModel.save(new FileInputStream(tmp));

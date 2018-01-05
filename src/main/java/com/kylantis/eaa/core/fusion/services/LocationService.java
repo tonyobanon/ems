@@ -15,7 +15,7 @@ import io.vertx.ext.web.RoutingContext;
 public class LocationService extends BaseService {
 
 	@EndpointMethod(uri = "/countryList",
-			functionality = Functionality.GET_LOCATION_DATA)
+			functionality = Functionality.GET_COUNTRY_NAMES)
 	public void getCountries(RoutingContext ctx) {
 		String json = (String) CacheModel.get(CacheKeys.COUNTRY_NAMES);
 		if (json != null) {
@@ -84,10 +84,10 @@ public class LocationService extends BaseService {
 		ctx.response().end();
 	}
 
-	@EndpointMethod(uri = "/territoryList", requestParams = "countryCode",
-			functionality = Functionality.GET_LOCATION_DATA)
+	@EndpointMethod(uri = "/territoryList", requestParams = "ctx",
+			functionality = Functionality.GET_TERRITORY_NAMES)
 	public void getTerritories(RoutingContext ctx) {
-		String countryCode = ctx.request().getParam("countryCode");
+		String countryCode = ctx.request().getParam("ctx");
 		String json = (String) CacheModel.get(CacheKeys.TERRITORIES_$COUNTRY.replace("$COUNTRY", countryCode));
 		if (json != null) {
 			ctx.response().setChunked(true).write(json);
@@ -99,10 +99,10 @@ public class LocationService extends BaseService {
 		ctx.response().end();
 	}
 
-	@EndpointMethod(uri = "/cityList", requestParams = "territoryCode",
-			functionality = Functionality.GET_LOCATION_DATA)
+	@EndpointMethod(uri = "/cityList", requestParams = "ctx",
+			functionality = Functionality.GET_CITY_NAMES)
 	public void getCities(RoutingContext ctx) {
-		String territoryCode = ctx.request().getParam("territoryCode");
+		String territoryCode = ctx.request().getParam("ctx");
 		String json = (String) CacheModel.get(CacheKeys.CITIES_$TERRITORY.replace("$TERRITORY", territoryCode));
 		if (json != null) {
 			ctx.response().setChunked(true).write(json);
@@ -168,12 +168,13 @@ public class LocationService extends BaseService {
 			ctx.response().setChunked(true).write(json);
 		} else {
 			json = "[\"" + LocationModel.getCurrencyCode(countryCode) + "\"]";
+			
 			CacheModel.put(CacheKeys.CURRENCY_CODE_$COUNTRY.replace("$COUNTRY", countryCode), json);
 			ctx.response().setChunked(true).write(json);
-		}
-		ctx.response().end();
-	}
-
+		} 
+		ctx.response().end(); 
+	}    
+ 
 	@EndpointMethod(uri = "/currencyName", requestParams = "countryCode",
 			functionality = Functionality.GET_LOCATION_DATA)
 	public void getCurrencyName(RoutingContext ctx) {

@@ -9,7 +9,7 @@ import com.googlecode.objectify.condition.IfNotNull;
 public class FormSectionEntity {
 
 	@Id
-	Long id;
+	String id;
 	@Index
 	String name;
 	@Index
@@ -18,11 +18,11 @@ public class FormSectionEntity {
 	@Index(IfNotNull.class)
 	Integer realm;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public FormSectionEntity setId(Long id) {
+	public FormSectionEntity setId(String id) {
 		this.id = id;
 		return this;
 	}

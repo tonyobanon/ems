@@ -8,7 +8,7 @@ public enum RoleRealm {
 
 	ADMIN(1), EXAM_OFFICER(2), HEAD_OF_DEPARTMENT(3), LECTURER(4), DEAN(5), STUDENT(6);
 
-	private int value;
+	private Integer value;
 
 	private RoleRealm(Integer value) {
 		this.value = value;
@@ -41,7 +41,7 @@ public enum RoleRealm {
 		}
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return value;
 	}
 	

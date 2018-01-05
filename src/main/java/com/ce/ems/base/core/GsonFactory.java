@@ -2,10 +2,17 @@ package com.ce.ems.base.core;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ce.ems.base.classes.Gender;
+import com.ce.ems.base.classes.IndexedNameType;
 import com.ce.ems.base.classes.Semester;
+import com.ce.ems.base.classes.gsonserializers.DateDeserializer;
+import com.ce.ems.base.classes.gsonserializers.DateSerializer;
+import com.ce.ems.base.classes.gsonserializers.GenderDeserializer;
+import com.ce.ems.base.classes.gsonserializers.GenderSerializer;
 import com.ce.ems.base.classes.gsonserializers.IndexedNameTypeDeserializer;
 import com.ce.ems.base.classes.gsonserializers.IndexedNameTypeSerializer;
 import com.ce.ems.base.classes.gsonserializers.RoleRealmDeserializer;
@@ -51,14 +58,20 @@ public class GsonFactory {
 				
 				//.setVersion(1.0)
 				
+				.registerTypeAdapter(Date.class, new DateSerializer())
+				.registerTypeAdapter(Date.class, new DateDeserializer())
+				
 				.registerTypeAdapter(Semester.class, new SemesterSerializer())
 				.registerTypeAdapter(Semester.class, new SemesterDeserializer())
+				
+				.registerTypeAdapter(Gender.class, new GenderSerializer())
+				.registerTypeAdapter(Gender.class, new GenderDeserializer())
 				
 				.registerTypeAdapter(RoleRealm.class, new RoleRealmSerializer())
 				.registerTypeAdapter(RoleRealm.class, new RoleRealmDeserializer())
 				
-				.registerTypeAdapter(RoleRealm.class, new IndexedNameTypeSerializer())
-				.registerTypeAdapter(RoleRealm.class, new IndexedNameTypeDeserializer())
+				.registerTypeAdapter(IndexedNameType.class, new IndexedNameTypeSerializer())
+				.registerTypeAdapter(IndexedNameType.class, new IndexedNameTypeDeserializer())
 				
 				.create();
 	}

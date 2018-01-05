@@ -1,7 +1,6 @@
 package com.kylantis.eaa.core.pdf;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -16,14 +15,13 @@ import com.kylantis.eaa.core.pdf.InputControl.Size;
 
 public class FormFactory {
 
-	
-	public static File toPDF(SizeSpec bodySize, SizeSpec headerSize, PDFForm sheet) {
+	public static File toPDF(SizeSpec bodySize, SizeSpec headerSize, SizeSpec otherSize, PDFForm sheet) {
 
 		try {
 
 			// Create Temp File
 			File tempFile = File.createTempFile(Utils.newRandom(), ".pdf");
-			
+
 			// Generate, write to temp file
 
 			PDFWriter writer = new PDFWriter(tempFile.getAbsolutePath());
@@ -32,23 +30,32 @@ public class FormFactory {
 
 			table
 
-					.withRow(new Row(bodySize).withColumn(new Column(sheet.getSubtitleLeft()).withPercentileWidth(30))
+					.withRow(new Row(otherSize)
+							
+							.withColumn(new Column(sheet.getSubtitleLeft()).withPercentileWidth(30))
 
-							.withColumn(new Column().withPercentileWidth(50))
+							.withColumn(new Column().withPercentileWidth(45))
 
 							.withColumn(new Column(sheet.getSubtitleRight()).withPercentileWidth(25)));
 
+
+			table.withRow(new Row(new SizeSpec(3)));
+
 			table
 
-					.withRow(new Row(bodySize).withColumn(new Column().withPercentileWidth(30))
+					.withRow(new Row(bodySize).withColumn(new Column().withPercentileWidth(35))
 
-							 .withColumn(new Column(new Image(new URL(sheet.getLogoURL()))).withPercentileWidth(25))
-							
+							.withColumn(sheet.getLogoURL() != null
+									? new Column(new Image(sheet.getLogoURL())).withPercentileWidth(15)
+									: null) 
+
 							.withColumn(
 									new Column(new TextControl(sheet.getTitle()).forHeader()).withPercentileWidth(40))
 
 							.withColumn(new Column().withPercentileWidth(30)));
-
+			
+			table.withRow(new Row(new SizeSpec(1)));
+			
 			for (Section section : sheet.getSections()) {
 
 				table.withRow(new Row(headerSize).withColumn(
@@ -192,8 +199,8 @@ public class FormFactory {
 			return tempFile;
 
 		} catch (Exception e) {
-			throw new RuntimeException("Error occured during PDF Generation: " + e.getMessage());
-			// return null;
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -247,7 +254,7 @@ public class FormFactory {
 
 			case EMAIL:
 				return new ColumnSet().add(new Column(se.getTitle() + ": ").withPercentileWidth(percentile * 0.4))
-						.add(new Column(new InputControl(BorderType.BOTTOM_ONLY).withWidth(Size.MEDIUM))
+						.add(new Column(new InputControl(BorderType.BOTTOM_ONLY).withWidth(Size.LARGE))
 								.withPercentileWidth(percentile * 0.6));
 
 			case PHONE:
@@ -302,17 +309,25 @@ public class FormFactory {
 			Rowset rowset = new Rowset();
 			rowset.withRow(new Row(bodySize).withColumn(new Column(ce.getTitle() + ": ")));
 
-			// @TODO: Prompt the user to either select one or select multiple,
-			// depending on the select type
-			ce.getItems().forEach((k, v) -> {
-				rowset.withRow(new Row(bodySize).withColumn(new Column().withPercentileWidth(2))
-						.withColumn(new Column(new InputControl(BorderType.FULL).withWidth(Size.SMALL))
-								.withPercentileWidth(2))
-						.withComponentSizeSpec(new SizeSpec(3)).withColumn(new Column().withPercentileWidth(2))
-						.withColumn(new Column(v.toString()).withPercentileWidth(85)));
-			});
+			if (ce.getItems().isEmpty()) {
 
-			return rowset;
+				return new ColumnSet().add(new Column(ce.getTitle() + ": ").withPercentileWidth(percentile * 0.4))
+						.add(new Column(new InputControl(BorderType.BOTTOM_ONLY).withWidth(Size.LARGE))
+								.withPercentileWidth(percentile * 0.6));
+			} else {
+
+				// @TODO: Prompt the user to either select one or select multiple,
+				// depending on the select type
+				ce.getItems().forEach((k, v) -> {
+					rowset.withRow(new Row(bodySize).withColumn(new Column().withPercentileWidth(2))
+							.withColumn(new Column(new InputControl(BorderType.FULL).withWidth(Size.SMALL))
+									.withPercentileWidth(2))
+							.withComponentSizeSpec(new SizeSpec(3)).withColumn(new Column().withPercentileWidth(2))
+							.withColumn(new Column(k.toString()).withPercentileWidth(85)));
+				});
+
+				return rowset;
+			}
 		}
 	}
 

@@ -417,7 +417,7 @@ public class PDFWriter implements Closeable {
 	public void appendTable(Table table, boolean noOffsetY) throws IOException {
 
 		float YOffset = CURRENT_Y;
-
+ 
 		if (lastPageIndex_withNoYOffset_ == -1 && noOffsetY) {
 			// This is the first page in the group
 			// Set the current Page
@@ -445,6 +445,10 @@ public class PDFWriter implements Closeable {
 			float currentXStart = table.getConfig().getStartX();
 
 			for (Column column : o) {
+				
+				if(column.value() == null) {
+					continue;
+				} 
 
 				float currentXEnd = ((float) currentXStart + column.getWidth());
 
@@ -457,12 +461,18 @@ public class PDFWriter implements Closeable {
 				} else if (column.value() instanceof TextControl) {
 
 					TextControl text = (TextControl) column.value();
-					writeText(new XCoordinate(currentXStart, currentXEnd), sizeSpec, text);
+					
+					if(text.getText() != null) {
+						writeText(new XCoordinate(currentXStart, currentXEnd), sizeSpec, text);
+					}
 
 				} else if (column.value() instanceof Image) {
-
+					
 					Image image = (Image) column.value();
-					writeImage(new XCoordinate(currentXStart, currentXEnd), sizeSpec, image);
+					
+					if(image.getImage() != null) {
+						writeImage(new XCoordinate(currentXStart, currentXEnd), sizeSpec, image);
+					}
 				}
 
 				// Increment by averageWidthX

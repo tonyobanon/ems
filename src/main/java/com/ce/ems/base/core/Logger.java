@@ -44,6 +44,10 @@ public class Logger {
 		isTraceEnabled = false;
 	}
 
+	public static void verboseMode(verboseLevel verboseLevel) {
+		 verboseMode(verboseLevel.toString());
+	}
+	
 	public static void verboseMode(String verboseLevel) {
 
 		Logger.verboseLevel level = null;

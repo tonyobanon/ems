@@ -1,9 +1,7 @@
 package com.ce.ems.models;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.cache.Cache;
@@ -63,43 +61,7 @@ public class CacheModel extends BaseModel {
 		persistentCache = newCache(new FluentHashMap<Integer, Object>());
 	}
 
-	public static List<String>  getListOrDefault(CacheType cacheType, String key, Callable<List<String>> fetch) {
-		List<String> value = getList(cacheType, key);
-		if(value == null) {
-			try {
-				value = fetch.call();
-			} catch (Exception e) {
-				Exceptions.throwRuntime(e);
-			}
-			put(cacheType, key, value);
-		}
-		return value;
-	}
 	
-	public static void addToList(CacheType cacheType, String key, String elem) {
-		List<String> value = getList(cacheType, key);
-		if(value != null) {
-			value.add(elem);
-			put(cacheType, key, value);
-		}
-	}
-	
-	public static void addToListOrCreate(CacheType cacheType, String key, String elem) {
-		List<String> value = getList(cacheType, key);
-		if(value == null) {
-			value = new ArrayList<String>();
-		}
-		value.add(elem);
-		put(cacheType, key, value);
-	}
-	
-	public static void  removeFromList(CacheType cacheType, String key, String elem) {
-		List<String> value = getList(cacheType, key);
-		if(value != null) {
-			value.remove(elem);
-			put(cacheType, key, value);
-		}
-	}
 
 	private static final Cache newCache(Map<Integer, Object> properties) {
 		
@@ -192,6 +154,10 @@ public class CacheModel extends BaseModel {
 	
 	public static List<String> getList(CacheType type, String key) {
 		return (List<String>) getCache(type).get(key);
+	}
+	
+	public static Map<String, Object> getMap(CacheType type, String key) {
+		return (Map<String, Object>) getCache(type).get(key);
 	}
 
 	public static Integer getInt(String key) {

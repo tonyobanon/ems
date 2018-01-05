@@ -18,7 +18,6 @@ import com.ce.ems.base.classes.IntegerWrapper;
 import com.ce.ems.base.classes.ListUpdate;
 import com.ce.ems.base.classes.Semester;
 import com.ce.ems.base.classes.SystemErrorCodes;
-import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AcademicSemesterSpec;
 import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
 import com.ce.ems.base.classes.spec.CourseSpec;
@@ -98,19 +97,28 @@ public class DirectoryModel extends BaseModel {
 			// StudentEntity
 			// we need to scan all student data, and update their levels if applicable
 		}
+		
+		createAcademicSemesterCourse(e.getId(), listCourseKeys(spec.getValue()));
 
-		Long currentSemesterId = DirectoryModel.currentSemesterId();
-
-		listCourseKeys(currentSemesterId).forEach(course -> {
-
-			AcademicSemesterCourseSpec o = new AcademicSemesterCourseSpec().setAcademicSemesterId(currentSemesterId)
+		ConfigModel.put(ConfigKeys.CURRENT_SEMESTER, e.getId());
+		
+		return e.getId();
+	}
+	
+	protected static void createAcademicSemesterCourse(Long academicSemesterId, List<String> courses) {
+		
+		List<AcademicSemesterCourseEntity> entities = new ArrayList<AcademicSemesterCourseEntity>();
+				
+		courses.forEach(course -> {
+			
+			AcademicSemesterCourseEntity o = new AcademicSemesterCourseEntity().setAcademicSemesterId(academicSemesterId)
 					.setCourseCode(course).setIsSheetCreated(false).setIsSheetFinal(false).setTotals(null)
 					.setStudents(new ArrayList<>());
-
-			CalculationModel.newAcademicSemesterCourse(o);
+			
+			entities.add(o);
 		});
-
-		return e.getId();
+		
+		ofy().save().entities(entities).now();
 	}
 
 	protected static Long currentSemesterId() {
@@ -452,6 +460,10 @@ public class DirectoryModel extends BaseModel {
 			ofy().save().entity(ls);
 		});
 		
+		Long currentSemesterId = currentSemesterId();
+		
+		createAcademicSemesterCourse(currentSemesterId, new FluentArrayList<String>().with(spec.getCode()));
+		
 		// Add to search index
 		SearchModel.addIndexedName(new IndexedNameSpec(e.getCode(), e.getCode(), e.getName()), IndexedNameType.COURSE);
 	}
@@ -475,12 +487,10 @@ public class DirectoryModel extends BaseModel {
 		return getCourse(courseCode).getLecturers().contains(principal);
 	}
 
-	protected static List<String> listCourseKeys(long academicSemesterId) {
+	protected static List<String> listCourseKeys(Semester semester) {
 		List<String> result = new FluentArrayList<>();
 
-		Integer currentSemester = DirectoryModel.getAcademicSemesterValue(academicSemesterId);
-
-		ofy().load().type(LevelSemesterEntity.class).filter("semester = ", currentSemester).forEach(ls -> {
+		ofy().load().type(LevelSemesterEntity.class).filter("semester = ", semester.getValue()).forEach(ls -> {
 			ls.getCourses().forEach(c -> {
 				result.add(DirectoryModel.getCourse(c).getCode());
 			});

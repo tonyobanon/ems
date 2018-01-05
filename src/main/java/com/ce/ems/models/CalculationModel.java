@@ -57,10 +57,7 @@ public class CalculationModel extends BaseModel {
 	public void install(InstallOptions options) {
 	}
 
-	protected static void newAcademicSemesterCourse(AcademicSemesterCourseSpec spec) {
-		AcademicSemesterCourseEntity e = EntityHelper.fromObjectModel(spec);
-		ofy().save().entity(e);
-	}
+	
 
 	@ModelMethod(functionality = Functionality.VIEW_SEMESTER_COURSE_RESULT)
 	public static Map<String, AcademicSemesterCourseSpec> getAcademicSemesterCourses(Long academicSemesterId, List<String> courseCodes) {
@@ -118,17 +115,23 @@ public class CalculationModel extends BaseModel {
 			defaultScores.add((short) 0);
 		});
 
+		
+		List<ResultRecordSheetEntity> sheetEntries = new ArrayList<>();
+		
 		e.getStudents().forEach(s -> {
 
 			ResultRecordSheetEntity re = new ResultRecordSheetEntity().setAcademicSemesterCourseId(e.getId())
 					.setStudentId(s).setScores(defaultScores).setTotal((short) 0);
-
-			ofy().save().entity(re);
+			
+			sheetEntries.add(re);
 		});
+		
+		ofy().save().entities(sheetEntries).now();
+		
 
 		e.setIsSheetCreated(true);
 
-		ofy().save().entity(e);
+		ofy().save().entity(e).now();
 
 		return e.getId();
 	}
@@ -201,7 +204,7 @@ public class CalculationModel extends BaseModel {
 
 			e.setTotal(total);
 
-			ofy().save().entity(e);
+			ofy().save().entity(e).now();
 
 			result.add(k);
 		});

@@ -19,8 +19,7 @@ public class FusionHelper {
 			return null;
 		}
 		
-		String value = (String) CacheModel.get(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
-		return value != null ? Long.parseLong(value) : null;
+		return (Long) CacheModel.get(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
 	}
 
 	public static Long getUserId(HttpServerRequest req) {
@@ -62,9 +61,9 @@ public class FusionHelper {
 	}
 
 	public static List<Integer> getCachedFunctionalities(String roleName) {
-		String o = CacheModel.get(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName)).toString();
+		Object o = CacheModel.get(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName));
 		if (o != null) {
-			return new JsonArray(o).getList();
+			return new JsonArray(o.toString()).getList();
 		}
 		return null;
 	}

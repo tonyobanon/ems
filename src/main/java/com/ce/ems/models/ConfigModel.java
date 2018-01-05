@@ -2,12 +2,19 @@ package com.ce.ems.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.Locale;
+
+import com.ce.ems.base.classes.InstallOptions;
+import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.ConfigEntity;
+import com.ce.ems.utils.LocaleUtils;
 import com.googlecode.objectify.Key;
+import com.kylantis.eaa.core.keys.ConfigKeys;
 
 @Todo("Add functionality, that allow incremental updates to config parameters from the frontend, "
 		+ "i.e uploading a config file")
+@BlockerTodo("Use Ibm Icu as the default locale provider")
 public class ConfigModel extends BaseModel {
 
 	@Override
@@ -16,9 +23,22 @@ public class ConfigModel extends BaseModel {
 	}
 	
 	@Override
-	public void preInstall() {
+	public void install(InstallOptions options) {
 		
+		ConfigModel.put(ConfigKeys.ORGANIZATION_NAME, options.getCompanyName());
+		ConfigModel.put(ConfigKeys.ORGANIZATION_LOGO_URL, options.getCompanyLogoUrl());
+		ConfigModel.put(ConfigKeys.ORGANIZATION_COUNTRY, options.getCountry());
+		ConfigModel.put(ConfigKeys.ORGANIZATION_AUDIENCE, options.getAudience());
 		
+		ConfigModel.put(ConfigKeys.ORGANIZATION_STUDENT_COUNT, options.getStudentCount());
+		ConfigModel.put(ConfigKeys.ORGANIZATION_EMPLOYEE_COUNT, options.getEmployeeCount());
+		
+		ConfigModel.put(ConfigKeys.DEFAULT_CURRENCY, options.getCurrency());
+		ConfigModel.put(ConfigKeys.DEFAULT_TIMEZONE, options.getTimezone());
+		
+		Locale locale = Locale.forLanguageTag(LocaleUtils.buildLocaleString(options.getLanguage(), options.getCountry()));
+		
+		ConfigModel.put(ConfigKeys.DEFAULT_LOCALE, locale.toString());
 	}
 	
 	public static String get(String key) {

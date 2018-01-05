@@ -47,6 +47,8 @@ function load() {
 		});
 		
 	});
+        
+        $('input[name="profile_gender"]').parent().dropdown();
 	
 	
 	 $('.ui .form').form({
@@ -55,7 +57,14 @@ function load() {
         		 identifier: 'profile_fname',
         		 rules: [{
         			 type: 'empty',
-        			 prompt: 'Please enter the first name'
+        			 prompt: 'Please enter your first name'
+        		 }]
+        	 },
+                 profile_mname: {
+        		 identifier: 'profile_mname',
+        		 rules: [{
+        			 type: 'empty',
+        			 prompt: 'Please enter your middle name'
         		 }]
         	 },
         	 profile_lname: {
@@ -118,7 +127,7 @@ function load() {
         		 identifier: 'profile_dob_year',
         		 rules: [{
         			 type: 'integer[1930..' + new Number(currentYear - 18) + ']',
-        			 prompt: 'The specified year cannot be used'
+        			 prompt: 'You must be at least 18 years old'
         		 }]
         	 },
         	 
@@ -135,6 +144,14 @@ function load() {
         		 rules: [{
         			 type: 'integer',
         			 prompt: 'Please enter a valid phone number'
+        		 }]
+        	 },
+                 
+                 profile_gender: {
+        		 identifier: 'profile_gender',
+        		 rules: [{
+        			 type: 'empty',
+        			 prompt: 'Please selct your gender'
         		 }]
         	 },
         	 
@@ -167,12 +184,12 @@ function load() {
         	 keyboardShortcuts: false,
         	 onSuccess: function () {
         		
-        		 if(localStorage.getItem("profiles") === null){
-        			 localStorage.setItem("profiles", "[]");
-        			 localStorage.setItem("keys", "[]");
+        		 if(localStorage.getItem("$SETUP_profiles") === null){
+        			 localStorage.setItem("$SETUP_profiles", "[]");
+        			 localStorage.setItem("$SETUP_keys", "[]");
         		 }
         		 
-        		 var keys = JSON.parse(localStorage.getItem("keys"));
+        		 var keys = JSON.parse(localStorage.getItem("$SETUP_keys"));
         		
         		 if(keys.indexOf($('input[name="profile_email"]').val()) !== -1
         				 ||  keys.indexOf($('input[name="profile_phone"]').val())  !== -1
@@ -184,32 +201,34 @@ function load() {
         		 var profile = {
         				 email:  $('input[name="profile_email"]').val(),
         				 password:  $('input[name="profile_pass"]').val(),
-        				 fname:  $('input[name="profile_fname"]').val(),
-        				 lname:  $('input[name="profile_lname"]').val(),
+                                         
+        				 firstName:  $('input[name="profile_fname"]').val(),
+                                         middleName:  $('input[name="profile_mname"]').val(),
+        				 lastName:  $('input[name="profile_lname"]').val(),
         				 
-        				 dob:  $('input[name="profile_dob_day"]').val() + "/"
+        				 dateOfBirth:  $('input[name="profile_dob_day"]').val() + "/"
         				 			+ $('input[name="profile_dob_month"]').val() + "/"
         				 					+ $('input[name="profile_dob_year"]').val(),
         				
         				 address:  $('input[name="profile_address"]').val(),
         				 phone:  $('input[name="profile_phone"]').val(),
-        				
+        				 gender: $('input[name="profile_gender"]').val(),
+                                         
         				 country:  $('input[name="profile_country"]').val(),
         				 territory:  $('input[name="profile_territory"]').val(),
-        				 city:  $('input[name="profile_city"]').val()
-        				 
+        				 city:  $('input[name="profile_city"]').val()    				 
         		 }
         		 
-        		 localStorage.setItem("profile____" + $('input[name="profile_email"]').val(), JSON.stringify(profile));
+        		 localStorage.setItem("$SETUP_profile____" + $('input[name="profile_email"]').val(), JSON.stringify(profile));
         		 
-        		 var profiles = JSON.parse(localStorage.getItem("profiles"));        		   	
+        		 var profiles = JSON.parse(localStorage.getItem("$SETUP_profiles"));        		   	
         		 profiles.push($('input[name="profile_email"]').val());
-        		 localStorage.setItem("profiles", JSON.stringify(profiles));
+        		 localStorage.setItem("$SETUP_profiles", JSON.stringify(profiles));
         		 
         		 
         		 keys.push($('input[name="profile_email"]').val());
         		 keys.push($('input[name="profile_phone"]').val());
-        		 localStorage.setItem("keys", JSON.stringify(keys));
+        		 localStorage.setItem("$SETUP_keys", JSON.stringify(keys));
         		 
         		 
         		  window.location = "/setup/three";

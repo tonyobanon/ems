@@ -15,6 +15,8 @@ import com.ce.ems.base.core.Model;
 @BlockerTodo("Create classes containing entity attribute names. See project <eaa>")
 public abstract class BaseModel {
 
+	public static final String DEFAULT_MODEL_VERSION = "";
+	
 	private static Map<String, BaseModel> linkedModels = new FluentHashMap<>();
 	
 	/**
@@ -88,6 +90,9 @@ public abstract class BaseModel {
 
 	public void start() {
 		
+	}
+	
+	public void update() {
 	}
 	
 	/**

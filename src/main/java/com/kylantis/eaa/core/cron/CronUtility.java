@@ -7,7 +7,6 @@ import com.kylantis.eaa.core.keys.AppConfigKey;
 
 public class CronUtility {
 
-	
 	public static void start () {
 		String ext = AppUtils.getConfig(AppConfigKey.CLASSES_CRONJOBS_EXT);
 		

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
-import com.ce.ems.base.classes.Audience;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.core.AppUtils;
@@ -71,7 +70,9 @@ public class LocationModel extends BaseModel {
 
 	public void install(InstallOptions options) {
 
-		saveCities(loadCities(options.getAudience() == Audience.REGIONAL ? options.getCountry() : null));
+		
+		
+		
 	}
 
 	@Override
