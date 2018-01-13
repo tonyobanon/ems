@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ce.ems.base.classes.Semester;
+import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AcademicSemesterSpec;
 import com.ce.ems.base.classes.spec.CourseSpec;
 import com.ce.ems.base.classes.spec.DepartmentSpec;
@@ -15,6 +16,7 @@ import com.ce.ems.models.DirectoryModel;
 import com.kylantis.eaa.core.fusion.BaseService;
 import com.kylantis.eaa.core.fusion.EndpointClass;
 import com.kylantis.eaa.core.fusion.EndpointMethod;
+import com.kylantis.eaa.core.fusion.FusionHelper;
 import com.kylantis.eaa.core.users.Functionality;
 
 import io.vertx.core.http.HttpMethod;
@@ -28,10 +30,12 @@ public class DirectoryService extends BaseService {
 			functionality = Functionality.MANAGE_SEMESTER_TIMELINE)
 	public void newAcademicSemester(RoutingContext ctx) {
 
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
 		JsonObject body = ctx.getBodyAsJson();
 		AcademicSemesterSpec spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), AcademicSemesterSpec.class);
 		
-		Long id = DirectoryModel.newAcademicSemester(spec);
+		Long id = DirectoryModel.newAcademicSemester(principal, spec);
 		
 		ctx.response().write(id.toString()).setChunked(true).end();
 	}
@@ -61,10 +65,12 @@ public class DirectoryService extends BaseService {
 			functionality = Functionality.MANAGE_DEPARTMENTS)
 	public void createDepartment(RoutingContext ctx) {
 
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
 		JsonObject body = ctx.getBodyAsJson();
 		DepartmentSpec spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), DepartmentSpec.class);
 		
-		Long id = DirectoryModel.createDepartment(spec);
+		Long id = DirectoryModel.createDepartment(principal, spec);
 		
 		ctx.response().write(id.toString()).setChunked(true).end();
 	}
@@ -86,7 +92,7 @@ public class DirectoryService extends BaseService {
 		
 		Long departmentId = Long.parseLong(ctx.request().getParam("departmentId"));
 		
-		Map<Long, Integer> result = DirectoryModel.listDepartmentLevels(departmentId);
+		 Map<Long, String> result = DirectoryModel.listDepartmentLevels(departmentId);
 		
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
@@ -119,10 +125,12 @@ public class DirectoryService extends BaseService {
 			functionality = Functionality.MANAGE_FACULTIES)
 	public void createFaculty(RoutingContext ctx) {
 
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
 		JsonObject body = ctx.getBodyAsJson();
 		FacultySpec spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), FacultySpec.class);
 		
-		Long id = DirectoryModel.createFaculty(spec);
+		Long id = DirectoryModel.createFaculty(principal, spec);
 		
 		ctx.response().write(id.toString()).setChunked(true).end();
 	}
@@ -173,7 +181,7 @@ public class DirectoryService extends BaseService {
 		
 		Long departmentLevelId = Long.parseLong(ctx.request().getParam("departmentLevelId"));
 		
-		List<Long> result = DirectoryModel.getStudents(departmentLevelId);
+		List<StudentSpec> result = DirectoryModel.getStudents(departmentLevelId);
 		
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
@@ -204,10 +212,12 @@ public class DirectoryService extends BaseService {
 			functionality = Functionality.MANAGE_COURSES)
 	public void createCourse(RoutingContext ctx) {
 
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
 		JsonObject body = ctx.getBodyAsJson();
 		CourseSpec spec = GsonFactory.newInstance().fromJson(body.getJsonObject("spec").encode(), CourseSpec.class);
 		
-		DirectoryModel.createCourse(spec);
+		DirectoryModel.createCourse(principal, spec);
 	}
 	
 	@EndpointMethod(uri = "/get-course", requestParams = {"courseCode"},
@@ -257,30 +267,44 @@ public class DirectoryService extends BaseService {
 		List<String> courses = body.getJsonArray("courses").getList();
 		
 		DirectoryModel.registerStudentCourses(studentId, courses);
+	} 
+	
+	@EndpointMethod(uri = "/get-available-semester-courses",
+			functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	public void getAvailableSemesterCourses (RoutingContext ctx) {
+		
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		Map<String, AcademicSemesterCourseSpec> result = DirectoryModel.getAcademicSemesterCourses(principal);
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end(); 
 	}
 	
 	@EndpointMethod(uri = "/add-lecturer-courses", bodyParams = {"lecturerId", "courses"}, method = HttpMethod.PUT,
 			functionality = Functionality.MANAGE_LECTURER_PROFILES)
 	public void addLecturerCourses (RoutingContext ctx) {
 		
-		JsonObject body = ctx.getBodyAsJson();
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		JsonObject body = ctx.getBodyAsJson();  
 		
 		Long lecturerId = body.getLong("lecturerId");
 		List<String> courses = body.getJsonArray("courses").getList();
 		
-		DirectoryModel.addLecturerCourses(lecturerId, courses);
+		DirectoryModel.addLecturerCourses(principal, lecturerId, courses);
 	}
 	
 	@EndpointMethod(uri = "/remove-lecturer-course", bodyParams = {"lecturerId", "course"}, method = HttpMethod.DELETE,
 			functionality = Functionality.MANAGE_LECTURER_PROFILES)
 	public void removeLecturerCourse (RoutingContext ctx) {
 		
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
 		JsonObject body = ctx.getBodyAsJson();
 		
 		Long lecturerId = body.getLong("lecturerId");
 		String course = body.getString("courses");
 		
-		DirectoryModel.removeCourses(lecturerId, course);
+		DirectoryModel.removeCourses(principal, lecturerId, course);
 	}
 	
 }

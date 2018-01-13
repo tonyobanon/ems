@@ -32,7 +32,7 @@ function finish() {
 
         payload["mailCredentials"] = JSON.parse(localStorage.getItem("$SETUP_mailCredentials"));
            
-	payload["locale"] = localStorage.getItem("$SETUP_company_language");
+	payload["language"] = localStorage.getItem("$SETUP_company_language");
         payload["currency"] = localStorage.getItem("$SETUP_company_currency");
         payload["timezone"] = localStorage.getItem("$SETUP_company_timezone");
 

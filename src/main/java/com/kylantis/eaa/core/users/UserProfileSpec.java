@@ -21,7 +21,7 @@ public class UserProfileSpec {
 	public String address;
 
 	public int city;
-	public String territory;
+	public String territory; 
 	public String country;
 
 	public String getEmail() {

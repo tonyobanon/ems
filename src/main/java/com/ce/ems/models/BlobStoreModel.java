@@ -19,12 +19,14 @@ import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.classes.spec.BlobSpec;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.ModelMethod;
+import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.BlobEntity;
 import com.ce.ems.utils.Utils;
 import com.kylantis.eaa.core.fusion.WebRoutes;
 import com.kylantis.eaa.core.users.Functionality;
 
-@BlockerTodo("Add functionality that enables the administrator to create arbitary rules for blob storage, use: MANAGE_BINARY_DATA")
+@BlockerTodo("Deprecate this functionality in favour of the GAE Blob Service")
+@Todo("Add functionality that enables the administrator to create arbitary rules for blob storage, use: MANAGE_BINARY_DATA")
 public class BlobStoreModel extends BaseModel {
 
 	@Override

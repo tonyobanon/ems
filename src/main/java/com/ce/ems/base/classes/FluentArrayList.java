@@ -8,6 +8,14 @@ public class FluentArrayList<E> extends ArrayList<E> implements Set<E> {
 
 	private static final long serialVersionUID = 1L;
 
+	public FluentArrayList() {
+		
+	}
+	
+	public static <T> FluentArrayList<T> asList(T item) {
+		 return new FluentArrayList<T>().with(item);
+	}
+	
 	public FluentArrayList<E> addIfNotNull(E item){
 		if(item != null) {
 			super.add(item);

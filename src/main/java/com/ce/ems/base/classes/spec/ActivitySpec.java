@@ -6,7 +6,7 @@ public class ActivitySpec {
 
 	private Long id;
 	private String image;
-	private String text;
+	private String html;
 	private Date date;
 
 	public Long getId() {
@@ -24,15 +24,15 @@ public class ActivitySpec {
 
 	public ActivitySpec setImage(String image) {
 		this.image = image;
-		return this;
+		return this; 
 	}
 
-	public String getText() {
-		return text;
+	public String getHtml() {
+		return html;
 	}
 
-	public ActivitySpec setText(String text) {
-		this.text = text;
+	public ActivitySpec setHtml(String html) {
+		this.html = html;
 		return this;
 	}
 

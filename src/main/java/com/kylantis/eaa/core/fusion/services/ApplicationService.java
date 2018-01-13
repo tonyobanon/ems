@@ -93,6 +93,14 @@ public class ApplicationService extends BaseService {
 		ctx.response().write(id.toString());
 	}
 	
+	@EndpointMethod(uri = "/get-decline-reasons",
+			functionality = Functionality.REVIEW_APPLICATION)
+	public void getApplicationDeclineReasons(RoutingContext ctx) {
+		
+		Map<Integer, Object> result = ApplicationModel.getApplicationDeclineReasons();
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true);
+	}
+	
 	@EndpointMethod(uri = "/decline-application", bodyParams = { "applicationId", "reason" }, method = HttpMethod.PUT,
 			functionality = Functionality.REVIEW_APPLICATION)
 	public void declineApplication(RoutingContext ctx) {
@@ -101,7 +109,7 @@ public class ApplicationService extends BaseService {
 
 		Long applicationId = body.getLong("applicationId");		
 		Long principal = FusionHelper.getUserId(ctx.request());
-		String reason = body.getString("reason");
+		Integer reason = Integer.parseInt(body.getString("reason"));
 		
 		ApplicationModel.declineApplication(applicationId, principal, reason);
 	}

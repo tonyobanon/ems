@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import com.ce.ems.base.core.BlockerTodo;
+import com.ce.ems.base.core.Todo;
 import com.ce.ems.utils.Utils;
 import com.kylantis.eaa.core.forms.ColumnSet;
 import com.kylantis.eaa.core.forms.CompositeEntry;
@@ -13,6 +15,7 @@ import com.kylantis.eaa.core.forms.SimpleEntry;
 import com.kylantis.eaa.core.pdf.InputControl.BorderType;
 import com.kylantis.eaa.core.pdf.InputControl.Size;
 
+@BlockerTodo("More space needed for: * Kindly attach a copy of your passport")
 public class FormFactory {
 
 	public static File toPDF(SizeSpec bodySize, SizeSpec headerSize, SizeSpec otherSize, PDFForm sheet) {
@@ -45,7 +48,7 @@ public class FormFactory {
 
 					.withRow(new Row(bodySize).withColumn(new Column().withPercentileWidth(35))
 
-							.withColumn(sheet.getLogoURL() != null
+							.withColumn(sheet.getLogoURL() != null && !sheet.getLogoURL().equals("")
 									? new Column(new Image(sheet.getLogoURL())).withPercentileWidth(15)
 									: null) 
 
@@ -229,7 +232,7 @@ public class FormFactory {
 								.withPercentileWidth((percentile * 0.6) * 0.85));
 
 			case IMAGE:
-				return new ColumnSet().add(new Column("* Kindly attach a copy of your " + se.getTitle())
+				return new ColumnSet().add(new Column("* Kindly attach a copy of your " + se.getTitle().toLowerCase())
 						.withPercentileWidth(percentile).withSingleRow(true)).setSingleRow(true);
 
 			case NUMBER:

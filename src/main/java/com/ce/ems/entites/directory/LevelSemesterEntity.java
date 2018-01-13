@@ -1,5 +1,6 @@
 package com.ce.ems.entites.directory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,10 @@ public class LevelSemesterEntity {
 	List<String> courses;
 	Date dateCreated;
 
+	public LevelSemesterEntity() {
+		this.courses = new ArrayList<>();
+	}	
+	
 	public Long getId() {
 		return id;
 	}

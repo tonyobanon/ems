@@ -19,6 +19,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.FileUpload;
+import io.vertx.ext.web.LanguageHeader;
 import io.vertx.ext.web.Locale;
 import io.vertx.ext.web.ParsedHeaderValues;
 import io.vertx.ext.web.Route;
@@ -251,6 +252,11 @@ public class GAERouteContext implements RoutingContext {
 	@Override
 	public List<Locale> acceptableLocales() {
 		return request.locales();
+	}
+	
+	@Override
+	public List<LanguageHeader> acceptableLanguages() {
+		return request.getLanguageHeaders();
 	}
 
 	@Override

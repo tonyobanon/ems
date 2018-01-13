@@ -13,5 +13,6 @@ import com.kylantis.eaa.core.users.Functionality;
 public @interface ModelMethod {
 
 	Functionality[] functionality();
+	boolean experimental() default false;
 
 }

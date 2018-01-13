@@ -1,6 +1,6 @@
 
 
- function newListContext (type, filters, pageSize) {
+ function newListContext (type, filters, pageSize, sort) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
 			 method : "PUT",
@@ -8,8 +8,8 @@
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
-			 data : JSON.stringify({type: type, filters: filters, pageSize: pageSize}), 
-			 url:  " /api/search/service/new-list-context"
+			 data : JSON.stringify({type: type, filters: filters, pageSize: pageSize, sort: sort}), 
+			 url: "/api/search/service/new-list-context"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -30,7 +30,7 @@
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
 			 data : JSON.stringify({type: type, phrase: phrase, pageSize: pageSize}), 
-			 url:  " /api/search/service/new-search-context"
+			 url: "/api/search/service/new-search-context"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -49,7 +49,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/search/service/clear-cache?type=" + type
+			 url: "/api/search/service/clear-cache?type=" + type
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -68,7 +68,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/search/service/has-cursor?moveType=" + moveType + "&contextKey=" + contextKey
+			 url: "/api/search/service/has-cursor?moveType=" + moveType + "&contextKey=" + contextKey
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -87,7 +87,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/search/service/is-context-available?contextKey=" + contextKey
+			 url: "/api/search/service/is-context-available?contextKey=" + contextKey
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -106,7 +106,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/search/service/next-results?moveType=" + moveType + "&contextKey=" + contextKey
+			 url: "/api/search/service/next-results?moveType=" + moveType + "&contextKey=" + contextKey
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -125,7 +125,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/search/service/get-searchable-lists"
+			 url: "/api/search/service/get-searchable-lists"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

@@ -10,6 +10,7 @@ public class AssessmentTotalSpec {
 	private Long levelSemester;
 	private Boolean isValidated;
 	
+	
 	public String getName() {
 		return name;
 	}

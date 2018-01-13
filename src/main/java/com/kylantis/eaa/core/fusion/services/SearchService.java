@@ -1,5 +1,7 @@
 package com.kylantis.eaa.core.fusion.services;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Map;
 
 import com.ce.ems.base.classes.CursorMoveType;
@@ -8,6 +10,7 @@ import com.ce.ems.base.classes.ListingType;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.core.GsonFactory;
 import com.ce.ems.models.SearchModel;
+import com.ce.ems.utils.BackendObjectMarshaller;
 import com.kylantis.eaa.core.fusion.BaseService;
 import com.kylantis.eaa.core.fusion.EndpointClass;
 import com.kylantis.eaa.core.fusion.EndpointMethod;
@@ -21,7 +24,7 @@ import io.vertx.ext.web.RoutingContext;
 @EndpointClass(uri = "/search/service")
 public class SearchService extends BaseService {
 
-	@EndpointMethod(uri = "/new-list-context", bodyParams = { "type", "filters", "pageSize"}, method = HttpMethod.PUT,
+	@EndpointMethod(uri = "/new-list-context", bodyParams = { "type", "filters", "pageSize", "sort"}, method = HttpMethod.PUT,
 			functionality = Functionality.PERFORM_LIST_OPERATION)
 	public void newListContext(RoutingContext ctx) {
 
@@ -31,11 +34,23 @@ public class SearchService extends BaseService {
 		
 		IndexedNameType type = IndexedNameType.from(body.getInteger("type"));
 		Map<String, Object> filters = body.getJsonObject("filters").getMap();
-		Integer pageSize = body.getInteger("pageSize");
+		Integer pageSize = body.getInteger("pageSize"); 
+		String sort = body.getString("sort");
+		 
+		//If there are any dates in <filters>, attempt parsing it correctly	
+		filters.forEach((k, v) -> {
+			try {
+				Date date = BackendObjectMarshaller.unmarshalDate(v.toString());
+				filters.put(k, date);
+			} catch (ParseException e) {
+			}
+		});
 		
-		String contextKey = SearchModel.newListContext(userId, type, filters, pageSize);
 		
-		ctx.response().write(contextKey);
+		
+		String contextKey = SearchModel.newListContext(userId, type, filters, pageSize, (sort != null && !sort.equals("undefined")) ? sort : null);
+		
+		ctx.response().write(new JsonObject().put("contextKey", contextKey).encode());
 	}
 	
 	@EndpointMethod(uri = "/new-search-context", bodyParams = { "type", "phrase", "pageSize"}, method = HttpMethod.PUT,
@@ -50,9 +65,9 @@ public class SearchService extends BaseService {
 		String phrase = body.getString("phrase");
 		Integer pageSize = body.getInteger("pageSize");
 		
-		String key = SearchModel.newSearchContext(userId, type, phrase, pageSize);
+		String contextKey = SearchModel.newSearchContext(userId, type, phrase, pageSize);
 		
-		ctx.response().write(key);
+		ctx.response().write(new JsonObject().put("contextKey", contextKey).encode());
 	}
 	
 	@EndpointMethod(uri = "/clear-cache", requestParams= {"type"}, method = HttpMethod.DELETE,
@@ -65,7 +80,7 @@ public class SearchService extends BaseService {
 	@EndpointMethod(uri = "/has-cursor", requestParams= {"moveType", "contextKey"}, method = HttpMethod.GET,
 			functionality = Functionality.PERFORM_LIST_OPERATION)
 	public void hasListingCursor(RoutingContext ctx) {
-		
+		  
 		Long userId = FusionHelper.getUserId(ctx.request());
 		
 		CursorMoveType moveType = CursorMoveType.from(Integer.parseInt(ctx.request().getParam("moveType")));
@@ -73,7 +88,7 @@ public class SearchService extends BaseService {
 		
 		Boolean b = SearchModel.has(userId, moveType, contextKey);
 		ctx.response().write(b.toString());
-	}
+	} 
 	
 	@EndpointMethod(uri = "/is-context-available", requestParams= {"contextKey"}, method = HttpMethod.GET,
 			functionality = Functionality.PERFORM_LIST_OPERATION)
@@ -94,19 +109,19 @@ public class SearchService extends BaseService {
 		CursorMoveType moveType = CursorMoveType.from(Integer.parseInt(ctx.request().getParam("moveType")));
 		String contextKey = ctx.request().getParam("contextKey");
 		
-		Map<String, ?> result = SearchModel.next(userId, moveType, contextKey);
+		Map<?, ?> result = SearchModel.next(userId, moveType, contextKey);
 		
 		ctx.response().write(GsonFactory.newInstance().toJson(result));
 	}
-	
+	 
 	@EndpointMethod(uri = "/get-searchable-lists", method = HttpMethod.GET,
 			functionality = Functionality.GET_SEARCHABLE_LISTS)
 	public void getSearchableList(RoutingContext ctx) {
 	
 		Long userId = FusionHelper.getUserId(ctx.request());
-		
+		 
 		Map<Integer, SearchableUISpec> result = SearchModel.getSearchableLists(userId);
 		ctx.response().write(GsonFactory.newInstance().toJson(result));
-	}
+	} 
 	
 }

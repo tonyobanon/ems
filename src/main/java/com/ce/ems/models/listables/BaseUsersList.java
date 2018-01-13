@@ -15,7 +15,6 @@ import com.ce.ems.entites.BaseUserEntity;
 import com.ce.ems.models.BaseUserModel;
 import com.ce.ems.models.RoleModel;
 import com.kylantis.eaa.core.users.Functionality;
-import com.kylantis.eaa.core.users.UserProfileSpec;
 
 public class BaseUsersList extends Listable<BaseUserSpec>{
 
@@ -30,8 +29,8 @@ public class BaseUsersList extends Listable<BaseUserSpec>{
 	}
 
 	@Override
-	public Class<?> entityClass() {
-		return UserProfileSpec.class;
+	public Class<BaseUserEntity> entityType() {
+		return BaseUserEntity.class;
 	}
 	
 	@Override
@@ -70,7 +69,7 @@ public class BaseUsersList extends Listable<BaseUserSpec>{
 	
 	@Override
 	public SearchableUISpec searchableUiSpec() {
-		return new SearchableUISpec().setName("Users").setListingPageUrl("/users-search");
+		return new SearchableUISpec().setName("users").setListingPageUrl("/users-search");
 	}
 
 }

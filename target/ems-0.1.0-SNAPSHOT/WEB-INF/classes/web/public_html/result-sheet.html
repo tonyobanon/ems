@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <link href="/css/jquery.contextMenu.min.css" rel="stylesheet" />   
+    </head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div id="available-courses" class="row" style="display: none;">
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header">
+                                Available Courses
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+                            <table class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Course Code</th>
+                                        <th>Course Title</th>
+                                        <th>No. of students</th>
+                                        <th>Last updated</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div id="course-result-sheet" class="row" style="display: none;">
+
+                    <div class="sixteen wide column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header">
+                                    Course Score Sheet
+                                </h5>
+                            </div>
+                            
+                            <div class="ui segment">
+                                <table class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+
+                                    <tbody></tbody>
+                                    
+                                </table>
+                            </div>
+                            
+                            <div id="save-course-result-sheet" style="display: none;" class="ui segment">
+                                <button class="ui primary button large" onclick="save_result_sheet_updates();"> Save Changes</button>
+                            </div>
+                        
+                        </div>
+                    </div>
+                    
+                    
+                
+
+
+            </div>
+
+
+        </div>
+
+        <div id="ce-page-scripts">
+            <script src="js/jquery.ui.position.min.js"></script>
+            <script src="js/jquery.contextMenu.min.js"></script>
+
+            <script src="/assets/js/utils.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/calculation.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/result-sheet.js"></script>
+                        
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

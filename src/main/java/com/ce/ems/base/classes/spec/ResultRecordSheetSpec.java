@@ -3,16 +3,21 @@ package com.ce.ems.base.classes.spec;
 import java.util.Date;
 import java.util.List;
 
+import com.ce.ems.base.classes.ClientResources.ClientRBRef;
 import com.ce.ems.base.classes.FluentArrayList;
 
 public class ResultRecordSheetSpec {
 
 	private Long id;
 	private Long studentId;
-	private List<Short> scores;
+	private String studentMatricNumber;
+	private String studentName;
+	private String departmentName;
+	private ClientRBRef level;
+	private List<Integer> scores;
 	private Short total;
 	private Date lastUpdated;
-	private Long lastUpdatedBy;
+	private String lastUpdatedBy;
 	
 
 	public ResultRecordSheetSpec() {
@@ -27,6 +32,15 @@ public class ResultRecordSheetSpec {
 		this.id = id;
 		return this;
 	}
+	
+	public String getStudentMatricNumber() {
+		return studentMatricNumber;
+	}
+
+	public ResultRecordSheetSpec setStudentMatricNumber(String studentMatricNumber) {
+		this.studentMatricNumber = studentMatricNumber;
+		return this;
+	}
 
 	public Long getStudentId() {
 		return studentId;
@@ -37,11 +51,38 @@ public class ResultRecordSheetSpec {
 		return this;
 	}
 
-	public List<Short> getScores() {
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public ResultRecordSheetSpec setStudentName(String studentName) {
+		this.studentName = studentName;
+		return this;
+	}
+
+	public String getDepartmentName() {
+		return departmentName;
+	}
+
+	public ResultRecordSheetSpec setDepartmentName(String departmentName) {
+		this.departmentName = departmentName;
+		return this;
+	}
+
+	public ClientRBRef getLevel() {
+		return level;
+	}
+
+	public ResultRecordSheetSpec setLevel(ClientRBRef level) {
+		this.level = level;
+		return this;
+	}
+
+	public List<Integer> getScores() {
 		return scores;
 	}
 
-	public ResultRecordSheetSpec setScores(List<Short> scores) {
+	public ResultRecordSheetSpec setScores(List<Integer> scores) {
 		this.scores = scores;
 		return this;
 	}
@@ -64,11 +105,11 @@ public class ResultRecordSheetSpec {
 		return this;
 	}
 
-	public Long getLastUpdatedBy() {
+	public String getLastUpdatedBy() {
 		return lastUpdatedBy;
 	}
 
-	public ResultRecordSheetSpec setLastUpdatedBy(Long lastUpdatedBy) {
+	public ResultRecordSheetSpec setLastUpdatedBy(String lastUpdatedBy) {
 		this.lastUpdatedBy = lastUpdatedBy;
 		return this;
 	}

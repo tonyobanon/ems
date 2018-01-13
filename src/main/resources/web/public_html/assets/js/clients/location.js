@@ -1,13 +1,13 @@
 
 
- function getSpokenLanguages (countryCode) {
+ function getCountries () {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
 			 method : "GET",
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/countryLanguages?countryCode=" + countryCode
+			 url: "/api/locations/service/countryList"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -26,7 +26,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/currencyList"
+			 url: "/api/locations/service/currencyList"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -45,7 +45,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/timezoneList"
+			 url: "/api/locations/service/timezoneList"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -57,14 +57,14 @@
  }
 
 
- function getTerritories (countryCode) {
+ function getTerritories (ctx) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
 			 method : "GET",
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/territoryList?countryCode=" + countryCode
+			 url: "/api/locations/service/territoryList?ctx=" + ctx
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -76,14 +76,14 @@
  }
 
 
- function getCities (territoryCode) {
+ function getCities (ctx) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
 			 method : "GET",
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/cityList?territoryCode=" + territoryCode
+			 url: "/api/locations/service/cityList?ctx=" + ctx
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -102,7 +102,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/cityCoordinates?cityCode=" + cityCode
+			 url: "/api/locations/service/cityCoordinates?cityCode=" + cityCode
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -121,26 +121,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/cityTimezone?cityCode=" + cityCode
-			 }).done(function(o) {
-				 resolve(o);
-			 }).fail(function(jqXHR, status, error){
-				 if(jqXHR.getResponseHeader("X-Location") === null && jqXHR.status !== 302){
-					 reject(jqXHR);
-				 }
-			 });
-		 });
- }
-
-
- function getCountries () {
-	 return new Promise(function(resolve, reject) {
-		 $.ajax({
-			 method : "GET",
-			 async: true,
-			 processData: false,
-			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/countryList"
+			 url: "/api/locations/service/cityTimezone?cityCode=" + cityCode
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -159,7 +140,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/localeList?countryCode=" + countryCode
+			 url: "/api/locations/service/localeList?countryCode=" + countryCode
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -178,7 +159,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/currencyCode?countryCode=" + countryCode
+			 url: "/api/locations/service/currencyCode?countryCode=" + countryCode
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -197,7 +178,26 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/locations/service/currencyName?countryCode=" + countryCode
+			 url: "/api/locations/service/currencyName?countryCode=" + countryCode
+			 }).done(function(o) {
+				 resolve(o);
+			 }).fail(function(jqXHR, status, error){
+				 if(jqXHR.getResponseHeader("X-Location") === null && jqXHR.status !== 302){
+					 reject(jqXHR);
+				 }
+			 });
+		 });
+ }
+
+
+ function getSpokenLanguages (countryCode) {
+	 return new Promise(function(resolve, reject) {
+		 $.ajax({
+			 method : "GET",
+			 async: true,
+			 processData: false,
+			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
+			 url: "/api/locations/service/countryLanguages?countryCode=" + countryCode
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

@@ -38,6 +38,7 @@ import io.vertx.core.net.NetSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.FileUpload;
+import io.vertx.ext.web.LanguageHeader;
 import io.vertx.ext.web.Locale;
 import io.vertx.ext.web.ParsedHeaderValues;
 import io.vertx.ext.web.impl.HeaderParser;
@@ -64,7 +65,10 @@ public class GAEHttp2ServerRequestMock implements HttpServerRequest {
 	private SocketAddress remoteAddr;
 	private Map<String, Cookie> cookies = new FluentHashMap<>();
 	private Collection<FileUpload> fileUploads = new FluentArrayList<>();
+	
 	private List<Locale>locales = new FluentArrayList<>();
+	private List<LanguageHeader> languageHeaders = new FluentArrayList<>();
+	
 	private ParsableHeaderValuesContainer parsedHeaders;
 	
 	public GAEHttp2ServerRequestMock(HttpServletRequest request) {
@@ -149,11 +153,14 @@ public class GAEHttp2ServerRequestMock implements HttpServerRequest {
 		}
 		
 		
-		// Add locales
+		// Add locales, and VertX language headers
 		
 		Enumeration<java.util.Locale> locales = request.getLocales();
 		while (locales.hasMoreElements()) {
+			
 			java.util.Locale locale = locales.nextElement();
+			
+			this.languageHeaders.add(new LanguageHeaderImpl(locale));
 			this.locales.add(new LocaleImpl(locale.getLanguage(), locale.getCountry(), locale.getVariant()));
 		}
 		
@@ -184,6 +191,10 @@ public class GAEHttp2ServerRequestMock implements HttpServerRequest {
 	
 	protected Set<FileUpload> fileUploads() {
 		return (Set<FileUpload>) fileUploads;
+	}
+	
+	public List<LanguageHeader> getLanguageHeaders() {
+		return languageHeaders;
 	}
 	
 	protected List<Locale> locales() {

@@ -11,6 +11,6 @@ public class ObjectWrapper<T>{
 	
 	public T get() {
 		return o;
-	}
+	} 
 	
 }

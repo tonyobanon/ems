@@ -16,13 +16,13 @@
 
 	"/applications-search": ["query"],
 
-	"/applications": ["applicationId"],
+	"/applications": ["applicationId", "status"],
 
 	"/users-search": ["query"],
 
 	"/users": ["userId"],
 
-	"/media-manager": [],
+	"/file-storage": [],
 
 	"/roles": ["roleName"],
 
@@ -31,8 +31,8 @@
 	"/system-configuration": ["id"],
 
 	"/dashboard": [],
-
-	"/departments": ["departmentId", "facultyId"],
+ 
+	"/departments": ["departmentId", "facultyId"], 
 
 	"/students": ["studentId", "departmentLevelId"],
 
@@ -42,9 +42,11 @@
 
 	"/register-courses": ["studentId"],
 
-	"/result-sheet": ["courseCode", "semesterCourseId"],
-
-	"/assessment-totals": ["id", "levelSemesterId"],
+	"/result-sheet": ["courseCode", "academicSemesterId"],
+ 
+	"/assessment-totals": ["levelSemesterId"],
+	
+	"/score-grades": [],
 
 	"/course-results": ["courseCode", "academicSemesterId"],
 

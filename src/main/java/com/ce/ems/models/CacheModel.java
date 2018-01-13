@@ -19,6 +19,7 @@ import com.google.appengine.api.memcache.stdimpl.GCacheFactory;
 import com.kylantis.eaa.core.keys.ConfigKeys;
 
 @Model
+//Used for caching User functionalities, Listing Context
 public class CacheModel extends BaseModel {
 
 	private static Cache volatileCache;

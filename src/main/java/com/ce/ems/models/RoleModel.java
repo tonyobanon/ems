@@ -124,14 +124,15 @@ public class RoleModel extends BaseModel {
 	public static Map<Integer, String> getRealmFunctionalities(RoleRealm realm) {
 
 		Map<Integer, String> result = new FluentHashMap<>();
-		List<Integer> f = getRoleFunctionalities(getDefaultRole(realm));
+		//List<Integer> f = getRoleFunctionalities(getDefaultRole(realm));
+		List<Integer> f = realm.spec();
 
 		f.forEach(k -> {
 			Functionality o = Functionality.from(k);
 			if(o.getIsVisible()) {
 				result.put(k, o.getName());
 			}
-		});
+		});  
 		return result;
 	}
 
@@ -139,7 +140,7 @@ public class RoleModel extends BaseModel {
 	public static List<Integer> getRoleFunctionalities(String name) {
 		UserRoleEntity entity = ofy().load().key(Key.create(UserRoleEntity.class, name)).safe();
 		return entity.getSpec();
-	}
+	} 
 	
 	@ModelMethod(functionality = Functionality.MANAGE_ROLES)
 	public static void updateRoleSpec(String name, RoleUpdateAction action, Integer functionality) {

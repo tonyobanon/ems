@@ -29,8 +29,8 @@
                                     
                                         $(".ui .form .button").addClass("disabled");
 					
-					var returnUrl = getCookie("returnUrl");
-					removeCookie("returnUrl");
+					var returnUrl = getCookie("returnurl");
+					removeCookie("returnurl");
 					
 					loginByEmail(
 							$('input[name="login_identifier"]').val(), 

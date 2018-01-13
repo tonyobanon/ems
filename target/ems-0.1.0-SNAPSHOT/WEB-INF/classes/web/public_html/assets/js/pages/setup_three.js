@@ -135,9 +135,9 @@ function load() {
                 lowerYearBound: $('input[name="semester_session_start_year"]').val(),
                 upperYearBound: $('input[name="semester_session_end_year"]').val(),
                 value: $('input[name="semester_value"]').val(),
-                startDate: $('input[name="semester_start_day"]').val() + "/"
-                        + $('input[name="semester_start_month"]').val() + "/"
-                        + $('input[name="semester_start_year"]').val()
+                startDate:  $('input[name="semester_start_year"]').val() + "-"
+                            + $('input[name="semester_start_month"]').val() + "-"
+                            + $('input[name="semester_start_day"]').val()
             };
 
             localStorage.setItem("$SETUP_academicSemester", JSON.stringify(academicSemester));

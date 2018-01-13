@@ -20,6 +20,7 @@ public class AcademicSemesterCourseEntity {
 	Date dateSheetFinal;
 	List<Long> totals;
 	List<Long> students;
+	Date dateUpdated;
 
 	public AcademicSemesterCourseEntity() {
 		this.totals = new FluentArrayList<>();
@@ -111,4 +112,14 @@ public class AcademicSemesterCourseEntity {
 		this.dateSheetFinal = dateSheetFinal;
 		return this;
 	}
+
+	public Date getDateUpdated() {
+		return dateUpdated;
+	}
+
+	public AcademicSemesterCourseEntity setDateUpdated(Date dateUpdated) {
+		this.dateUpdated = dateUpdated;
+		return this;
+	}
+	
 }

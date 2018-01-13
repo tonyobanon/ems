@@ -1,9 +1,9 @@
 package com.ce.ems.entites.calculation;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.ce.ems.base.classes.FluentArrayList;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -17,11 +17,11 @@ public class StudentSemesterCoursesEntity {
 	String studentId;
 	@Index
 	String academicSemesterId;
-	List<String> courses;
+	Map<String, Short> courses;
 	Date dateCreated;
 
 	public StudentSemesterCoursesEntity() {
-		courses = new FluentArrayList<>();
+		courses = new HashMap<>();
 	}
 
 	public Long getId() {
@@ -51,11 +51,11 @@ public class StudentSemesterCoursesEntity {
 		return this;
 	}
 
-	public List<String> getCourses() {
+	public Map<String, Short> getCourses() {
 		return courses;
 	}
 
-	public StudentSemesterCoursesEntity setCourses(List<String> courses) {
+	public StudentSemesterCoursesEntity setCourses(Map<String, Short> courses) {
 		this.courses = courses;
 		return this;
 	}

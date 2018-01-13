@@ -34,4 +34,9 @@ public class QueryFilter {
 	public static QueryFilter get(String condition, Object value) {
 		return new QueryFilter(condition, value);
 	}
+	
+	@Override
+	public String toString() {
+		return condition + value;
+	}
 }

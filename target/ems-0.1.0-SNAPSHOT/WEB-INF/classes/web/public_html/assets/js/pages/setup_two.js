@@ -206,9 +206,9 @@ function load() {
                                          middleName:  $('input[name="profile_mname"]').val(),
         				 lastName:  $('input[name="profile_lname"]').val(),
         				 
-        				 dateOfBirth:  $('input[name="profile_dob_day"]').val() + "/"
-        				 			+ $('input[name="profile_dob_month"]').val() + "/"
-        				 					+ $('input[name="profile_dob_year"]').val(),
+        				 dateOfBirth:  $('input[name="profile_dob_year"]').val() + "-"
+        				 			+ $('input[name="profile_dob_month"]').val() + "-"
+        				 					+ $('input[name="profile_dob_day"]').val(),
         				
         				 address:  $('input[name="profile_address"]').val(),
         				 phone:  $('input[name="profile_phone"]').val(),

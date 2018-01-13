@@ -47,13 +47,13 @@ public class RolesService extends BaseService {
 	public void listRoles(RoutingContext ctx) {
 		
 		String realm = ctx.request().getParam("realm");
-		
+		 
 		Map<String, Integer> roles = 
 				realm == null ?
 				RoleModel.listRoles() :
 					RoleModel.listRoles(RoleRealm.from(Integer.parseInt(realm)));
 				
-		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true).end();
+		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true);
 	}
 	
 	@EndpointMethod(uri = "/user-count", bodyParams = { "roleNames" }, method = HttpMethod.POST,
@@ -64,32 +64,32 @@ public class RolesService extends BaseService {
 		JsonArray names = body.getJsonArray("roleNames");
 		
 		Map<String, Integer> result = RoleModel.getUsersCount(names.getList());
-		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true);
 	}
 	
 	@EndpointMethod(uri = "/realms", method = HttpMethod.GET,
 			functionality = Functionality.LIST_ROLE_REALMS)
 	public void listRealms(RoutingContext ctx) {
 		Map<String, Integer> roles = RoleModel.listRoles();
-		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true).end();
+		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true);
 	}
 	
 	/**
 	 * This retrieves all the functionalities applicable to this role realm
 	 * */
 	@EndpointMethod(uri = "/realm-functionalities", requestParams = { "realm" },
-			functionality = Functionality.MANAGE_ROLES)
+			functionality = Functionality.GET_REALM_FUNCTIONALITIES)
 	public void getRealmFunctionalities(RoutingContext ctx) {
 		RoleRealm roleRealm = RoleRealm.from(Integer.parseInt(ctx.request().getParam("realm")));
 		String json = GsonFactory.newInstance().toJson(RoleModel.getRealmFunctionalities(roleRealm));
-		ctx.response().setChunked(true).write(json).end();
+		ctx.response().setChunked(true).write(json);
 	}
 
 	/**
 	 * This retrieves all the functionalities for this role
 	 * */
 	@EndpointMethod(uri = "/functionalities", requestParams = { "roleName" },
-			functionality = Functionality.MANAGE_ROLES)
+			functionality = Functionality.GET_ROLE_FUNCTIONALITIES)
 	public void getRoleFunctionalities(RoutingContext ctx) {
 		
 		String roleName = ctx.request().getParam("roleName");
@@ -99,7 +99,7 @@ public class RolesService extends BaseService {
 				new JsonArray(e).toString());
 
 		String json = GsonFactory.newInstance().toJson(e);
-		ctx.response().setChunked(true).write(json).end();
+		ctx.response().setChunked(true).write(json);
 	}
 
 	@EndpointMethod(uri = "/update-spec", bodyParams = { "roleName", "functionality", "action" }, method = HttpMethod.POST,
@@ -122,7 +122,7 @@ public class RolesService extends BaseService {
 	public void getDefaultRole(RoutingContext ctx) {
 		RoleRealm roleRealm = RoleRealm.from(Integer.parseInt(ctx.request().getParam("realm")));
 		String role = RoleModel.getDefaultRole(roleRealm);
-		ctx.response().setChunked(true).write(role).end();
+		ctx.response().setChunked(true).write(role);
 	}
 
 }

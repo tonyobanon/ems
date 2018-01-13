@@ -4,8 +4,10 @@ import java.util.Locale;
 
 public class LocaleUtils {
 
+	public static final String LANGUAGE_COUNTRY_DELIMETER = "-";
+	
 	public static String buildLocaleString(String language, String country) {
-		return language + "-" + country;
+		return language + LANGUAGE_COUNTRY_DELIMETER + country;
 	}
 	
 	public static String buildLocaleString(Locale locale) {

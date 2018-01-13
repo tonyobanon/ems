@@ -1,20 +1,19 @@
 package com.ce.ems.base.classes.spec;
 
 import java.util.Date;
-import java.util.List;
-
-import com.ce.ems.base.classes.FluentArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class StudentSemesterCoursesSpec {
 
 	private Long id;
 	private Long studentId;
 	private Long academicSemesterId;
-	private List<String> courses;
+	private Map<String, Short> courses;
 	private Date dateCreated;
 
 	public StudentSemesterCoursesSpec() {
-		courses = new FluentArrayList<>();
+		courses = new HashMap<>();
 	}
 
 	public Long getId() {
@@ -44,11 +43,11 @@ public class StudentSemesterCoursesSpec {
 		return this;
 	}
 
-	public List<String> getCourses() {
+	public Map<String, Short> getCourses() {
 		return courses;
 	}
 
-	public StudentSemesterCoursesSpec setCourses(List<String> courses) {
+	public StudentSemesterCoursesSpec setCourses(Map<String, Short> courses) {
 		this.courses = courses;
 		return this;
 	}

@@ -1,0 +1,123 @@
+{
+	"/console-fragment": {
+	},
+		
+	"/datatable-fragment": {
+		"parent": "/console-fragment"
+	},
+	
+	"/editable-datatable-fragment": {
+		"parent": "/datatable-fragment"
+	},
+	
+	"/view-application-form": {
+	},
+
+	"/update-application": {
+	},
+
+	"/user-login": {
+	},
+
+	"/own-profile": {
+		"parent": "/console-fragment"  
+	},
+	
+	"/course-search":{
+		"parent": "/console-fragment"
+	},
+	
+	"/manage-application-form": {
+		"parent": "/console-fragment"
+	},
+	
+	"/manage-system-configuration-form": {
+		"parent": "/console-fragment"
+	},
+	
+	"/applications-search": {
+		"parent": "/console-fragment"
+	},
+	
+	"/applications": {
+		"parent": "/console-fragment"
+	},
+	
+	"/users-search": {
+		"parent": "/console-fragment"
+	},
+	
+	"/users": {
+		"parent": "/console-fragment"
+	},
+	
+	"/file-storage": {
+		"parent": "/console-fragment"
+	},
+	
+	"/roles": {
+		"parent": "/console-fragment"
+	},
+	
+	"/system-caches": {
+		"parent": "/console-fragment"
+	},
+	
+	"/system-configuration": {
+		"parent": "/console-fragment"
+	},
+	
+	"/dashboard": {
+		"parent": "/console-fragment"
+	},
+	
+	"/departments": {
+		"parent": "/datatable-fragment"
+	},
+	
+	"/students": {
+		"parent": "/datatable-fragment"
+	},
+	
+	"/lecturers": {
+		"parent": "/console-fragment"
+	},
+	
+	"/courses": {
+		"parent": "/console-fragment"
+	},
+	
+	"/register-courses": {
+		"parent": "/console-fragment"
+	},
+	
+	"/result-sheet": {
+		"parent": "/editable-datatable-fragment"
+	},
+	
+	"/assessment-totals": {
+		"parent": "/console-fragment"
+	},
+	 
+	"/score-grades": {
+		"parent": "/console-fragment"
+	},
+	
+	"/course-results": {
+		"parent": "/console-fragment"
+	},
+	
+	"/student-results": {
+		"parent": "/console-fragment"
+	}, 
+	
+	"/assets/js/pages/console-fragment.js": {	
+	},
+	
+	"/assets/js/pages/result-sheet.js": {
+	},
+	
+	"/assets/js/pages/students.js": {
+	}
+	
+}

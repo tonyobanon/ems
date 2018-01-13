@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Compute Essentials EMS Solutions - Dashboard</title>
+        <link rel="icon" href="assets/images/icon.png" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name=viewport content="width=device-width, initial-scale=1" />
+        <link href="dist/semantic.min.css" rel="stylesheet" />
+        <link href="plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+        <link href="css/main.css" rel="stylesheet"/>
+        <link href="plugins/pacejs/pace.css" rel="stylesheet" />
+        <link rel="shortcut icon" href="assets/images/icon.png" />
+    </head>
+
+    <body>  
+
+        <div id="contextWrap">  
+
+            <!--sidebar-->
+            <div class="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" style="-webkit-transition-duration: 0.1s; transition-duration: 0.1s;" data-color="grey">
+                <a class="item logo" href="">
+                    <img src="img/logo.png" alt="stagblogo" />
+                    <img src="img/thumblogo.png" alt="stagblogo" class="displaynone" />
+                </a>  
+                <div class="ui accordion inverted">
+                    <a class="title item ce-fc-s-1">
+                        <i class="ion-speedometer titleIcon icon"></i> 
+                        <span class="ce-translate">dashboard</span> <i class="dropdown icon"></i>
+                    </a>
+                    <div class="content">
+                        <a class="item" href="/dashboard">
+                            <span class="ce-translate">dashboard</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-person titleIcon icon"></i>
+                        <i class="dropdown icon"></i> 
+                        <span class="ce-translate">accounts</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/users">
+                            <span class="ce-translate">users</span>
+                        </a>
+                        <a class="item" href="/roles">
+                            <span class="ce-translate">roles</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-grid titleIcon icon"></i>
+                        <i class="dropdown icon"></i> 
+                        <span class="ce-translate">courses</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/result-sheet">
+                            <span class="ce-translate">result_sheet</span>
+                        </a>
+                        <a class="item" href="/register-courses">
+                            <span class="ce-translate">registration</span>
+                        </a>
+                        <a class="item" href="/courses">
+                            <span class="ce-translate">course_list</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-folder titleIcon icon"></i>
+                        <i class="dropdown icon"></i> 
+                        <span class="ce-translate">directory</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/departments">
+                            <span class="ce-translate">departments</span>
+                        </a>
+                        <a class="item" href="/students">
+                            <span class="ce-translate">students</span>
+                        </a>
+                        <a class="item" href="/lecturers">
+                            <span class="ce-translate">lecturers</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-arrow-graph-up-right titleIcon icon"></i>
+                        <i class="dropdown icon"></i> 
+                        <span class="ce-translate">result</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/student-results">
+                            <span class="ce-translate">students_result</span>
+                        </a>
+                        <a class="item" href="/course-results">
+                            <span class="ce-translate">course_result</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-ios-filing-outline titleIcon icon"></i>
+                        <i class="dropdown icon"></i>
+                        <span class="ce-translate">grading</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/assessment-totals">
+                            <span class="ce-translate">assessment_totals</span>
+                        </a>
+                        <a class="item" href="/score-grades">
+                            <span class="ce-translate">score_grades</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-person-add titleIcon  icon"></i>
+                        <i class="dropdown icon"></i>
+                        <span class="ce-translate">applications</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/applications?status=2">
+                            <span class="ce-translate">pending</span>
+                        </a>
+                        <a class="item" href="/applications?status=3">
+                            <span class="ce-translate">declined</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-paintbrush titleIcon icon"></i>
+                        <i class="dropdown icon"></i> 
+                        <span class="ce-translate">forms</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/manage-application-form">
+                            <span class="ce-translate">application_forms</span>
+                        </a>
+                        <a class="item" href="/manage-system-configuration-form">
+                            <span class="ce-translate">configuration_forms</span>
+                        </a>
+                    </div>
+                    <div class="title item ce-fc-s-1">
+                        <i class="ion-settings titleIcon icon"></i>
+                        <i class="dropdown icon"></i>
+                        <span class="ce-translate">settings</span>
+                    </div>
+                    <div class="content">
+                        <a class="item" href="/system-configuration">
+                            <span class="ce-translate">system_configuration</span>
+                        </a>
+                        <a class="item" href="/system-caches">
+                            <span class="ce-translate">cache</span>
+                        </a>
+                        <a class="item" href="/file-storage">
+                            <span class="ce-translate">file_storage</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">dashboard</span></span>
+                    <i class="ion-speedometer icon"></i>
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">dashboard</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/dashboard">
+                            <span class="ce-translate">dashboard</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">accounts</span></span>
+                    <i class="ion-person icon"></i>
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">accounts</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/users">
+                            <span class="ce-translate">users</span>
+                        </a>
+                        <a class="item" href="/roles">
+                            <span class="ce-translate">roles</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">courses</span></span>
+                    <i class="ion-grid icon"></i>
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">courses</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/result-sheet">
+                            <span class="ce-translate">result_sheet</span>
+                        </a>
+                        <a class="item" href="/register-courses">
+                            <span class="ce-translate">registration</span>
+                        </a>
+                        <a class="item" href="/courses">
+                            <span class="ce-translate">course_list</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">directory</span></span>
+                    <i class="ion-folder icon"></i> 
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">directory</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/departments">
+                            <span class="ce-translate">departments</span>
+                        </a>
+                        <a class="item" href="/students">
+                            <span class="ce-translate">students</span>
+                        </a>
+                        <a class="item" href="/lecturers">
+                            <span class="ce-translate">lecturers</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">result</span></span>
+                    <i class="ion-arrow-graph-up-right icon"></i>
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">result</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/student-results">
+                            <span class="ce-translate">students_result</span>
+                        </a>
+                        <a class="item" href="/course-results">
+                            <span class="ce-translate">course_result</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">grading</span></span>
+                    <i class="ion-ios-filing-outline titleIcon icon"></i>
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">grading</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/assessment-totals">
+                            <span class="ce-translate">assessment_totals</span>
+                        </a>
+                        <a class="item" href="/score-grades">
+                            <span class="ce-translate">score_grades</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">applications</span></span>
+                    <i class="ion-person-add icon"></i>
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">applications</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/applications?status=2">
+                            <span class="ce-translate">pending</span>
+                        </a>
+                        <a class="item" href="/applications?status=3">
+                            <span class="ce-translate">declined</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">forms</span></span>
+                    <i class="ion-paintbrush icon"></i>
+
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">forms</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/manage-application-form">
+                            <span class="ce-translate">application_forms</span>
+                        </a>
+                        <a class="item" href="/manage-system-configuration-form">
+                            <span class="ce-translate">configuration_forms</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
+                    <span><span class="ce-translate">settings</span></span>
+                    <i class="ion-settings icon"></i>
+                    <div class="menu">
+                        <div class="header">
+                            <span class="ce-translate">settings</span>
+                        </div>
+                        <div class="ui divider"></div>
+                        <a class="item" href="/system-configuration">
+                            <span class="ce-translate">system_configuration</span>
+                        </a>
+                        <a class="item" href="/system-caches">
+                            <span class="ce-translate">cache</span>
+                        </a>
+                        <a class="item" href="/file-storage">
+                            <span class="ce-translate">file_storage</span>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="ce-f-120">
+                    <!--<div class="ui divider"></div>
+                    <a class="item" href="typography.html">
+                        <i class="ion-cloud icon"></i> <span class="colhidden">Software Updates</span>
+                    </a>-->
+                    <div class="ui divider"></div>              
+                    <a class="item">
+                        <div class="ui inverted progress tiny yellow" id="total_users">
+                            <div class="bar"></div>
+                            <div class="label colhidden" style="margin-top: 10px">
+                                <span class="colhidden"><span class="ce-translate">total_users</span></span>
+                            </div>
+                        </div>
+                    </a>
+                    <a class="item">
+                        <div class="ui inverted progress tiny teal" id="overall_student_performance">
+                            <div class="bar"></div>
+                            <div class="label colhidden" style="margin-top: 10px">
+                                <span class="colhidden"> <span class="ce-translate">overall_student_performance</span></span></div>
+                        </div>
+                    </a>
+                    <div class="ui divider"></div>
+                    <a class="item hiddenCollapse">
+                        <div class="ui one tiny inverted statistics">                        
+                            <div class="statistic">
+                                <div class="value counter">
+                                    3654
+                                </div>
+                                <div class="label">
+                                    <span class="ce-translate">users</span>
+                                </div>
+                            </div>                        
+                            <div class="statistic">
+                                <div class="value counter">
+                                    1909
+                                </div>
+                                <div class="label">
+                                    <span class="ce-translate">courses</span>
+                                </div>
+                            </div>
+                            <!--<div class="statistic">
+                                <div class="value">
+                                    <i class="ion-paperclip icon"></i><span class="counter">19</span>
+                                </div>
+                                <div class="label">
+                                    Attached File
+                                </div>
+                            </div>
+                            <div class="statistic">
+                                <div class="value">
+                                    <img src="img/avatar/people/carol.png" class="ui circular inline  top aligned image"><span class="counter">212</span>
+                                </div>
+                                <div class="label">
+                                    Team Members
+                                </div>
+                            </div>-->
+                        </div>
+
+                </div> 
+
+            </div>
+        </a>  
+
+
+
+        <div class="ui right sidebar ce-f-340" tabindex="1" style="overflow: auto; outline: none; width: 230px;">
+            <div class="ui pointing secondary two item tabular menu">
+                <a class="item active" data-tab="first"><i class="red icon ion-chatbox-working icon"></i></a>
+
+                <a class="item" data-tab="fourth"><i class="blue icon ion-gear-a"></i></a>
+            </div>
+            <div class="ui tab active" data-tab="first">
+                <div id="activity_stream_events" class="ui small feed">
+
+                    <style>
+                        #activity_stream_events .event a {
+                            color: #1b6d85;
+                        };
+                    </style>
+
+                    <h4 class="ui header">Activity Stream</h4>
+                    <div id="activity_stream_next_container">
+                        <div class="ui divider"></div>
+                        <button id="activity_stream_next_button" class="ui mini button" onclick="ce_activity_stream_next();">
+                            Show more
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="ui tab" data-tab="fourth">
+                <div class="ui form fluid">
+                    <div class="grouped fields">
+                        <label>Activity Timeline</label>
+                        <div class="field">
+                            <div class="ui slider checkbox">
+                                <input type="radio" name="activity_stream_timeline" value="1">
+                                <label>Hourly</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui slider checkbox">
+                                <input type="radio" name="activity_stream_timeline" value="2">
+                                <label>Daily</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui slider checkbox">
+                                <input type="radio" name="activity_stream_timeline" value="3">
+                                <label>Weekly</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+                <div class="ui form fluid">
+                    <div class="grouped fields">
+                        <label>Activity Stream Setting</label>
+                        <div class="field">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" name="activity_stream_enabled">
+                                <label class="coloring red">Enabled</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+
+            </div>
+        </div>
+
+
+        <div class="pusher">
+            <!--navbar-->
+            <div class="navslide navwrap">
+                <div class="ui menu icon borderless grid" data-color="inverted white">
+                    <a class="item labeled openbtn">
+                        <i class="ion-navicon-round big icon"></i>
+                    </a>
+                    <a class="item labeled expandit" onclick="toggleFullScreen(document.body)">
+                        <i class="ion-arrow-expand big icon"></i>
+                    </a>
+
+
+                    <div class="ui dropdown item colhidden"> 
+                        <div class="ui icon input">
+                            <input id="search_input" type="text" placeholder="Search...">
+                            <i class="search icon"></i>
+                        </div>
+                        <div id="search_menu" class="menu">
+                            <div class="header">
+                                <span class="ce-translate">what_are_you_looking_for</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="right menu colhidden">
+                        <div class="ui dropdown item"> <span class="ce-translate">language</span> <i class="dropdown icon"></i>
+                            <div id="available_countries_menu" class="menu"></div>
+                        </div>
+                        <div class="ui dropdown item">
+                            <img id= "user_avatar" class="ui mini circular image" src="/assets/images/user.png" alt="label-image" />
+                            <div class="menu">
+                                <a id="user_name" class="item" href="/own_profile"></a>
+                                <div class="ui divider"></div>
+                                <a class="item" href="/help-center"><span class="ce-translate">help_center</span></a>
+                                <a id="signout_button" class="item"><span class="ce-translate">sign_out</span></a>
+                            </div>
+                        </div>
+                        <a class="item labeled rightsidebar computer only ce-f-340">
+                            <i class="feed icon"></i>
+                            <div class="ui red label mini circular">3</div>
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!--navbar-->
+            <!--maincontent-->
+            <div class="mainWrap navslide">
+                <div id="ce-page-main-container" class="ui equal width left aligned padded grid stackable" style="min-height: 748px;">
+
+                </div>
+            </div>
+            <!--maincontent-->
+        </div>
+    </div>
+
+    <!--jquery-->
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <!--jquery-->
+
+    <!--semantic-->
+    <script src="dist/semantic.min.js"></script>
+    <!--semantic-->
+
+    <!--counter number-->
+    <script src="plugins/counterup/jquery.counterup.min.js"></script>
+    <script src="plugins/counterup/waypoints.min.js"></script>
+    <!--counter number-->
+
+    <!--pace-->
+    <script data-pace-options='{ "ajax": false }' src="plugins/pacejs/pace.js"></script>
+    <!--pace-->
+
+    <script src="/assets/js/moment.min.js"></script>
+
+    <script src="/assets/js/utils.js"></script>
+    <script type="text/javascript" src="/assets/js/clients/activitystream.js"></script>
+    <script type="text/javascript" src="/assets/js/clients/resourcebundle.js"></script>
+    <script type="text/javascript" src="/assets/js/clients/user.js"></script>
+    <script type="text/javascript" src="/assets/js/clients/roles.js"></script>
+    <script type="text/javascript" src="/assets/js/clients/search.js"></script>
+    <script src="/assets/js/pages/console-fragment.js"></script> 
+
+</body>
+
+</html>

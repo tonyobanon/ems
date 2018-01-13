@@ -9,9 +9,9 @@ import com.google.common.collect.Lists;
 
 public class RPCFactory {
 
-	private static Boolean prependDomainVariableToUrl = true;
+	private static boolean prependDomainVariableToUrl = true; 
 	
-	public static void setPrependDomainVariableToUrl(Boolean prependDomainVariableToUrl) {
+	public static void setPrependDomainVariableToUrl(boolean prependDomainVariableToUrl) {
 		RPCFactory.prependDomainVariableToUrl = prependDomainVariableToUrl;
 	}
 	 
@@ -159,7 +159,7 @@ public class RPCFactory {
 		}
   
 		clientFunction.append(
-				"\t\t\t url: " + (prependDomainVariableToUrl ? "FUSION_API_URL + " : "") + " \" " + APIRoutes.BASE_PATH + classAnnotation.uri() + methodAnnotation.uri() + requestParams.toString());
+				"\t\t\t url: " + (prependDomainVariableToUrl ? "FUSION_API_URL + " : "") + "\"" + APIRoutes.BASE_PATH + classAnnotation.uri() + methodAnnotation.uri() + requestParams.toString());
 
 		clientFunction.append("\n");
 
@@ -204,5 +204,4 @@ public class RPCFactory {
 		return clientFunction.toString();
 
 	}
-	
 }

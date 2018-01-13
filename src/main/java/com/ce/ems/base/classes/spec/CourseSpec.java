@@ -36,8 +36,8 @@ public class CourseSpec {
 		return point;
 	}
 
-	public CourseSpec setPoint(Short point) {
-		this.point = point;
+	public CourseSpec setPoint(int point) {
+		this.point = (short) point;
 		return this;
 	}
 

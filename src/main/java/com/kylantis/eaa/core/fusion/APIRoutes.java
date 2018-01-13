@@ -23,36 +23,42 @@ import com.ce.ems.base.core.ClasspathScanner;
 import com.ce.ems.base.core.Exceptions;
 import com.ce.ems.base.core.Logger;
 import com.ce.ems.base.core.ResourceException;
+import com.ce.ems.models.LocaleModel;
+import com.ce.ems.utils.LocaleUtils;
 import com.ce.ems.utils.Utils;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.kylantis.eaa.core.fusion.services.ResourceBundleService;
 import com.kylantis.eaa.core.keys.AppConfigKey;
 import com.kylantis.eaa.core.users.Functionality;
 
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.Router;
 
-@BlockerTodo("Create optionalRequestParams setting, Validate request params in fusion. Do in main ctx handler")
+@BlockerTodo("Create optionalRequestParams setting, Validate request params in fusion. Do in main ctx handler. Add support for service docs")
+/**
+ * Note: This class calls LocaleModel, to set user locale
+ */
 public class APIRoutes {
-	
 
-	public static Pattern endpointClassUriPattern = Pattern.compile("\\A\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+(\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+)*\\z");
+	public static Pattern endpointClassUriPattern = Pattern
+			.compile("\\A\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+(\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+)*\\z");
 
 	public static Pattern endpointMethodUriPattern = Pattern.compile("\\A\\Q/\\E[a-zA-Z-]+[-]*[a-zA-Z]+\\z");
-
 
 	private static Multimap<String, RouteHandler> routeKeys = LinkedHashMultimap.create();
 	private static Multimap<Route, RouteHandler> routes = LinkedHashMultimap.create();
 
 	protected static Map<Object, Integer> routesMappings = new HashMap<>();
-
+  
 	protected static Map<Integer, List<String>> functionalityToRoutesMappings = new HashMap<>();
-	
+  
 	protected static final String USER_ID_PARAM_NAME = "x_uid";
 	public static final String BASE_PATH = "/api";
-
-	/**
+  
+	/**  
 	 * This discovers fusion services by scanning the classpath
 	 */
 	private static void scanServices(Consumer<FusionServiceContext> consumer) {
@@ -83,7 +89,15 @@ public class APIRoutes {
 				throw new RuntimeException("Improper URI format for " + service.getName());
 			}
 
-			Method[] methods = service.getDeclaredMethods();
+			List<Method> methodsList = new ArrayList<Method>();
+
+			for (Method m : service.getDeclaredMethods()) {
+				if (!m.isSynthetic()) {
+					methodsList.add(m);
+				}
+			}
+
+			Method[] methods = methodsList.toArray(new Method[methodsList.size()]);
 
 			for (int i = 0; i < methods.length; i++) {
 
@@ -99,7 +113,7 @@ public class APIRoutes {
 				if (!endpointMethodUriPattern.matcher(methodAnnotation.uri()).matches()) {
 					throw new RuntimeException("Improper URI format for " + service.getName() + "/" + method.getName());
 				}
-				
+
 				consumer.accept(new FusionServiceContext(classAnnotation, methodAnnotation, serviceInstance, method,
 						i == methods.length - 1));
 			}
@@ -113,7 +127,7 @@ public class APIRoutes {
 		String path = "/tmp/ems/fusion-service-clients/" + name.replace("Service", "").toLowerCase() + ".js";
 
 		File clientStubFile = new File(path);
-		
+
 		clientStubFile.mkdirs();
 		try {
 			if (clientStubFile.exists()) {
@@ -150,6 +164,27 @@ public class APIRoutes {
 
 		registerRoute(new Route(), new RouteHandler(Handlers::APIAuthHandler, false));
 
+		
+		// Then, add locale handler, for detecting user's language
+
+		registerRoute(new Route(), new RouteHandler(ctx -> {
+
+			Cookie localeCookie = ctx.getCookie(ResourceBundleService.DEFAULT_LOCALE_COOKIE);
+			List<String> locales = new ArrayList<>();
+
+			if (localeCookie != null) {
+				locales.add(localeCookie.getValue());
+			} else {
+
+				ctx.acceptableLanguages().forEach(lh -> {
+					locales.add(lh.value().replaceFirst(Pattern.quote("_"), LocaleUtils.LANGUAGE_COUNTRY_DELIMETER));
+				});
+			}
+
+			LocaleModel.setUserLocale(locales);
+
+		}, false));
+
 		// Then, add fusion services found in classpath
 
 		ObjectWrapper<StringBuilder> serviceCientBuffer = new ObjectWrapper<StringBuilder>().set(new StringBuilder());
@@ -173,24 +208,22 @@ public class APIRoutes {
 			methodNames.put(methodName, className);
 
 			Functionality functionality = context.getEndpointMethod().functionality();
-			
+
 			String uri = context.getEndpointClass().uri() + context.getEndpointMethod().uri();
 			HttpMethod httpMethod = context.getEndpointMethod().method();
 
 			Route route = new Route(uri, httpMethod);
 
-			Logger.trace("Mapping route: " + uri + " (" + httpMethod + ") to functionality: "
-					+ functionality);
+			Logger.trace("Mapping route: " + uri + " (" + httpMethod + ") to functionality: " + functionality);
 
 			routesMappings.put(route.toString(), context.getEndpointMethod().functionality().getId());
 
-			
-			if(!functionalityToRoutesMappings.containsKey(functionality.getId())) {
+			if (!functionalityToRoutesMappings.containsKey(functionality.getId())) {
 				functionalityToRoutesMappings.put(functionality.getId(), new ArrayList<>());
 			}
-			
-			functionalityToRoutesMappings.get(functionality.getId()).add(uri);			
-			
+
+			functionalityToRoutesMappings.get(functionality.getId()).add(uri);
+
 			if (context.getEndpointMethod().createXhrClient()) {
 				// Generate XHR clients
 				serviceCientBuffer.get().append(RPCFactory.generateXHRClient(context.getEndpointClass(),
@@ -218,8 +251,6 @@ public class APIRoutes {
 
 			registerRoute(route, handler);
 
-			
-			
 			// Generate Javascript client
 
 			if (context.isClassEnd()) {
@@ -283,7 +314,11 @@ public class APIRoutes {
 
 	private static final void registerRoute(Route route, RouteHandler handler) {
 
-		if (!routeKeys.containsKey(route.toString())) {
+		// Actually, this check is not necessary, and should be removed, since in
+		// practice, different service methods can use the same route signature.
+		// This was originally done to ensure code integrity, in initial architectural
+		// design
+		if (!routeKeys.containsKey(route.toString()) || route.toString().equals("*")) {
 			routeKeys.put(route.toString(), handler);
 			routes.put(route, handler);
 		} else {
@@ -308,12 +343,12 @@ public class APIRoutes {
 		}
 		return routes;
 	}
-	
-	public static List<String> getUri(Functionality functionality){
+
+	public static List<String> getUri(Functionality functionality) {
 		return functionalityToRoutesMappings.get(functionality.getId());
 	}
 
 	static {
-			
+		RPCFactory.setPrependDomainVariableToUrl(false);
 	}
 }

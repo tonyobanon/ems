@@ -9,7 +9,7 @@ import com.googlecode.objectify.condition.IfNotEmpty;
 public class IndexedNameEntity {
 
 	@Id
-	String id;
+	Long id;
 	@Index
 	String entityId;
 	Integer type;
@@ -20,11 +20,11 @@ public class IndexedNameEntity {
 	@Index(IfNotEmpty.class)
 	String z;
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public IndexedNameEntity setId(String id) {
+	public IndexedNameEntity setId(Long id) {
 		this.id = id;
 		return this;
 	}

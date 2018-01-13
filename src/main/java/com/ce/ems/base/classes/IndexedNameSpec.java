@@ -62,5 +62,24 @@ public class IndexedNameSpec {
 		this.z = z;
 		return this;
 	}
+	
+	@Override
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder().append(x);
+		String separator = ClientResources.HtmlCharacterEnties.SPACE.toString();
+		
+		if(y != null) {
+			sb.append(separator)
+				.append(y);
+		}
+		
+		if(z != null) {
+			sb.append(separator)
+				.append(z);
+		}
+		
+		return sb.toString();
+	}
 
 }

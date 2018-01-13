@@ -1,0 +1,57 @@
+{
+
+	"/view-application-form": {"min": [-8], "max":[]},
+
+	"/update-application": {"min": [-20], "max":[-21]},
+
+	"/user-login": {"min": [-100, -110], "max":[]},
+
+	"/own-profile": {"min": [10], "max":[12]},
+	
+	"/course-search": {"min": [20], "max":[]},
+	
+	"/manage-application-form": {"min": [30], "max":[]},
+	
+	"/manage-system-configuration-form": {"min": [109], "max":[]},
+	
+	"/applications-search": {"min": [40], "max":[50]},
+	
+	"/applications": {"min": [40], "max":[50]},
+	
+	"/users-search": {"min": [70], "max":[60]},
+	
+	"/users": {"min": [70], "max":[60]},
+	
+	"/file-storage": {"min": [90], "max":[]},
+	
+	"/roles": {"min": [100], "max":[]},
+	
+	"/system-caches": {"min": [105], "max":[]},
+	
+	"/system-configuration": {"min": [111], "max":[110]},
+	
+	"/dashboard": {"min": [120], "max": []},
+	
+	"/console": {"min": [0], "max": []},
+	
+	"/departments": {"min": [150], "max": [140]},
+	
+	"/students": {"min": [190], "max":[180]},
+	
+	"/lecturers": {"min": [210], "max":[200]},
+	
+	"/courses": {"min": [250], "max":[240]},
+	
+	"/register-courses": {"min": [20, 260], "max":[]},
+	
+	"/result-sheet": {"min": [270], "max":[]},
+	
+	"/assessment-totals": {"min": [280], "max":[290]},
+	
+	"/score-grades": {"min": [320], "max":[330]},
+	
+	"/course-results": {"min": [300], "max":[]},
+	
+	"/student-results": {"min": [310], "max":[]}
+	
+}

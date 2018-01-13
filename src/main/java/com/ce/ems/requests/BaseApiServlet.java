@@ -1,6 +1,7 @@
 package com.ce.ems.requests;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,10 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ce.ems.base.classes.FluentArrayList;
-import com.ce.ems.base.core.Application;
 import com.kylantis.eaa.core.fusion.APIRoutes;
-import com.kylantis.eaa.core.fusion.RPCFactory;
 import com.kylantis.eaa.core.fusion.Route;
 import com.kylantis.eaa.core.fusion.RouteHandler;
 import com.kylantis.eaa.core.gaefusion.ErrorHelper;
@@ -38,7 +36,7 @@ public class BaseApiServlet extends HttpServlet {
 
 		// Find all matching handlers
 
-		List<RouteHandler> handlers = new FluentArrayList<>();
+		List<RouteHandler> handlers = new ArrayList<>();
 
 		// Matching all paths and methods
 		handlers.addAll(APIRoutes.getRouteHandler(new Route()));
@@ -64,8 +62,8 @@ public class BaseApiServlet extends HttpServlet {
 				handler.getHandler().handle(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
-				ctx.response().end(com.kylantis.eaa.core.fusion.Utils.toResponse(ErrorHelper.getError(e)));
-				break;
+				ctx.response().setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).end(com.kylantis.eaa.core.fusion.Utils.toResponse(ErrorHelper.getError(e)));
+				break; 
 			}
 
 			// Check if response is ended
@@ -80,13 +78,9 @@ public class BaseApiServlet extends HttpServlet {
 				ctx.response().write(com.kylantis.eaa.core.fusion.Utils.toResponse(ctx.response().getStatusCode()));
 			}
 			ctx.response().end();
-		}
+		} 
 
 		ctx.response().transform(resp);
 		resp.flushBuffer();
-	}
-
-	static {
-		RPCFactory.setPrependDomainVariableToUrl(false);
 	}
 }

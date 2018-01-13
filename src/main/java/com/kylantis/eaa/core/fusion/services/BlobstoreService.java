@@ -46,8 +46,8 @@ public class BlobstoreService extends BaseService {
 		ctx.response().putHeader("Content-Type", blob.getMimeType()).bodyEndHandler(v -> {
 			ctx.response().end();
 		}).write(Buffer.buffer(blob.getData()));
-	}
-
+	} 
+ 
 	@EndpointMethod(uri = "/delete", requestParams = { "blobId" },
 			functionality = Functionality.MANAGE_BINARY_DATA)
 	public void deleteBlob(RoutingContext ctx) {
@@ -63,5 +63,4 @@ public class BlobstoreService extends BaseService {
 		.write(GsonFactory.newInstance().toJson(entries)).setChunked(true)
 		.end();
 	}
-	
 }

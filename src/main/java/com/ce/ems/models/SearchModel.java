@@ -17,6 +17,7 @@ import com.ce.ems.base.classes.ListableContext;
 import com.ce.ems.base.classes.ListingType;
 import com.ce.ems.base.classes.QueryFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
+import com.ce.ems.base.core.BlockerBlockerTodo;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.CacheType;
 import com.ce.ems.base.core.ClassIdentityType;
@@ -34,23 +35,25 @@ import com.ce.ems.utils.Utils;
 import com.googlecode.objectify.Key;
 import com.kylantis.eaa.core.users.Functionality;
 
-@BlockerTodo("Make search functionality configurable")
+@BlockerTodo("Cleanup of listing contexts is poorly done, and this could be expensive")
+@BlockerBlockerTodo("No sorting is done, please add support for sorting. It is extremely a Blocker")
+@Todo("Make search functionality configurable")
 public class SearchModel extends BaseModel {
 
 	private static Map<Integer, Listable<?>> listables = new FluentHashMap<>();
 	private static Map<Integer, SearchableUISpec> searchables = new FluentHashMap<>();
 
-	//Persistent
+	// Persistent
 	public static final String CACHE_KEY_LIST_$TYPE = "CACHE_KEY_LIST_$TYPE";
-	//Short-lived
+	// Short-lived
 	public static final String CACHE_KEY_SEARCH_$TYPE_$PHRASE = "CACHE_KEY_SEARCH_$TYPE_$PHRASE";
 
-	//Persistent
+	// Persistent
 	public static final String CACHE_KEY_LIST_ENTRIES = "CACHE_KEY_LIST_ENTRIES";
-	//Persistent
+	// Persistent
 	public static final String CACHE_KEY_SEARCH_ENTRIES = "CACHE_KEY_SEARCH_ENTRIES";
 
-	//Short-lived
+	// Short-lived
 	public static final String LISTABLE_CONTEXT_$KEY = "LISTABLE_CONTEXT_$KEY";
 
 	@Override
@@ -60,7 +63,7 @@ public class SearchModel extends BaseModel {
 
 	@Override
 	public void start() {
-		
+
 		Logger.info("Scanning Listables");
 
 		new ClasspathScanner<>("List", Listable.class, ClassIdentityType.SUPER_CLASS).scanClasses().forEach(e -> {
@@ -119,12 +122,17 @@ public class SearchModel extends BaseModel {
 	 * addCachedListKey(..) and removeCachedListKey(..), it always contains
 	 * up-to-date data, and therefore has a cache type of PERSISTENT
 	 */
-	private static final List<String> _list(IndexedNameType type, Map<String, Object> filtersMap) {
+	private static final List<String> _list(IndexedNameType type, Map<String, Object> filtersMap, String order) {
 		String key = buildCacheListKey(type, filtersMap);
-		return CacheHelper.getListOrDefault(CacheType.PERSISTENT, key, () -> {
+
+		List<String> cachedValue = CacheHelper.getListOrDefault(CacheType.PERSISTENT, key, () -> {
 			CacheHelper.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, key);
-			return list(type, filtersMap);
+
+			List<String> fetchedValue = list(type, filtersMap, order);
+			return fetchedValue;
 		});
+
+		return cachedValue;
 	}
 
 	/**
@@ -132,16 +140,21 @@ public class SearchModel extends BaseModel {
 	 */
 	private static final List<String> _search(IndexedNameType type, String phrase) {
 		String key = buildCacheSearchKey(type, phrase);
-		return CacheHelper.getListOrDefault(CacheType.SHORT_LIVED, key, () -> {
+
+		List<String> cachedValue = CacheHelper.getListOrDefault(CacheType.SHORT_LIVED, key, () -> {
 			CacheHelper.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_SEARCH_ENTRIES, key);
-			return search(type, phrase);
+
+			List<String> fetchedValue = search(type, phrase);
+			return fetchedValue;
 		});
+
+		return cachedValue;
 	}
 
 	public static void addCachedListKey(IndexedNameType type, Object elem) {
 		addCachedListKey(type, FluentHashMap.forValueMap(), elem);
-	}	
-	
+	}
+
 	public static void removeCachedListKey(IndexedNameType type, Object elem) {
 		removeCachedListKey(type, FluentHashMap.forValueMap(), elem);
 	}
@@ -172,8 +185,8 @@ public class SearchModel extends BaseModel {
 
 		Integer pageCount = null;
 
-		if (keysSize <= pageSize) {
-			pageCount = 1;
+		if (keysSize <= pageSize || pageSize == -1) {
+			pageCount = keysSize > 0 ? 1 : 0;
 			pageSize = keysSize;
 		} else {
 			pageCount = keysSize / pageSize;
@@ -200,13 +213,15 @@ public class SearchModel extends BaseModel {
 			ctx.addPage(i, pageKeys);
 		}
 
+		ctx.setPageCount(pageCount);
+
 		CacheModel.put(CacheType.SHORT_LIVED, getCacheContextKey(ctx.getId()), ctx);
 
 		return ctx.getId();
 	}
 
 	private static boolean _hasNext(ListableContext ctx) {
-		return (ctx.getCurrentPage() < ctx.getPageSize());
+		return (ctx.getCurrentPage() < ctx.getPageCount());
 	}
 
 	private static boolean _hasPrevious(ListableContext ctx) {
@@ -221,7 +236,7 @@ public class SearchModel extends BaseModel {
 
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
 	public static String newListContext(Long userId, IndexedNameType type, Map<String, Object> filtersMap,
-			Integer pageSize) {
+			Integer pageSize, String order) {
 
 		Listable<?> model = listables.get(type.getValue());
 
@@ -229,13 +244,14 @@ public class SearchModel extends BaseModel {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
 
-		List<String> keys = _list(type, filtersMap);
+		List<String> keys = _list(type, filtersMap, order);
 		return newContext(type, keys, pageSize);
 	}
 
 	/**
-	 * Note: When a search result for a particular phrase is cached, it takes CacheType.SHORT_LIVED seconds to be clear from cache
-	 * */
+	 * Note: When a search result for a particular phrase is cached, it takes
+	 * CacheType.SHORT_LIVED seconds to be clear from cache
+	 */
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
 	public static String newSearchContext(Long userId, IndexedNameType type, String phrase, Integer pageSize) {
 
@@ -252,46 +268,46 @@ public class SearchModel extends BaseModel {
 	@ModelMethod(functionality = Functionality.MANAGE_SYSTEM_CACHES)
 	public static void clearCache(ListingType type) {
 		switch (type) {
-			case LIST:
-				getListKeys().forEach(k -> {
-					CacheModel.del(CacheType.PERSISTENT, k);
-				});
+		case LIST:
+			getListKeys().forEach(k -> {
+				CacheModel.del(CacheType.PERSISTENT, k);
+			});
 			break;
-			case SEARCH:
-				getSearchKeys().forEach(k -> {
-					CacheModel.del(CacheType.SHORT_LIVED, k);
-				});
+		case SEARCH:
+			getSearchKeys().forEach(k -> {
+				CacheModel.del(CacheType.SHORT_LIVED, k);
+			});
 			break;
-			}
+		}
 	}
-	
+
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
 	public static Boolean has(Long userId, CursorMoveType moveType, String contextKey) {
-		
+
 		ListableContext ctx = getContext(contextKey);
-		
+
 		Listable<?> instance = listables.get(ctx.getType().getValue());
 
 		if (!instance.authenticate(userId, null)) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
-		
+
 		switch (moveType) {
-			case NEXT:
-				return _hasNext(ctx);
-			case PREVIOUS:
-				return _hasPrevious(ctx);
+		case NEXT:
+			return _hasNext(ctx);
+		case PREVIOUS:
+			return _hasPrevious(ctx);
 		}
 		return false;
 	}
-	
+
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
 	public static Boolean isContextAvailable(String contextKey) {
 		return CacheModel.containsKey(CacheType.SHORT_LIVED, getCacheContextKey(contextKey));
 	}
 
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
-	public static Map<String, ?> next(Long userId, CursorMoveType moveType, String contextKey) {
+	public static Map<?, ?> next(Long userId, CursorMoveType moveType, String contextKey) {
 
 		ListableContext ctx = getContext(contextKey);
 
@@ -302,7 +318,7 @@ public class SearchModel extends BaseModel {
 		if (!o.authenticate(userId, null)) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
-		
+
 		switch (moveType) {
 		case NEXT:
 			if (!_hasNext(ctx)) {
@@ -323,10 +339,10 @@ public class SearchModel extends BaseModel {
 		ctx.setCurrentPage(currentPage);
 
 		CacheModel.put(CacheType.SHORT_LIVED, getCacheContextKey(contextKey), ctx);
-	
+
 		return o.getAll(keys);
 	}
-	
+
 	@ModelMethod(functionality = Functionality.GET_SEARCHABLE_LISTS)
 	public static Map<Integer, SearchableUISpec> getSearchableLists(Long userId) {
 
@@ -380,15 +396,16 @@ public class SearchModel extends BaseModel {
 
 	public static void addIndexedName(IndexedNameSpec spec, IndexedNameType type) {
 
-		if(spec.getX() == null) {
+		if (spec.getX() == null) {
 			return;
 		}
-		
+
 		// Run permutation function on names to get possible combinations
 
-		List<String> nameList = new FluentArrayList<String>().with(spec.getX()).addIfNotNull(spec.getY()).addIfNotNull(spec.getZ());
-		Integer [] indexes = Utils.indexes(nameList.size());
-		
+		List<String> nameList = new FluentArrayList<String>().with(spec.getX()).addIfNotNull(spec.getY())
+				.addIfNotNull(spec.getZ());
+		Integer[] indexes = Utils.indexes(nameList.size());
+
 		List<IndexedNameEntity> ies = new FluentArrayList<>();
 
 		Utils.permute(indexes).forEach(l1 -> {
@@ -396,24 +413,24 @@ public class SearchModel extends BaseModel {
 			String x = null;
 			String y = null;
 			String z = null;
-			
-			switch(indexes.length) {
-				case 1:
-					x = nameList.get(l1.get(0));
-					break;
-				case 2:
-					x = nameList.get(l1.get(0));
-					y = nameList.get(l1.get(1));
-					break;
-				case 3:
-					x = nameList.get(l1.get(0));
-					y = nameList.get(l1.get(1));
-					z = nameList.get(l1.get(2));
-					break;
+
+			switch (indexes.length) {
+			case 1:
+				x = nameList.get(l1.get(0));
+				break;
+			case 2:
+				x = nameList.get(l1.get(0));
+				y = nameList.get(l1.get(1));
+				break;
+			case 3:
+				x = nameList.get(l1.get(0));
+				y = nameList.get(l1.get(1));
+				z = nameList.get(l1.get(2));
+				break;
 			}
 
-			IndexedNameEntity ie = new IndexedNameEntity().setType(type.getValue()).setEntityId(spec.getKey())
-					.setX(x).setY(y).setZ(z);
+			IndexedNameEntity ie = new IndexedNameEntity().setType(type.getValue()).setEntityId(spec.getKey()).setX(x)
+					.setY(y).setZ(z);
 
 			ies.add(ie);
 		});
@@ -423,7 +440,7 @@ public class SearchModel extends BaseModel {
 		ofy().save().entities(ies).now();
 	}
 
-	private static final List<String> list(IndexedNameType type, Map<String, Object> filtersMap) {
+	private static final <T> List<String> list(IndexedNameType type, Map<String, Object> filtersMap, String order) {
 
 		Listable<?> o = listables.get(type.getValue());
 
@@ -433,13 +450,13 @@ public class SearchModel extends BaseModel {
 			filters.add(QueryFilter.get(k, v));
 		});
 
-		Class<?> T = o.entityClass();
+		Class<T> T = (Class<T>) o.entityType();
 
 		// Fetch all keys for this entity
 
 		List<String> keys = new FluentArrayList<>();
 
-		ofy().load().type(T).keys().forEach(k -> {
+		EntityUtils.lazyQuery(T, order, filters.toArray(new QueryFilter[filters.size()])).keys().forEach(k -> {
 			keys.add(ObjectUtils.toKeyString(k));
 		});
 
@@ -471,11 +488,11 @@ public class SearchModel extends BaseModel {
 			break;
 		}
 
-		List<String> keys = new FluentArrayList<>();
+		List<Long> keys = new FluentArrayList<>();
 		List<String> filteredKeys = new FluentArrayList<>();
 
 		EntityUtils.search(IndexedNameEntity.class, values, o -> {
-			keys.add(ObjectUtils.toKeyString(o));
+			keys.add(o.getId());
 		});
 
 		ofy().load().type(IndexedNameEntity.class).ids(keys).forEach((k, v) -> {

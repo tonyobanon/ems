@@ -25,6 +25,10 @@ public class EntityUtils {
 	}
 	
 	public static <T> Query<T> lazyQuery(Class<T> type, QueryFilter... filters){
+		return lazyQuery(type, null, filters);
+	}
+	
+	public static <T> Query<T> lazyQuery(Class<T> type, String order, QueryFilter... filters){
 		
 		LoadType<T> loadType = ofy().load().type(type);
 
@@ -40,8 +44,12 @@ public class EntityUtils {
 				query = query.filter(filter.getCondition(), filter.getValue());
 			}
 		}
+		
+		if(order != null) {
+			query = query.order(order);
+		}
 
-		return query;
+		return loadType.filter(null);
 	}
 
 	public static <T> List<T> query(Class<T> type, QueryFilter... filters) {

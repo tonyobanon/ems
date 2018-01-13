@@ -1,9 +1,8 @@
 package com.ce.ems.models;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
-import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.ClassIdentityType;
@@ -17,7 +16,7 @@ public abstract class BaseModel {
 
 	public static final String DEFAULT_MODEL_VERSION = "";
 	
-	private static Map<String, BaseModel> linkedModels = new FluentHashMap<>();
+	private static LinkedHashMap<String, BaseModel> linkedModels = new LinkedHashMap<String, BaseModel>();
 	
 	/**
 	 * This method is used by models to populate data into their tables after

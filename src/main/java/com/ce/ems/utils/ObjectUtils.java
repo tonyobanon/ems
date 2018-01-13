@@ -1,8 +1,8 @@
 package com.ce.ems.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.ce.ems.base.classes.FluentHashMap;
 import com.googlecode.objectify.Key;
 
 public class ObjectUtils {
@@ -22,13 +22,13 @@ public class ObjectUtils {
 	}
 
 	public static Map<String, String> toStringMap(Map<String, Object> o) {
-		Map<String, String> result = new FluentHashMap<>();
+		Map<String, String> result = new HashMap<>();
 		o.forEach((k, v) -> {
 			result.put(k, v.toString());
 		});
 		return result;
 	}
-	
+
 	public static String toKeyString(Key<?> k) {
 		return k.getId() != 0 ? Long.valueOf(k.getId()).toString() : k.getName();
 	}

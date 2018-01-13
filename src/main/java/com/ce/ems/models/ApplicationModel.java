@@ -8,11 +8,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.ce.ems.base.api.event_streams.Article;
+import com.ce.ems.base.api.event_streams.CustomPredicate;
+import com.ce.ems.base.api.event_streams.ObjectEntity;
+import com.ce.ems.base.api.event_streams.ObjectType;
+import com.ce.ems.base.api.event_streams.Sentence;
+import com.ce.ems.base.api.event_streams.SubjectEntity;
+import com.ce.ems.base.api.event_streams.SubjectType;
+import com.ce.ems.base.api.event_streams.SubordinatingConjuction;
+import com.ce.ems.base.classes.ApplicationDeclineReason;
 import com.ce.ems.base.classes.ApplicationStatus;
+import com.ce.ems.base.classes.ClientResources.ClientRBRef;
 import com.ce.ems.base.classes.FluentArrayList;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.FormSectionType;
@@ -30,6 +41,7 @@ import com.ce.ems.base.core.Logger;
 import com.ce.ems.base.core.Model;
 import com.ce.ems.base.core.ModelMethod;
 import com.ce.ems.base.core.ResourceException;
+import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.ApplicationEntity;
 import com.ce.ems.entites.ApplicationFormValueEntity;
 import com.ce.ems.entites.DeclinedApplicationEntity;
@@ -55,8 +67,7 @@ public class ApplicationModel extends BaseModel {
 	}
 
 	@Override
-	public void preInstall() {
-		
+	public void preInstall() {		
 	}
 
 	@Override
@@ -73,6 +84,7 @@ public class ApplicationModel extends BaseModel {
 		}
 	}
 
+	@Todo("Add to activity stream")
 	@ModelMethod(functionality = Functionality.CREATE_APPLICATION)
 	public static Long newApplication(String role) {
 
@@ -87,7 +99,7 @@ public class ApplicationModel extends BaseModel {
 		SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
 				FluentHashMap.forValueMap().with("status", ApplicationStatus.CREATED.getValue()),
 				applicationId);
-
+		
 		return applicationId;
 	}
 
@@ -129,6 +141,22 @@ public class ApplicationModel extends BaseModel {
 					FluentHashMap.forValueMap().with("status", ApplicationStatus.OPEN.getValue()),
 					applicationId);
 		}
+
+		String role = getApplicationRole(applicationId);
+		RoleRealm realm = RoleModel.getRealm(role);
+		
+		
+		//Add to activity stream
+		
+		Sentence activity = Sentence.newInstance()
+				.setSubject(getNameSpec(applicationId, realm))
+				.setPredicate(CustomPredicate.UPDATED)
+				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
+								.setIdentifiers(FluentArrayList.asList(applicationId))
+								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER)
+						);
+		
+		ActivityStreamModel.newActivity(getApplicantImage(applicationId, realm), activity);
 	}
 
 	@ModelMethod(functionality = Functionality.SUBMIT_APPLICATION)
@@ -162,6 +190,19 @@ public class ApplicationModel extends BaseModel {
 		
 		IndexedNameSpec nameSpec = getNameSpec(applicationId, realm, values);
 		SearchModel.addIndexedName(nameSpec, IndexedNameType.APPLICATION);
+		
+
+		//Add to activity stream
+		
+		Sentence activity = Sentence.newInstance()
+				.setSubject(getNameSpec(applicationId, realm))
+				.setPredicate(CustomPredicate.SUBMITED)
+				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
+								.setIdentifiers(FluentArrayList.asList(applicationId))
+								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER)
+						);
+		
+		ActivityStreamModel.newActivity(getApplicantImage(applicationId, realm), activity);
 		
 		return applicationId;
 	}
@@ -343,20 +384,41 @@ public class ApplicationModel extends BaseModel {
 		
 		SearchModel.updateIndexedNameType(applicationId, userId, IndexedNameType.APPLICATION, IndexedNameType.USER);
 
+
+		//Add to activity stream
+		
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.APPROVED)
+				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
+								.setIdentifiers(FluentArrayList.asList(applicationId))
+						);
+		
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		
 		return userId;
 	}
 
 	@ModelMethod(functionality = Functionality.REVIEW_APPLICATION)
-	public static void declineApplication(Long applicationId, Long staffId, String reason) {
+	public static Map<Integer, Object> getApplicationDeclineReasons() {
+		Map<Integer, Object> reasons = new HashMap<>();
+		for(ApplicationDeclineReason reason : ApplicationDeclineReason.values()) {
+			reasons.put(reason.getValue(), ClientRBRef.get(reason));
+		}
+		return reasons;
+	}
+	
+	@ModelMethod(functionality = Functionality.REVIEW_APPLICATION)
+	public static void declineApplication(Long applicationId, Long principal, Integer reason) {
 
 		// Update application status
 		updateApplicationStatus(applicationId, ApplicationStatus.DECLINED);
 
 		// Create new declined application
 
-		DeclinedApplicationEntity de = new DeclinedApplicationEntity().setApplicationId(applicationId)
-				.setStaffId(staffId).setReason(reason).setDateCreated(new Date());
-		ofy().save().entity(de);
+		DeclinedApplicationEntity e = new DeclinedApplicationEntity().setApplicationId(applicationId)
+				.setStaffId(principal).setReason(reason).setDateCreated(new Date());
+		ofy().save().entity(e);
 
 		// Delete field values for application
 		// deleteFieldValuesForApplication(applicationId);
@@ -376,6 +438,19 @@ public class ApplicationModel extends BaseModel {
 		//remove indexed name
 		
 		SearchModel.removeIndexedName(applicationId.toString(), IndexedNameType.APPLICATION);
+		
+		
+		//Add to activity stream
+		
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.DECLINED)
+				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
+								.setIdentifiers(FluentArrayList.asList(applicationId))
+						)
+				.setSubordinativeClause(SubordinatingConjuction.BECAUSE, ClientRBRef.get(ApplicationDeclineReason.from(reason)));
+		
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
 	}
 
 	private static Long consolidateApplication(Long principal, Long applicationId) {
@@ -450,6 +525,8 @@ public class ApplicationModel extends BaseModel {
 
 				.setFirstName(values.get(keys.get(FieldType.FIRST_NAME)))
 				.setLastName(values.get(keys.get(FieldType.LAST_NAME)))
+				.setImage(values.get(keys.get(FieldType.IMAGE)))
+				
 				.setMiddleName(values.get(keys.get(FieldType.MIDDLE_NAME)))
 				.setDateOfBirth(FrontendObjectMarshaller.unmarshalDate(values.get(keys.get(FieldType.DATE_OF_BIRTH))))
 				.setGender(Gender.from(Integer.parseInt(values.get(keys.get(FieldType.GENDER)))))
@@ -461,7 +538,50 @@ public class ApplicationModel extends BaseModel {
 				.setTerritory(values.get(keys.get(FieldType.STATE)))
 				.setCountry(values.get(keys.get(FieldType.COUNTRY)));
 	}
+	
 
+	
+	
+	
+	
+	////////		Utils	//////////
+	
+	
+	private static String getApplicantImage(Long applicationId, RoleRealm realm) {
+		return getApplicantImage(applicationId, realm, null);
+	}
+	
+	private static String getApplicantImage(Long applicationId, RoleRealm realm, Map<String, String> fieldValues) {
+
+		String imageField = FormFieldRepository.getFieldId(realm, FormFieldRepository.FieldType.IMAGE);
+
+		if (fieldValues == null) {
+			fieldValues = getFieldValues(applicationId,
+					new FluentArrayList<String>().with(imageField));
+		}
+		
+		return fieldValues.get(imageField);
+	}
+	
+	private static Boolean isMaleApplicant(Long applicationId, RoleRealm realm) {
+		return isMaleApplicant(applicationId, realm, null);
+	}
+	
+	private static Boolean isMaleApplicant(Long applicationId, RoleRealm realm, Map<String, String> fieldValues) {
+
+		String genderField = FormFieldRepository.getFieldId(realm, FormFieldRepository.FieldType.GENDER);
+
+		if (fieldValues == null) {
+			fieldValues = getFieldValues(applicationId,
+					new FluentArrayList<String>().with(genderField));
+		}
+		
+		Integer value = Integer.parseInt(fieldValues.get(genderField));
+		Gender gender = Gender.from(value);
+
+		return gender.equals(Gender.MALE);
+	}
+	
 	public static IndexedNameSpec getNameSpec(Long applicationId, RoleRealm realm) {
 		return getNameSpec(applicationId, realm, null);
 	}

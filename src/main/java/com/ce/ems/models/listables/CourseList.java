@@ -28,7 +28,7 @@ public class CourseList extends Listable<BaseCourseSpec>{
 	}
 
 	@Override
-	public Class<?> entityClass() {
+	public Class<CourseEntity> entityType() {
 		return CourseEntity.class;
 	}
 	
@@ -56,7 +56,7 @@ public class CourseList extends Listable<BaseCourseSpec>{
 	
 	@Override
 	public SearchableUISpec searchableUiSpec() {
-		return new SearchableUISpec().setName("Courses").setListingPageUrl("/course-search");
+		return new SearchableUISpec().setName("courses").setListingPageUrl("/course-search");
 	}
 
 }

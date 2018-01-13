@@ -36,4 +36,7 @@ public class ConfigKeys {
 	public static final String USER_COUNT_ARCHIVE = "USER_COUNT_ARCHIVE";
 	public static final String USER_COUNT_CURRENT = "USER_COUNT_CURRENT";
 	
+	public static final String ACTIVITY_STREAM_ENABLED = "ACTIVITY_STREAM_ENABLED";
+	public static final String DEFAULT_ACTIVITY_STREAM_TIMELINE = "DEFAULT_ACTIVITY_STREAM_TIMELINE";
+	
 }

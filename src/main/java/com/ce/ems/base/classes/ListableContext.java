@@ -1,17 +1,22 @@
 package com.ce.ems.base.classes;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ListableContext {
+public class ListableContext implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	
 	private String id;
 	private IndexedNameType type;
 	
 	private Integer pageSize;
-	private Integer currentPage;
 	
-	Map<Integer, List<String>> pages;
+	private Integer currentPage;
+	private Integer pageCount;
+	
+	Map<Integer, List<String>> pages = new FluentHashMap<>();
 
 	public String getId() {
 		return id;
@@ -64,6 +69,15 @@ public class ListableContext {
 	
 	public ListableContext addPage(Integer page, List<String> keys) {
 		this.pages.put(page, keys);
+		return this;
+	}
+
+	public Integer getPageCount() {
+		return pageCount;
+	}
+
+	public ListableContext setPageCount(Integer pageCount) {
+		this.pageCount = pageCount;
 		return this;
 	}
 	

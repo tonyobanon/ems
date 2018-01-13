@@ -1,0 +1,7 @@
+
+# Specify available Functionalities via the Functionalities enum
+# Specify available realms, and their functionalities
+# Update ObjectType in activity streams API
+# In base web folder, update route_mapping and route_params
+# Rewrite Models, Services, Resource Bundles
+# Remove solution-specific classes

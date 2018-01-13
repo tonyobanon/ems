@@ -2,9 +2,9 @@ package com.ce.ems.base.classes;
 
 public enum Semester {
 
-	FIRST(1), SECOND(2);
+	FIRST(1), SECOND(2), THIRD(3);
 
-	private int value;
+	private Integer value;
 
 	private Semester(Integer value) {
 		this.value = value;
@@ -19,14 +19,22 @@ public enum Semester {
 			
 		case 2:
 			return Semester.SECOND;
+			
+		case 3:
+			return Semester.THIRD;
 
 		default:
 			throw new IllegalArgumentException("An invalid value was provided");
 		}
 	}
 
-	public int getValue() {
+	public Integer getValue() {
 		return value;
 	}
 	
+	@Override
+	@ClientAware
+	public String toString() {
+		return  "semester." + value.toString() ;
+	}
 }

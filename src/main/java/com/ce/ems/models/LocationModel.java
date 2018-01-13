@@ -27,12 +27,12 @@ import com.ce.ems.entites.locations.CountryEntity;
 import com.ce.ems.entites.locations.LanguageEntity;
 import com.ce.ems.entites.locations.TerritoryEntity;
 import com.google.common.collect.ImmutableList;
+import com.kylantis.eaa.core.fusion.Unexposed;
 import com.kylantis.eaa.core.locations.Admin1CodesFeatures;
 import com.kylantis.eaa.core.locations.Cities1000Features;
 import com.kylantis.eaa.core.locations.Coordinates;
 import com.kylantis.eaa.core.locations.CountryInfoFeatures;
 import com.kylantis.eaa.core.users.Functionality;
-
 
 @UsesMock
 public class LocationModel extends BaseModel {
@@ -51,7 +51,7 @@ public class LocationModel extends BaseModel {
 	public String path() {
 		return "core/location";
 	}
-	
+
 	@Override
 	public void preInstall() {
 
@@ -70,9 +70,6 @@ public class LocationModel extends BaseModel {
 
 	public void install(InstallOptions options) {
 
-		
-		
-		
 	}
 
 	@Override
@@ -112,8 +109,8 @@ public class LocationModel extends BaseModel {
 
 		try {
 
-			buffer = new BufferedReader(new InputStreamReader(AppUtils.getInputStream(COUNTRY_INFO_FILE_NAME),
-					Charset.forName("UTF-8")));
+			buffer = new BufferedReader(
+					new InputStreamReader(AppUtils.getInputStream(COUNTRY_INFO_FILE_NAME), Charset.forName("UTF-8")));
 
 			while ((line = buffer.readLine()) != null) {
 
@@ -161,8 +158,8 @@ public class LocationModel extends BaseModel {
 
 		try {
 
-			buffer = new BufferedReader(new InputStreamReader(AppUtils.getInputStream(ADMIN1_CODES_FILE_NAME),
-					Charset.forName("UTF-8")));
+			buffer = new BufferedReader(
+					new InputStreamReader(AppUtils.getInputStream(ADMIN1_CODES_FILE_NAME), Charset.forName("UTF-8")));
 
 			while ((line = buffer.readLine()) != null) {
 
@@ -249,8 +246,8 @@ public class LocationModel extends BaseModel {
 
 		try {
 
-			buffer = new BufferedReader(new InputStreamReader(AppUtils.getInputStream(LANGUAGE_CODES_FILE_NAME),
-					Charset.forName("UTF-8")));
+			buffer = new BufferedReader(
+					new InputStreamReader(AppUtils.getInputStream(LANGUAGE_CODES_FILE_NAME), Charset.forName("UTF-8")));
 
 			while ((line = buffer.readLine()) != null) {
 
@@ -292,6 +289,18 @@ public class LocationModel extends BaseModel {
 	@ModelMethod(functionality = Functionality.GET_LOCATION_DATA)
 	public static String getCountryName(String countryCode) {
 		return ((CountryEntity) ofy().load().type(CountryEntity.class).id(countryCode).safe()).getCountryName();
+	}
+
+	@Unexposed
+	@ModelMethod(functionality = Functionality.GET_LOCATION_DATA)
+	public static Map<String, String> getCountryNames(List<String> countryCodes) {
+		Map<String, String> result = new HashMap<>(countryCodes.size());
+
+		ofy().load().type(CountryEntity.class).ids(countryCodes).forEach((k, v) -> {
+			result.put(k, v.getCountryName());
+		});
+
+		return result;
 	}
 
 	@ModelMethod(functionality = Functionality.GET_LOCATION_DATA)

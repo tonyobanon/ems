@@ -15,10 +15,12 @@ function hideSpinner() {
 	 $('.ui.loader').parent().css('visibility', 'hidden');
 }
 
-function removeCookie(key) {
-    var lastyear = new Date();
-    lastyear.setFullYear(lastyear.getFullYear() - 1);
-    document.cookie = key + "=" + "" + "; expires=" + lastyear.toGMTString();
+function removeCookieWithPath(key, path) {
+    document.cookie = key + '=;Version=1;Path=' + (path ? path : '/' ) + ';Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function removeCookie(key, path) {
+    document.cookie = key + '=;path=' + path ? path : '/' + ';expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 function getCookie(key) {

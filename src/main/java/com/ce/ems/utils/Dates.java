@@ -5,12 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.ce.ems.base.core.Exceptions;
+import com.ce.ems.base.core.BlockerTodo;
 
-
+@BlockerTodo("Here and global.js, stop using the system's default timezone offset. Instead use platform configured timezone")
 public class Dates {
 	
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
 	public static Date now(){
 		return new Date();
@@ -24,13 +24,12 @@ public class Dates {
 		return format.format(o);
 	}
 
-	public static Date toDate(String o) {
-		try {
+	public static Date toDate(String o) throws ParseException {
 			return format.parse(o);
-		} catch (ParseException e) {
-			Exceptions.throwRuntime(e);
-			return null;
-		}
+	}
+	
+	static {
+		
 	}
 	
 }

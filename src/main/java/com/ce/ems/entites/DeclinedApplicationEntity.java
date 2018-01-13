@@ -11,7 +11,7 @@ public class DeclinedApplicationEntity {
 	@Id Long applicationId;
 
 	Long staffId;
-	String reason;
+	Integer reason;
 
 	Date dateCreated;
 
@@ -33,11 +33,11 @@ public class DeclinedApplicationEntity {
 		return this;
 	}
 
-	public String getReason() {
+	public Integer getReason() {
 		return reason;
 	}
 
-	public DeclinedApplicationEntity setReason(String reason) {
+	public DeclinedApplicationEntity setReason(Integer reason) {
 		this.reason = reason;
 		return this;
 	}

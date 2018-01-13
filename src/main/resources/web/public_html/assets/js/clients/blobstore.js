@@ -7,7 +7,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/blobstore/list"
+			 url: "/api/blobstore/list"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -29,7 +29,7 @@
 			 cache : false, 
 			 contentType : 'multipart/form-data', 
 			 data : formData, 
-			 url:  " /api/blobstore/save"
+			 url: "/api/blobstore/save"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -48,7 +48,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/blobstore/delete?blobId=" + blobId
+			 url: "/api/blobstore/delete?blobId=" + blobId
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

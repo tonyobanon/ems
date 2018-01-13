@@ -7,6 +7,7 @@ import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.Semester;
 import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
+import com.ce.ems.base.classes.spec.ScoreSheet;
 import com.ce.ems.base.core.GsonFactory;
 import com.ce.ems.models.CalculationModel;
 import com.kylantis.eaa.core.fusion.BaseService;
@@ -36,7 +37,7 @@ public class CalculationService extends BaseService {
 	}
 	
 	@EndpointMethod(uri = "/is-semester-course-sheet-created", requestParams = {"courseCode"},
-			functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
+			functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
 	public void isSemesterCourseSheetCreated (RoutingContext ctx) {
 		
 		Long principal = FusionHelper.getUserId(ctx.request());
@@ -46,45 +47,97 @@ public class CalculationService extends BaseService {
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
 	
-	@EndpointMethod(uri = "/create-course-sheet", bodyParams = {"courseCode"}, method = HttpMethod.PUT,
-			functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
-	public void createScoreSheet (RoutingContext ctx) {
-		
-		JsonObject body = ctx.getBodyAsJson();
-		
-		Long principal = FusionHelper.getUserId(ctx.request());	
-		String courseCode = body.getString("courseCode");
-		
-		Long result = CalculationModel.createScoreSheet(principal, courseCode);
-		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
-	}
-
-	@EndpointMethod(uri = "/update-course-sheet", bodyParams = {"academicSemesterCourseId", "updates"}, method = HttpMethod.PUT,
-			functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
-	public void updateScoreSheet (RoutingContext ctx) {
+	@EndpointMethod(uri = "/create-score-sheet", bodyParams = {"academicSemesterCourseId"}, method = HttpMethod.PUT,
+			functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	public void createScoreSheet (RoutingContext ctx) { 
 		
 		JsonObject body = ctx.getBodyAsJson();
 		
 		Long principal = FusionHelper.getUserId(ctx.request());	
 		Long academicSemesterCourseId = Long.parseLong(body.getString("academicSemesterCourseId"));
+		
+		Long result = CalculationModel.createScoreSheet(principal, academicSemesterCourseId);
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
+	}
+
+	@EndpointMethod(uri = "/get-score-sheet", requestParams = {"courseCode", "academicSemesterId"},
+			functionality = Functionality.VIEW_COURSE_SCORE_SHEET)
+	public void getScoreSheet(RoutingContext ctx) {
+		 
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		String courseCode = ctx.request().getParam("courseCode");
+		String academicSemesterId = ctx.request().getParam("academicSemesterId");
+	
+		ScoreSheet result = CalculationModel.getScoreSheet(principal, courseCode, !academicSemesterId.equals("undefined")
+				? Long.parseLong(academicSemesterId) : null);
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
+	}
+	
+	@EndpointMethod(uri = "/get-score-sheet-with-id", requestParams = {"academicSemesterCourseId"},
+			functionality = Functionality.VIEW_COURSE_SCORE_SHEET)
+	public void getScoreSheetWithId(RoutingContext ctx) { 
+		
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		Long academicSemesterCourseId = Long.parseLong(ctx.request().getParam("academicSemesterCourseId"));
+	
+		ScoreSheet result = CalculationModel.getScoreSheet(principal, academicSemesterCourseId, null);
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
+	} 
+	 
+	@EndpointMethod(uri = "/update-score-sheet", bodyParams = {"academicSemesterCourseId", "updates"}, method = HttpMethod.PUT,
+			functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	public void updateScoreSheet (RoutingContext ctx) {
+		
+		JsonObject body = ctx.getBodyAsJson();
+		
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		Long academicSemesterCourseId = body.getLong("academicSemesterCourseId");
 		Map<String, Object> updates = body.getJsonObject("updates").getMap();
 		
-		Map<Long, List<Short>> scores = new FluentHashMap<>();
+		Map<Long, List<Integer>> scores = new FluentHashMap<>();
 		updates.forEach((k,v) -> {
-			scores.put(Long.parseLong(k), (List<Short>) v);
+			scores.put(Long.parseLong(k), (List<Integer>) v);
 		});
 		
 		List<Long> result = CalculationModel.updateScoreSheet(principal, academicSemesterCourseId, scores);
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
 	
-	@EndpointMethod(uri = "/get-level-assessment-totals", requestParams = {"departmentLevel"},
+	@EndpointMethod(uri = "/submit-score-sheet", bodyParams = {"academicSemesterCourseId"}, method = HttpMethod.PUT,
+			functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	public void submitScoreSheet (RoutingContext ctx) {
+		
+		JsonObject body = ctx.getBodyAsJson();
+		
+		Long principal = FusionHelper.getUserId(ctx.request());	
+		
+		Long academicSemesterCourseId = Long.parseLong(body.getString("academicSemesterCourseId"));
+		
+		CalculationModel.submitScoreSheet(principal, academicSemesterCourseId);
+	}
+	
+	@EndpointMethod(uri = "/get-level-semester", requestParams = {"departmentLevelId", "semester"},
+			functionality = Functionality.LIST_LEVEL_SEMESTERS)
+	public void getLevelSemester(RoutingContext ctx) {
+		
+		Long departmentLevelId = Long.parseLong(ctx.request().getParam("departmentLevelId"));
+		Semester semester = Semester.from(Integer.parseInt(ctx.request().getParam("semester")));
+		
+		Long result = CalculationModel.getLevelSemester(departmentLevelId, semester);
+		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
+	}
+	
+	@EndpointMethod(uri = "/get-level-assessment-totals", requestParams = {"departmentLevelId", "levelSemesterId"},
 			functionality = Functionality.VIEW_ASSESSMENT_TOTALS)
 	public void getLevelAssessmentTotals(RoutingContext ctx) {
 		
-		Long departmentLevel = Long.parseLong(ctx.request().getParam("departmentLevel"));
+		Long departmentLevelId = Long.parseLong(ctx.request().getParam("departmentLevelId"));
+		Long levelSemesterId = Long.parseLong(ctx.request().getParam("levelSemesterId"));
 		
-		Map<Semester, List<AssessmentTotalSpec>> result = CalculationModel.getAssessmentTotalsForLevel(departmentLevel);
+		List<AssessmentTotalSpec> result = CalculationModel.getAssessmentTotalsForLevel(departmentLevelId, levelSemesterId);
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
 	
@@ -94,9 +147,10 @@ public class CalculationService extends BaseService {
 		
 		JsonObject body = ctx.getBodyAsJson();
 		
+		Long principal = FusionHelper.getUserId(ctx.request());	
 		AssessmentTotalSpec spec = GsonFactory.newInstance().fromJson(body.getString("spec"), AssessmentTotalSpec.class);
 		
-		Long result = CalculationModel.newAssessmentTotal(spec);
+		Long result = CalculationModel.newAssessmentTotal(principal, spec);
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true).end();
 	}
 	
@@ -106,9 +160,10 @@ public class CalculationService extends BaseService {
 		
 		JsonObject body = ctx.getBodyAsJson();
 		
+		Long principal = FusionHelper.getUserId(ctx.request());	
 		Long totalId = body.getLong("totalId");
 		
-		CalculationModel.deleteAssessmentTotal(totalId);
+		CalculationModel.deleteAssessmentTotal(principal, totalId);
 	}
 
 }

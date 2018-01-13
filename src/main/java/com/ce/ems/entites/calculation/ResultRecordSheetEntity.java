@@ -15,8 +15,9 @@ public class ResultRecordSheetEntity {
 	Long id;
 	@Index
 	String academicSemesterCourseId;
-	Long studentId;
-	List<Short> scores;
+	@Index
+	String studentId;
+	List<Integer> scores;
 	Short total;
 	Date lastUpdated;
 	Long lastUpdatedBy;
@@ -44,19 +45,19 @@ public class ResultRecordSheetEntity {
 	}
 
 	public Long getStudentId() {
-		return studentId;
+		return Long.parseLong(studentId);
 	}
 
 	public ResultRecordSheetEntity setStudentId(Long studentId) {
-		this.studentId = studentId;
+		this.studentId = studentId.toString();
 		return this;
 	}
 
-	public List<Short> getScores() {
+	public List<Integer> getScores() {
 		return scores;
 	}
 
-	public ResultRecordSheetEntity setScores(List<Short> scores) {
+	public ResultRecordSheetEntity setScores(List<Integer> scores) {
 		this.scores = scores;
 		return this;
 	}

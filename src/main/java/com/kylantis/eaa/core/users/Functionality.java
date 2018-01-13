@@ -2,7 +2,6 @@ package com.kylantis.eaa.core.users;
 
 public enum Functionality {
 	
-	
 	/* No Auth */
 	
 	// Forms Module ..
@@ -18,6 +17,7 @@ public enum Functionality {
 	LIST_FACULTY_NAMES(-40, "List facultites "),
 	LIST_DEPARTMENT_NAMES(-50, "List deoartment names"),
 	LIST_DEPARTMENT_LEVELS(-60, "List department levels"),
+	LIST_LEVEL_SEMESTERS(-61, "List level semesters"),
 	LIST_ACADEMIC_SEMESTER(-70, "List academic semesters"),
 	LIST_ROLE_REALMS(-80, "List role realms"),
 	
@@ -39,6 +39,9 @@ public enum Functionality {
 	
 	PLATFORM_INSTALLATION(-150, "Install platform"),
 	
+	GET_AVAILABLE_COUNTRIES(-160, "Get available countries"),
+	GET_RESOURCE_BUNDLE_ENTRIES(-170, "Get resource bundle entries"),
+	
 	
 	
 	
@@ -53,6 +56,9 @@ public enum Functionality {
 	COURSE_SEARCH(20, "Search course", false),
 
 	GET_PERSON_NAMES(80, "Get person names", false),
+	
+	GET_REALM_FUNCTIONALITIES(101, "Get realm functionalities", false),
+	GET_ROLE_FUNCTIONALITIES(102, "Get role functionalities", false),
 		
 	
 	
@@ -83,7 +89,7 @@ public enum Functionality {
 	VIEW_SYSTEM_CONFIGURATION(111, "View system configuration"),
 	UPDATE_SYSTEM_CONFIGURATION(110, "Update system configuration"),
 	
-	VIEW_DASHBOARD(120, "View dashboard"),
+	VIEW_SYSTEM_MTERICS(120, "View system metrics"),
 	
 	
 	// Directory Module
@@ -114,14 +120,20 @@ public enum Functionality {
 	
 	
 	// Calculation Module
-	
-	MANAGE_COURSE_RESULT_SHEET(270, "Manage course result sheet"),
+	VIEW_COURSE_SCORE_SHEET(268, "View course result sheet"),
+	MANAGE_COURSE_SCORE_SHEET(270, "Manage course result sheet"),
+	VIEW_ALL_SEMESTER_COURSES(272, "View all semester courses"),
 	
 	VIEW_ASSESSMENT_TOTALS(280, "View assessment totals"),
 	MANAGE_ASSESSMENT_TOTALS(290, "Manage assessment totals"),
 	
 	VIEW_SEMESTER_COURSE_RESULT(300, "View course results"),
-	VIEW_SEMESTER_STUDENT_RESULT(310, "View students result");
+	VIEW_STUDENT_SEMESTER_RESULT(310, "View students result"),
+	
+	VIEW_SCORE_GRADES(320, "View score grades"),
+	MANAGE_SCORE_GRADES(330, "Manage score grades"),
+	  
+	MANAGE_ACTIVITY_STREAM(340, "Manage activity Stream"); 
 	
 	private final int id;
 	private final String name;
@@ -134,7 +146,7 @@ public enum Functionality {
 	private Functionality(int id, String name, boolean isVisible) {
 		this.id = id;
 		this.name = name;
-		this.isVisible = false;
+		this.isVisible = isVisible;
 	}
 
 	public static Functionality from(Integer value) {
@@ -157,6 +169,8 @@ public enum Functionality {
 			return Functionality.LIST_DEPARTMENT_NAMES;
 		case -60:
 			return Functionality.LIST_DEPARTMENT_LEVELS;
+		case -61:
+			return Functionality.LIST_LEVEL_SEMESTERS;
 		case -70:
 			return Functionality.LIST_ACADEMIC_SEMESTER;
 		case -80:
@@ -180,6 +194,12 @@ public enum Functionality {
 			return Functionality.GET_BINARY_DATA;
 		case -140:
 			return Functionality.SAVE_BINARY_DATA;
+		case -150:
+			return Functionality.PLATFORM_INSTALLATION;
+		case -160:
+			return Functionality.GET_AVAILABLE_COUNTRIES;
+		case -170:
+			return Functionality.GET_RESOURCE_BUNDLE_ENTRIES;
 			
 			
 			
@@ -209,6 +229,10 @@ public enum Functionality {
 			return Functionality.MANAGE_BINARY_DATA;
 		case 100:
 			return Functionality.MANAGE_ROLES;
+		case 101:
+			return Functionality.GET_REALM_FUNCTIONALITIES;
+		case 102:
+			return Functionality.GET_ROLE_FUNCTIONALITIES;
 			
 		case 105:
 			return Functionality.MANAGE_SYSTEM_CACHES;
@@ -219,7 +243,7 @@ public enum Functionality {
 		case 111:
 			return Functionality.VIEW_SYSTEM_CONFIGURATION;
 		case 120:
-			return Functionality.VIEW_DASHBOARD;
+			return Functionality.VIEW_SYSTEM_MTERICS;
 		case 130:
 			return Functionality.MANAGE_SEMESTER_TIMELINE;
 		case 140:
@@ -248,9 +272,30 @@ public enum Functionality {
 		case 250:
 			return Functionality.VIEW_COURSES;
 		case 260:
-			return Functionality.REGISTER_STUDENT_COURSES;
-			
+			return Functionality.REGISTER_STUDENT_COURSES;			
 	
+			
+		case 268:
+			return Functionality.VIEW_COURSE_SCORE_SHEET;
+		case 270:
+			return Functionality.MANAGE_COURSE_SCORE_SHEET;
+		case 272:
+			return Functionality.VIEW_ALL_SEMESTER_COURSES;
+		case 280:
+			return Functionality.VIEW_ASSESSMENT_TOTALS;
+		case 290:
+			return Functionality.MANAGE_ASSESSMENT_TOTALS;
+		case 300:
+			return Functionality.VIEW_SEMESTER_COURSE_RESULT;
+		case 310:
+			return Functionality.VIEW_STUDENT_SEMESTER_RESULT;
+		case 320:
+			return Functionality.VIEW_SCORE_GRADES;
+		case 330:
+			return Functionality.MANAGE_SCORE_GRADES;
+		case 340:
+			return Functionality.MANAGE_ACTIVITY_STREAM;
+									
 		default:
 			throw new IllegalArgumentException("An invalid value was provided");
 		}

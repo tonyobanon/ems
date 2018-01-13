@@ -9,7 +9,7 @@
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
 			 data : JSON.stringify({roleName: roleName, realm: realm}), 
-			 url:  " /api/roles/new-role"
+			 url: "/api/roles/new-role"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -28,7 +28,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/role?roleName=" + roleName
+			 url: "/api/roles/role?roleName=" + roleName
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -47,7 +47,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/list?realm=" + realm
+			 url: "/api/roles/list?realm=" + realm
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -68,7 +68,7 @@
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
 			 data : JSON.stringify({roleNames: roleNames}), 
-			 url:  " /api/roles/user-count"
+			 url: "/api/roles/user-count"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -87,7 +87,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/realms"
+			 url: "/api/roles/realms"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -106,7 +106,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/realm-functionalities?realm=" + realm
+			 url: "/api/roles/realm-functionalities?realm=" + realm
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -125,7 +125,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/functionalities?roleName=" + roleName
+			 url: "/api/roles/functionalities?roleName=" + roleName
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -146,7 +146,7 @@
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
 			 data : JSON.stringify({roleName: roleName, functionality: functionality, action: action}), 
-			 url:  " /api/roles/update-spec"
+			 url: "/api/roles/update-spec"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -165,7 +165,7 @@
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url:  " /api/roles/default-role?realm=" + realm
+			 url: "/api/roles/default-role?realm=" + realm
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

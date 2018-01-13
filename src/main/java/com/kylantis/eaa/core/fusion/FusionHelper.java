@@ -10,6 +10,7 @@ import com.kylantis.eaa.core.keys.CacheKeys;
 
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
+import io.vertx.ext.web.RoutingContext;
 
 public class FusionHelper {
 
@@ -23,11 +24,13 @@ public class FusionHelper {
 	}
 
 	public static Long getUserId(HttpServerRequest req) {
-		return Long.parseLong(req.getParam(APIRoutes.USER_ID_PARAM_NAME));
+		String userId = req.getParam(APIRoutes.USER_ID_PARAM_NAME);
+		return userId != null ? Long.parseLong(userId): null;
 	}
 	
 	public static void setUserId(HttpServerRequest req, Long userId) {
 		req.params().add(APIRoutes.USER_ID_PARAM_NAME, userId.toString());
+		
 	}
 
 	public static List<String> getRoles(Long userId) {
@@ -36,6 +39,35 @@ public class FusionHelper {
 
 	public static final String sessionTokenName() {
 		return "X-Session-Token";
+	}
+	  
+	public static List<Integer> functionalities(RoutingContext ctx) {
+
+		// Get sessionToken from either a cookie or request header
+		String sessionToken;
+		try {
+			sessionToken = ctx.getCookie(FusionHelper.sessionTokenName()).getValue();
+		} catch (NullPointerException e) {
+			sessionToken = ctx.request().getHeader(FusionHelper.sessionTokenName());
+		}
+
+		Long userId = FusionHelper.getUserIdFromToken(sessionToken);
+		
+		String roleName = FusionHelper.getRoles(userId).get(0);
+		
+		// Check that this role has the right to view this page
+
+		List<Integer> functionalities = FusionHelper.getCachedFunctionalities(roleName);
+
+		if (functionalities == null) {
+
+			functionalities = FusionHelper.getFunctionalities(roleName);
+
+			// Cache role functionalities
+			FusionHelper.cacheFunctionalities(roleName, functionalities);
+		}
+
+		return functionalities;
 	}
 	
 	public static boolean isAccessAllowed(String roleName, Integer functionalityId) {

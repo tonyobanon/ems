@@ -10,6 +10,7 @@ public class StudentEntity {
 	String matricNumber;
 	Long departmentLevel;
 	String jambRegNo;
+	Double cgpa;
 
 	public Long getId() {
 		return id;
@@ -47,4 +48,12 @@ public class StudentEntity {
 		return this;
 	}
 
+	public Double getCgpa() {
+		return cgpa;
+	}
+
+	public StudentEntity setCgpa(Double cgpa) {
+		this.cgpa = cgpa;
+		return this;
+	}
 }

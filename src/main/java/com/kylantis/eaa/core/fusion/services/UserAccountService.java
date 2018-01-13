@@ -39,8 +39,8 @@ public class UserAccountService extends BaseService {
 			Long userId = BaseUserModel.loginByPhone(phone, pass);
 			String sessionToken = Utils.newRandom();
 
-			loginUser(userId, sessionToken, ctx.request().remoteAddress().host(), rem.equals("true") ? CacheValues.SESSION_TOKEN_LONG_EXPIRY_IN_SECS
-					: CacheValues.SESSION_TOKEN_SHORT_EXPIRY_IN_SECS);
+			loginUser(userId, sessionToken, ctx.request().remoteAddress().host(), rem.equals("true") ? CacheValues.SESSION_TOKEN_COOKIE_LONG_EXPIRY_IN_SECS
+					: CacheValues.SESSION_TOKEN_COOKIE_SHORT_EXPIRY_IN_SECS);
 
 			if (returnUrl.equals("null")) {
 				returnUrl = WebRoutes.DEFAULT_CONSOLE_URI;
@@ -48,12 +48,12 @@ public class UserAccountService extends BaseService {
 
 			Cookie cookie = new CookieImpl(FusionHelper.sessionTokenName(), sessionToken).setPath("/");
 			
-			cookie.setMaxAge(rem.equals("true") ? CacheValues.SESSION_TOKEN_LONG_EXPIRY_IN_SECS : CacheValues.SESSION_TOKEN_SHORT_EXPIRY_IN_SECS);
+			cookie.setMaxAge(rem.equals("true") ? CacheValues.SESSION_TOKEN_COOKIE_LONG_EXPIRY_IN_SECS : CacheValues.SESSION_TOKEN_COOKIE_SHORT_EXPIRY_IN_SECS);
 			
 			ctx.addCookie(cookie);
 
 			ctx.response().setStatusCode(HttpServletResponse.SC_FOUND);
-			ctx.response().putHeader("X-Location", returnUrl);
+			ctx.response().putHeader(getLocationHeader(), returnUrl);
 			
 		} catch (SystemValidationException e) {
 			ctx.response().setStatusCode(HttpServletResponse.SC_UNAUTHORIZED);
@@ -70,12 +70,13 @@ public class UserAccountService extends BaseService {
 		String rem = ctx.request().getHeader("rem");
 
 		String returnUrl = ctx.request().getParam("returnUrl");
+		
 		try {
 			Long userId = BaseUserModel.loginByEmail(email, pass);
 			String sessionToken = Utils.newRandom();
 
-			loginUser(userId, sessionToken, ctx.request().remoteAddress().host(), rem.equals("true") ? CacheValues.SESSION_TOKEN_LONG_EXPIRY_IN_SECS
-					: CacheValues.SESSION_TOKEN_SHORT_EXPIRY_IN_SECS);
+			loginUser(userId, sessionToken, ctx.request().remoteAddress().host(), rem.equals("true") ? CacheValues.SESSION_TOKEN_COOKIE_LONG_EXPIRY_IN_SECS
+					: CacheValues.SESSION_TOKEN_COOKIE_SHORT_EXPIRY_IN_SECS);
 
 			if (returnUrl.equals("null")) {
 				returnUrl = WebRoutes.DEFAULT_CONSOLE_URI;
@@ -83,12 +84,12 @@ public class UserAccountService extends BaseService {
 
 			Cookie cookie = new CookieImpl(FusionHelper.sessionTokenName(), sessionToken).setPath("/");
 
-			cookie.setMaxAge(rem.equals("true") ? CacheValues.SESSION_TOKEN_LONG_EXPIRY_IN_SECS : CacheValues.SESSION_TOKEN_SHORT_EXPIRY_IN_SECS);
+			cookie.setMaxAge(rem.equals("true") ? CacheValues.SESSION_TOKEN_COOKIE_LONG_EXPIRY_IN_SECS : CacheValues.SESSION_TOKEN_COOKIE_SHORT_EXPIRY_IN_SECS);
 
 			ctx.addCookie(cookie);
 
 			ctx.response().setStatusCode(HttpServletResponse.SC_FOUND);
-			ctx.response().putHeader("X-Location", returnUrl);
+			ctx.response().putHeader(getLocationHeader(), returnUrl);
 			
 		} catch (SystemValidationException e) {
 			ctx.response().setStatusCode(HttpServletResponse.SC_UNAUTHORIZED);

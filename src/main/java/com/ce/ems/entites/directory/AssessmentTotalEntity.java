@@ -64,7 +64,7 @@ public class AssessmentTotalEntity {
 	}
 
 	public Boolean getIsValidated() {
-		return isValidated;
+		return isValidated != null ? isValidated : false;
 	}
 
 	public AssessmentTotalEntity setIsValidated(Boolean isValidated) {

@@ -67,8 +67,8 @@ public enum RoleRealm {
 		case STUDENT:
 			result = studentFunctionalities();
 			break;
-		}
-		return result;
+		} 
+		return result; 
 	}
 	
 	public static List<Integer> adminFunctionalities(){
@@ -79,7 +79,7 @@ public enum RoleRealm {
 			}
 		}
 		return o;
-	}
+	} 
 
 	private static List<Integer> baseUserFunctionalities() {
 		return new FluentArrayList<Integer>()
@@ -88,7 +88,10 @@ public enum RoleRealm {
 			.with(Functionality.GET_SEARCHABLE_LISTS.getId())
 			.with(Functionality.PERFORM_LIST_OPERATION.getId())
 			.with(Functionality.SEARCH_COURSES.getId())
-			.with(Functionality.GET_PERSON_NAMES.getId());
+			.with(Functionality.GET_PERSON_NAMES.getId())
+			.with(Functionality.GET_REALM_FUNCTIONALITIES.getId())
+			.with(Functionality.GET_ROLE_FUNCTIONALITIES.getId())			
+			.with(Functionality.VIEW_SCORE_GRADES.getId());
 	}
 	
 	private static List<Integer> baseStaffFunctionalities() {
@@ -103,7 +106,9 @@ public enum RoleRealm {
 			.with(Functionality.VIEW_FACULTY_PROFILES.getId())
 			.with(Functionality.VIEW_DEPARTMENT_PROFILES.getId())
 			.with(Functionality.VIEW_LECTURER_PROFILES.getId())
-			.with(Functionality.VIEW_STUDENT_PROFILES.getId());
+			.with(Functionality.VIEW_STUDENT_PROFILES.getId())
+
+			.with(Functionality.VIEW_COURSE_SCORE_SHEET.getId());
 	}
 	
 	private static List<Integer> examOfficerFunctionalities() {
@@ -112,8 +117,8 @@ public enum RoleRealm {
 			.withAll(baseStaffFunctionalities())
 			
 			.with(Functionality.MANAGE_COURSES.getId())
-			.with(Functionality.MANAGE_ASSESSMENT_TOTALS.getId());
-			
+			.with(Functionality.MANAGE_ASSESSMENT_TOTALS.getId())
+			.with(Functionality.MANAGE_SCORE_GRADES.getId());
 	}
 	
 	private static List<Integer> hodFunctionalities() {
@@ -122,7 +127,8 @@ public enum RoleRealm {
 				.withAll(examOfficerFunctionalities())
 	
 				.with(Functionality.MANAGE_LECTURER_PROFILES.getId())
-				.with(Functionality.VIEW_SEMESTER_STUDENT_RESULT.getId());
+				.with(Functionality.VIEW_STUDENT_SEMESTER_RESULT.getId());
+				
 	}
 	
 	private static List<Integer> deanFunctionalities() {
@@ -135,9 +141,8 @@ public enum RoleRealm {
 	private static List<Integer> lecturerFunctionalities() {
 		return new FluentArrayList<Integer>()
 				
-				.withAll(baseStaffFunctionalities())
-				
-				.with(Functionality.MANAGE_COURSE_RESULT_SHEET.getId());
+				.withAll(baseStaffFunctionalities())				
+				.with(Functionality.MANAGE_COURSE_SCORE_SHEET.getId());
 	}
 	
 	private static List<Integer> studentFunctionalities(){

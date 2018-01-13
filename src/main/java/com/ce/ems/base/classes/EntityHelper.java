@@ -9,6 +9,7 @@ import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
 import com.ce.ems.base.classes.spec.BlobSpec;
 import com.ce.ems.base.classes.spec.CourseResultReportSpec;
 import com.ce.ems.base.classes.spec.CourseSpec;
+import com.ce.ems.base.classes.spec.DepartmentLevelSpec;
 import com.ce.ems.base.classes.spec.DepartmentSpec;
 import com.ce.ems.base.classes.spec.DepartmentalHeadSpec;
 import com.ce.ems.base.classes.spec.FacultyDeanSpec;
@@ -19,7 +20,7 @@ import com.ce.ems.base.classes.spec.ResultRecordSheetSpec;
 import com.ce.ems.base.classes.spec.StudentResultReportSpec;
 import com.ce.ems.base.classes.spec.StudentSemesterCoursesSpec;
 import com.ce.ems.base.classes.spec.StudentSpec;
-import com.ce.ems.entites.ActivityEntity;
+import com.ce.ems.entites.ActivityStreamEntity;
 import com.ce.ems.entites.BaseUserEntity;
 import com.ce.ems.entites.BlobEntity;
 import com.ce.ems.entites.FormCompositeFieldEntity;
@@ -35,6 +36,7 @@ import com.ce.ems.entites.directory.AssessmentTotalEntity;
 import com.ce.ems.entites.directory.CourseEntity;
 import com.ce.ems.entites.directory.DepartmentEntity;
 import com.ce.ems.entites.directory.DepartmentalHeadEntity;
+import com.ce.ems.entites.directory.DepartmentalLevelEntity;
 import com.ce.ems.entites.directory.FacultyDeanEntity;
 import com.ce.ems.entites.directory.FacultyEntity;
 import com.ce.ems.entites.directory.LecturerEntity;
@@ -202,7 +204,7 @@ public class EntityHelper {
 	public static DepartmentSpec toObjectModel(DepartmentEntity entity) {
 	
 		DepartmentSpec o = new DepartmentSpec()
-				
+				.setId(entity.getId())
 				.setName(entity.getName())
 				.setFaculty(entity.getFaculty())
 				.setHeadOfDepartment(entity.getHeadOfDepartment())
@@ -378,6 +380,7 @@ public class EntityHelper {
 				.setType(spec.getType().getValue())
 				.setPercentile(spec.getPercentile())
 				.setIsValidated(spec.getIsValidated())
+				.setLevelSemester(spec.getLevelSemester())
 				.setDateCreated(new Date());
 		
 		return o;
@@ -400,7 +403,8 @@ public class EntityHelper {
 				.setId(entity.getId())
 				.setMatricNumber(entity.getMatricNumber())
 				.setJambRegNo(entity.getJambRegNo())
-				.setDepartmentLevel(entity.getDepartmentLevel());
+				.setDepartmentLevel(entity.getDepartmentLevel())
+				.setCgpa(entity.getCgpa());
 		return o;
 	}
 	
@@ -515,16 +519,6 @@ public class EntityHelper {
 		return o;
 	}
 	
-	public static StudentSemesterCoursesEntity fromObjectModel(StudentSemesterCoursesSpec spec) {
-
-		StudentSemesterCoursesEntity o = new StudentSemesterCoursesEntity()
-				.setStudentId(spec.getStudentId())
-				.setAcademicSemesterId(spec.getAcademicSemesterId())
-				.setCourses(spec.getCourses())
-				.setDateCreated(new Date());
-		return o;
-	}
-	
 	/////////////////	StudentSemesterCoursesEntity   ///////////////////
 	
 	
@@ -535,29 +529,14 @@ public class EntityHelper {
 	
 		AcademicSemesterCourseSpec o = new AcademicSemesterCourseSpec()
 				.setId(entity.getId())
-				.setAcademicSemesterId(entity.getAcademicSemesterId())
 				.setCourseCode(entity.getCourseCode())
 				.setIsSheetCreated(entity.getIsSheetCreated())
 				.setDateSheetCreated(entity.getDateSheetCreated())
 				.setIsSheetFinal(entity.getIsSheetFinal())
 				.setDateSheetFinal(entity.getDateSheetFinal())
-				.setTotals(entity.getTotals())
-				.setStudents(entity.getStudents());
+				.setStudentCount(entity.getStudents().size())
+				.setDateUpdated(entity.getDateUpdated());				
 										
-		return o;
-	}
-	
-	public static AcademicSemesterCourseEntity fromObjectModel(AcademicSemesterCourseSpec spec) {
-
-		AcademicSemesterCourseEntity o = new AcademicSemesterCourseEntity()
-				.setAcademicSemesterId(spec.getAcademicSemesterId())
-				.setCourseCode(spec.getCourseCode())
-				.setIsSheetCreated(spec.getIsSheetCreated())
-				.setDateSheetCreated(spec.getDateSheetCreated())
-				.setIsSheetFinal(spec.getIsSheetFinal())
-				.setDateSheetFinal(spec.getDateSheetFinal())
-				.setTotals(spec.getTotals())
-				.setStudents(spec.getStudents());
 		return o;
 	}
 	
@@ -683,8 +662,7 @@ public class EntityHelper {
 			.setStudentId(v.getStudentId())
 			.setScores(v.getScores())
 			.setTotal(v.getTotal())
-			.setLastUpdated(v.getLastUpdated())
-			.setLastUpdatedBy(v.getLastUpdatedBy());
+			.setLastUpdated(v.getLastUpdated());
 	
 		return spec;
 	}
@@ -699,29 +677,35 @@ public class EntityHelper {
 
 	/////////////////	ActivityEntity   ///////////////////
 	
-	public static ActivitySpec toObjectModel(ActivityEntity entity) {
+	public static ActivitySpec toObjectModel(ActivityStreamEntity entity) {
 		
+		//Sentence s = GsonFactory.newInstance().fromJson(entity.getActivity(), Sentence.class);
+
 		ActivitySpec o = new ActivitySpec()
 				.setId(entity.getId())
-				.setText(entity.getText())
+				.setHtml(entity.getActivity())
 				.setImage(entity.getImage())
 				.setDate(entity.getDate());
 		
 		return o;
 	}
 	
-	public static ActivityEntity fromObjectModel(ActivitySpec spec) {
+	/////////////////	ActivityEntity   ///////////////////	
+	
+	
 
-		ActivityEntity o = new ActivityEntity()
-				.setId(spec.getId())
-				.setText(spec.getText())
-				.setImage(spec.getImage())
-				.setDate(new Date());
+	/////////////////	DepartmentalLevelEntity   ///////////////////
+	
+	public static DepartmentLevelSpec toObjectModel(DepartmentalLevelEntity entity) {
+		
+		DepartmentLevelSpec o = new DepartmentLevelSpec()
+				.setId(entity.getId())
+				.setLevel(entity.getLevel())
+				.setDepartment(entity.getDepartment());
 		
 		return o;
 	}
 	
-	/////////////////	ActivityEntity   ///////////////////	
-	
+	/////////////////	DepartmentalLevelEntity   ///////////////////	
 	
 }

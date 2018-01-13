@@ -24,25 +24,28 @@ public class FormFieldRepository {
 		
 		FormModel.newSection("Profile Information", FormSectionType.APPLICATION_FORM).forEach((k, v) -> {
 
+			saveFieldId(k, FieldType.IMAGE, FormModel.newSimpleField(v,
+					(SimpleEntry) new SimpleEntry(InputType.IMAGE, "Passport").setSortOrder(1).setIsDefault(true)));
+			
 			saveFieldId(k, FieldType.FIRST_NAME, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "First Name").setSortOrder(1).setIsDefault(true)));
+					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "First Name").setSortOrder(2).setIsDefault(true)));
 
 			saveFieldId(k, FieldType.MIDDLE_NAME, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "Middle Name").setSortOrder(2).setIsDefault(true).setIsRequired(false)));
+					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "Middle Name").setSortOrder(3).setIsDefault(true).setIsRequired(false)));
 
 			saveFieldId(k, FieldType.LAST_NAME, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "Last Name").setSortOrder(3).setIsDefault(true)));
+					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "Last Name").setSortOrder(4).setIsDefault(true)));
 
 			saveFieldId(k, FieldType.GENDER,
 					FormModel.newCompositeField(v,
 							(CompositeEntry) new CompositeEntry("Gender").withItem("Male", Gender.MALE.getValue())
-									.withItem("Female", Gender.FEMALE.getValue()).setSortOrder(4).setIsDefault(true)));
+									.withItem("Female", Gender.FEMALE.getValue()).setSortOrder(5).setIsDefault(true)));
 			
 			saveFieldId(k, FieldType.DATE_OF_BIRTH, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.DATE_OF_BIRTH, "Date Of Birth").setSortOrder(5).setIsDefault(true)));
+					(SimpleEntry) new SimpleEntry(InputType.DATE_OF_BIRTH, "Date Of Birth").setSortOrder(6).setIsDefault(true)));
 			
 			saveFieldId(k, FieldType.EMAIL, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.EMAIL, "Email").setSortOrder(6).setIsDefault(true)));
+					(SimpleEntry) new SimpleEntry(InputType.EMAIL, "Email").setSortOrder(7).setIsDefault(true)));
 		});
 
 		
@@ -216,7 +219,7 @@ public class FormFieldRepository {
 	}
 
 	public enum FieldType {
-		FIRST_NAME, MIDDLE_NAME, LAST_NAME, DATE_OF_BIRTH, GENDER, EMAIL, PHONE_NUMBER, ADDRESS, CITY, STATE, COUNTRY, POSTAL_CODE, MATRIC_NUMBER, LEVEL, JAMB_REG_NO, FACULTY, DEPARTMENT
+		IMAGE, FIRST_NAME, MIDDLE_NAME, LAST_NAME, DATE_OF_BIRTH, GENDER, EMAIL, PHONE_NUMBER, ADDRESS, CITY, STATE, COUNTRY, POSTAL_CODE, MATRIC_NUMBER, LEVEL, JAMB_REG_NO, FACULTY, DEPARTMENT
 	}
 
 }

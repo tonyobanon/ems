@@ -8,7 +8,7 @@ import com.ce.ems.base.core.Exceptions;
 
 public class FrontendObjectMarshaller {
 
-	private static SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	public static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	
 	/* Date */
 	public static String marshal(Date object) {

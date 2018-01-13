@@ -4,9 +4,18 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ce.ems.base.api.event_streams.Article;
+import com.ce.ems.base.api.event_streams.CustomPredicate;
+import com.ce.ems.base.api.event_streams.ObjectEntity;
+import com.ce.ems.base.api.event_streams.ObjectType;
+import com.ce.ems.base.api.event_streams.Preposition;
+import com.ce.ems.base.api.event_streams.Sentence;
+import com.ce.ems.base.api.event_streams.SubjectEntity;
+import com.ce.ems.base.api.event_streams.SubjectType;
 import com.ce.ems.base.classes.AssessmentTotalType;
 import com.ce.ems.base.classes.EntityHelper;
 import com.ce.ems.base.classes.FluentArrayList;
@@ -18,18 +27,22 @@ import com.ce.ems.base.classes.IntegerWrapper;
 import com.ce.ems.base.classes.ListUpdate;
 import com.ce.ems.base.classes.Semester;
 import com.ce.ems.base.classes.SystemErrorCodes;
+import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AcademicSemesterSpec;
 import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
 import com.ce.ems.base.classes.spec.CourseSpec;
+import com.ce.ems.base.classes.spec.DepartmentLevelSpec;
 import com.ce.ems.base.classes.spec.DepartmentSpec;
 import com.ce.ems.base.classes.spec.DepartmentalHeadSpec;
 import com.ce.ems.base.classes.spec.FacultyDeanSpec;
 import com.ce.ems.base.classes.spec.FacultySpec;
 import com.ce.ems.base.classes.spec.LecturerSpec;
 import com.ce.ems.base.classes.spec.StudentSpec;
+import com.ce.ems.base.core.BlockerBlockerTodo;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.ModelMethod;
 import com.ce.ems.base.core.SystemValidationException;
+import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.calculation.AcademicSemesterCourseEntity;
 import com.ce.ems.entites.calculation.StudentSemesterCoursesEntity;
 import com.ce.ems.entites.directory.AcademicSemesterEntity;
@@ -37,6 +50,7 @@ import com.ce.ems.entites.directory.CourseEntity;
 import com.ce.ems.entites.directory.DepartmentEntity;
 import com.ce.ems.entites.directory.DepartmentalHeadEntity;
 import com.ce.ems.entites.directory.DepartmentalLevelEntity;
+import com.ce.ems.entites.directory.DepartmentalLevelStudentsEntity;
 import com.ce.ems.entites.directory.FacultyDeanEntity;
 import com.ce.ems.entites.directory.FacultyEntity;
 import com.ce.ems.entites.directory.LecturerEntity;
@@ -45,47 +59,32 @@ import com.ce.ems.entites.directory.StudentEntity;
 import com.kylantis.eaa.core.fusion.Unexposed;
 import com.kylantis.eaa.core.keys.ConfigKeys;
 import com.kylantis.eaa.core.users.Functionality;
+import com.kylantis.eaa.core.users.RoleRealm;
 
+@BlockerTodo("Add functionality that enable principals to update user department levels. It happens frequently in real life")
 public class DirectoryModel extends BaseModel {
 
 	@Override
 	public String path() {
 		return "core/directory";
 	}
-	
+
 	@Override
 	public void preInstall() {
-
-		// create faculties
-
-		//Logger.info("Creating faculties");
-
-		// long facultyOfScience = createFaculty(new FacultySpec().setName("Faculty of
-		// Science"));
-		// long facultyOfHumanity = createFaculty(new FacultySpec().setName("Faculty of
-		// Humanity"));
-
-		// create department
-		//Logger.info("Creating departments");
-		//createDepartment(new DepartmentSpec());
-
-		// create courses
-		//createCourse(new CourseSpec());
 	}
 
 	@Override
 	public void install(InstallOptions options) {
 
 		// Create new academic semester
-		newAcademicSemester(options.getAcademicSemester());
-
+		newAcademicSemester(-1l, options.getAcademicSemester());
 	}
 
-	@BlockerTodo("On starting new semester, we need to scan all student data, and "
+	@BlockerTodo("Add activity stream. On starting new semester, we need to scan all student data, and "
 			+ "update their levels if applicable")
-
+	@BlockerBlockerTodo("On starting  new semster, all assessment totals need to be updated, i.e isValidated = true")
 	@ModelMethod(functionality = Functionality.MANAGE_SEMESTER_TIMELINE)
-	public static Long newAcademicSemester(AcademicSemesterSpec spec) {
+	public static Long newAcademicSemester(Long principal, AcademicSemesterSpec spec) {
 
 		// create entity
 
@@ -97,27 +96,27 @@ public class DirectoryModel extends BaseModel {
 			// StudentEntity
 			// we need to scan all student data, and update their levels if applicable
 		}
-		
+
 		createAcademicSemesterCourse(e.getId(), listCourseKeys(spec.getValue()));
 
 		ConfigModel.put(ConfigKeys.CURRENT_SEMESTER, e.getId());
-		
+
 		return e.getId();
 	}
-	
+
 	protected static void createAcademicSemesterCourse(Long academicSemesterId, List<String> courses) {
-		
+
 		List<AcademicSemesterCourseEntity> entities = new ArrayList<AcademicSemesterCourseEntity>();
-				
+
 		courses.forEach(course -> {
-			
-			AcademicSemesterCourseEntity o = new AcademicSemesterCourseEntity().setAcademicSemesterId(academicSemesterId)
-					.setCourseCode(course).setIsSheetCreated(false).setIsSheetFinal(false).setTotals(null)
-					.setStudents(new ArrayList<>());
-			
+
+			AcademicSemesterCourseEntity o = new AcademicSemesterCourseEntity()
+					.setAcademicSemesterId(academicSemesterId).setCourseCode(course).setIsSheetCreated(false)
+					.setIsSheetFinal(false).setTotals(null).setStudents(new ArrayList<>()).setDateUpdated(new Date());
+
 			entities.add(o);
 		});
-		
+
 		ofy().save().entities(entities).now();
 	}
 
@@ -125,7 +124,7 @@ public class DirectoryModel extends BaseModel {
 		return Long.parseLong(ConfigModel.get(ConfigKeys.CURRENT_SEMESTER));
 	}
 
-	@BlockerTodo
+	@BlockerTodo("Add activity stream")
 	@ModelMethod(functionality = Functionality.MANAGE_SEMESTER_TIMELINE)
 	public static void endSemester() {
 
@@ -165,7 +164,8 @@ public class DirectoryModel extends BaseModel {
 	}
 
 	@ModelMethod(functionality = Functionality.MANAGE_DEPARTMENTS)
-	public static Long createDepartment(DepartmentSpec spec) {
+	@Todo("Use batch saves in this method. Recursively calling newAssessmentTotal(..) is too expensive")
+	public static Long createDepartment(Long principal, DepartmentSpec spec) {
 
 		DepartmentEntity entity = EntityHelper.fromObjectModel(spec);
 		ofy().save().entity(entity).now();
@@ -176,38 +176,49 @@ public class DirectoryModel extends BaseModel {
 
 		for (int i = 100; i < ((spec.getDuration() * 100) + 1); i += 100) {
 
-			DepartmentalLevelEntity e = new DepartmentalLevelEntity().setDepartment(entity.getId()).setLevel(i)
-					.setStudents(new FluentArrayList<>());
+			DepartmentalLevelEntity e = new DepartmentalLevelEntity().setDepartment(entity.getId()).setLevel(i);
 			ofy().save().entity(e).now();
 
 			levels.add(e.getId());
+
+			DepartmentalLevelStudentsEntity ls = new DepartmentalLevelStudentsEntity().setId(e.getId())
+					.setStudents(new ArrayList<>());
+			ofy().save().entity(ls).now();
 
 			// Save level semesters
 
 			for (Semester semester : Semester.values()) {
 
 				LevelSemesterEntity se = new LevelSemesterEntity().setDepartmentLevel(e.getId())
-						.setSemester(semester.getValue()).setDateCreated(new Date());
+						.setSemester(semester.getValue()).setCourses(new ArrayList<>()).setDateCreated(new Date());
 
-				ofy().save().entity(se);
+				ofy().save().entity(se).now();
 
 				// Save default assessment totals
 
-				CalculationModel.newAssessmentTotal(new AssessmentTotalSpec().setName("CA 1").setPercentile(10)
-						.setType(AssessmentTotalType.ASSESSMENT).setLevelSemester(se.getId()));
+				CalculationModel.newAssessmentTotal(principal, new AssessmentTotalSpec().setName("CA 1")
+						.setPercentile(10).setType(AssessmentTotalType.ASSESSMENT).setLevelSemester(se.getId()));
 
-				CalculationModel.newAssessmentTotal(new AssessmentTotalSpec().setName("CA 2").setPercentile(10)
-						.setType(AssessmentTotalType.ASSESSMENT).setLevelSemester(se.getId()));
+				CalculationModel.newAssessmentTotal(principal, new AssessmentTotalSpec().setName("CA 2")
+						.setPercentile(10).setType(AssessmentTotalType.ASSESSMENT).setLevelSemester(se.getId()));
 
-				CalculationModel.newAssessmentTotal(new AssessmentTotalSpec().setName("Exam").setPercentile(80)
-						.setType(AssessmentTotalType.EXAM).setLevelSemester(se.getId()));
+				CalculationModel.newAssessmentTotal(principal, new AssessmentTotalSpec().setName("Exam")
+						.setPercentile(80).setType(AssessmentTotalType.EXAM).setLevelSemester(se.getId()));
 
 			}
 		}
 
 		entity.setLevels(levels);
 		ofy().save().entity(entity).now();
-		
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.CREATED).setObject(ObjectEntity.get(ObjectType.DEPARTMENT)
+						.setIdentifiers(FluentArrayList.asList(entity.getId())).setName(spec.getName()).addQualifier());
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+
 		return entity.getId();
 	}
 
@@ -217,33 +228,50 @@ public class DirectoryModel extends BaseModel {
 		return EntityHelper.toObjectModel(e);
 	}
 
-	@ModelMethod(functionality = Functionality.LIST_DEPARTMENT_LEVELS)
-	public static Map<Long, Integer> listDepartmentLevels(Long departmentId) {
+	protected static String getDepartmentName(Long id) {
+		DepartmentEntity e = ofy().load().type(DepartmentEntity.class).id(id).safe();
+		return e.getName();
+	}
 
-		Map<Long, Integer> levels = new FluentHashMap<>();
+	@ModelMethod(functionality = Functionality.LIST_DEPARTMENT_LEVELS)
+	public static Map<Long, String> listDepartmentLevels(Long departmentId) {
+
+		Map<Long, String> result = new HashMap<>();
 
 		DepartmentEntity e = ofy().load().type(DepartmentEntity.class).id(departmentId).safe();
-		e.getLevels().forEach(l -> {
-			DepartmentalLevelEntity le = ofy().load().type(DepartmentalLevelEntity.class).id(l).safe();
-			levels.put(le.getId(), le.getLevel());
+		
+		ofy().load().type(DepartmentalLevelEntity.class).ids(e.getLevels()).forEach((k,v) -> {
+			DepartmentLevelSpec spec = EntityHelper.toObjectModel(v);
+			result.put(k, spec.toString());
 		});
-		return levels;
+		
+		return result;
 	}
-	
+
+	protected static Semester getSemester(Long levelSemesterId) {
+		return Semester.from(ofy().load().type(LevelSemesterEntity.class).id(levelSemesterId).safe().getSemester());
+	}
+
+	protected static DepartmentLevelSpec getDepartmentLevel(Long levelSemesterId) {
+		Long departmentLevelId = ofy().load().type(LevelSemesterEntity.class).id(levelSemesterId).safe()
+				.getDepartmentLevel();
+		DepartmentalLevelEntity departmentLevel = ofy().load().type(DepartmentalLevelEntity.class).id(departmentLevelId)
+				.safe();
+		return EntityHelper.toObjectModel(departmentLevel);
+	}
 
 	protected static Long getDepartmentLevel(Long departmentId, Integer level) {
 
 		DepartmentEntity e = ofy().load().type(DepartmentEntity.class).id(departmentId).safe();
-		
-		for(Long l : e.getLevels()){
+
+		for (Long l : e.getLevels()) {
 			DepartmentalLevelEntity le = ofy().load().type(DepartmentalLevelEntity.class).id(l).safe();
-			if(le.getLevel().equals(level)) {
+			if (le.getLevel().equals(level)) {
 				return le.getId();
 			}
 		}
 		return null;
 	}
-
 
 	@ModelMethod(functionality = Functionality.LIST_DEPARTMENT_NAMES)
 	public static Map<Long, String> listDepartmentNames(Long facultyId) {
@@ -274,22 +302,32 @@ public class DirectoryModel extends BaseModel {
 
 	protected static void addStudentToDepartmentLevel(ListUpdate u, Long departmentLevelId, Long studentId) {
 
-		DepartmentalLevelEntity levelEntity = ofy().load().type(DepartmentalLevelEntity.class).id(departmentLevelId)
-				.safe();
+		DepartmentalLevelStudentsEntity e = ofy().load().type(DepartmentalLevelStudentsEntity.class)
+				.id(departmentLevelId).safe();
 
 		if (u.equals(ListUpdate.ADD)) {
-			levelEntity.addStudent(studentId);
+			e.addStudent(studentId);
 		} else {
-			levelEntity.removeStudent(studentId);
+			e.removeStudent(studentId);
 		}
 
-		ofy().save().entity(levelEntity).now();
+		ofy().save().entity(e).now();
 	}
 
 	@ModelMethod(functionality = Functionality.MANAGE_FACULTIES)
-	public static Long createFaculty(FacultySpec spec) {
+	public static Long createFaculty(Long principal, FacultySpec spec) {
+
 		FacultyEntity e = new FacultyEntity().setName(spec.getName());
 		ofy().save().entity(e).now();
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.CREATED).setObject(ObjectEntity.get(ObjectType.FACULTY)
+						.setIdentifiers(FluentArrayList.asList(e.getId())).setName(spec.getName()).addQualifier());
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+
 		return e.getId();
 	}
 
@@ -298,7 +336,7 @@ public class DirectoryModel extends BaseModel {
 		FacultyEntity e = ofy().load().type(FacultyEntity.class).id(id).safe();
 		return EntityHelper.toObjectModel(e);
 	}
-
+	
 	@ModelMethod(functionality = Functionality.VIEW_FACULTY_PROFILES)
 	public static List<FacultySpec> listFaculties() {
 		List<FacultySpec> result = new FluentArrayList<>();
@@ -317,9 +355,10 @@ public class DirectoryModel extends BaseModel {
 		return result;
 	}
 
-	protected static void createStudent(Long id, StudentSpec spec) {
+	@Todo("make method protected")
+	public static void createStudent(Long id, StudentSpec spec) {
 
-		StudentEntity e = EntityHelper.fromObjectModel(spec).setId(id);
+		StudentEntity e = EntityHelper.fromObjectModel(spec).setId(id).setCgpa(0.0d);
 		ofy().save().entity(e).now();
 
 		// increase student count for current level
@@ -327,7 +366,7 @@ public class DirectoryModel extends BaseModel {
 	}
 
 	@Unexposed
-	@BlockerTodo
+	@BlockerTodo("Impl, add to act. stream")
 	@ModelMethod(functionality = Functionality.MANAGE_STUDENT_PROFILES)
 	public static void deleteStudent(Long id) {
 
@@ -344,20 +383,36 @@ public class DirectoryModel extends BaseModel {
 		return EntityHelper.toObjectModel(e);
 	}
 
-	@ModelMethod(functionality = Functionality.VIEW_STUDENT_PROFILES)
-	public static List<Long> getStudents(Long departmentLevelId) {
-		DepartmentalLevelEntity e = ofy().load().type(DepartmentalLevelEntity.class).id(departmentLevelId).safe();
-		return e.getStudents();
+	protected static String getStudentMatricNumber(Long id) {
+		StudentEntity e = ofy().load().type(StudentEntity.class).id(id).safe();
+		return e.getMatricNumber();
 	}
 
-	protected static void createLecturer(Long id, LecturerSpec spec) {
+	@ModelMethod(functionality = Functionality.VIEW_STUDENT_PROFILES)
+	public static List<StudentSpec> getStudents(Long departmentLevelId) {
 
-		LecturerEntity e = EntityHelper.fromObjectModel(spec).setId(id);
+		DepartmentalLevelStudentsEntity e = ofy().load().type(DepartmentalLevelStudentsEntity.class)
+				.id(departmentLevelId).safe();
+
+		List<StudentSpec> result = new ArrayList<>();
+
+		ofy().load().type(StudentEntity.class).ids(e.getStudents()).forEach((k, v) -> {
+			StudentSpec spec = EntityHelper.toObjectModel(v).setName(BaseUserModel.getPersonName(k, true).toString());
+			result.add(spec);
+		});
+
+		return result;
+	}
+
+	@Todo("make method protected")
+	public static void createLecturer(Long id, LecturerSpec spec) {
+
+		LecturerEntity e = EntityHelper.fromObjectModel(spec).setId(id).setCourses(new ArrayList<>());
 		ofy().save().entity(e).now();
 
 		// add to lecturers field in Department
 		DepartmentEntity dpt = ofy().load().type(DepartmentEntity.class).id(spec.getDepartment()).safe()
-				.addLecturer(spec.getId());
+				.addLecturer(e.getId());
 		ofy().save().entity(dpt).now();
 
 		e.getCourses().forEach(c -> {
@@ -372,27 +427,85 @@ public class DirectoryModel extends BaseModel {
 		LecturerEntity e = ofy().load().type(LecturerEntity.class).id(id).safe();
 		return EntityHelper.toObjectModel(e);
 	}
-	
+
 	@ModelMethod(functionality = Functionality.VIEW_LECTURER_PROFILES)
 	public static List<Long> getLecturers(long departmentId) {
 		return ofy().load().type(DepartmentEntity.class).id(departmentId).safe().getLecturers();
 	}
-	
+
+	/**
+	 * This gets the courses that are assigned to the lecturer, applicable to the
+	 * current semester
+	 */
+	@BlockerTodo("See comments in method")
+	@ModelMethod(functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	public static Map<String, AcademicSemesterCourseSpec> getAcademicSemesterCourses(long principal) {
+
+		// boolean canAccessAll =
+		// RoleModel.isAccessAllowed(BaseUserModel.getRole(principal),
+		// Functionality.VIEW_ALL_SEMESTER_COURSES);
+
+		boolean isAdmin = RoleModel.getRealm(BaseUserModel.getRole(principal)).equals(RoleRealm.ADMIN);
+
+		if (isAdmin) {
+			// @BlockerTodo
+			// This should not happen normally. In this case, AcademicSemesterList listable
+			// should be used on the client
+			// This is extremely inappropriate
+			return CalculationModel.getAcademicSemesterCourses(currentSemesterId());
+		} else {
+			LecturerEntity e = ofy().load().type(LecturerEntity.class).id(principal).safe();
+			return CalculationModel.getAcademicSemesterCourses(currentSemesterId(), e.getCourses());
+		}
+	}
+
 	@ModelMethod(functionality = Functionality.MANAGE_LECTURER_PROFILES)
-	public static void addLecturerCourses(long lecturerId, List<String> courses) {
+	public static void addLecturerCourses(Long principal, Long lecturerId, List<String> courses) {
 		LecturerEntity e = ofy().load().type(LecturerEntity.class).id(lecturerId).safe();
 		e.addCourses(courses);
-		ofy().save().entity(e);
+		ofy().save().entity(e).now();
+
+		// Add to activity stream
+
+		courses.forEach(course -> {
+
+			Sentence activity = Sentence.newInstance()
+					.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+					.setPredicate(CustomPredicate.ASSIGNED)
+
+					.setObject(ObjectEntity.get(ObjectType.COURSE).setIdentifiers(FluentArrayList.asList(course))
+							.setName(course))
+					.withPreposition(Preposition.TO,
+							SubjectEntity.get(SubjectType.LECTURER).setIdentifiers(FluentArrayList.asList(lecturerId)));
+
+			ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		});
+
 	}
-	
+
 	@ModelMethod(functionality = Functionality.MANAGE_LECTURER_PROFILES)
-	public static void removeCourses(long lecturerId, String course) {
+	public static void removeCourses(Long principal, Long lecturerId, String course) {
+
 		LecturerEntity e = ofy().load().type(LecturerEntity.class).id(lecturerId).safe();
 		e.removeCourse(course);
-		ofy().save().entity(e);
+		ofy().save().entity(e).now();
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.UNASSIGNED)
+
+				.setObject(ObjectEntity.get(ObjectType.COURSE).setIdentifiers(FluentArrayList.asList(course))
+						.setName(course))
+				.withPreposition(Preposition.FROM,
+						SubjectEntity.get(SubjectType.LECTURER).setIdentifiers(FluentArrayList.asList(lecturerId)));
+
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
 	}
 
 	@Unexposed
+	@Todo("Add act. stream")
 	@ModelMethod(functionality = Functionality.MANAGE_LECTURER_PROFILES)
 	public static void deleteLecturer(long id) {
 
@@ -408,7 +521,8 @@ public class DirectoryModel extends BaseModel {
 
 	}
 
-	protected static void createDepartmentalHead(Long id, DepartmentalHeadSpec spec) {
+	@Todo("make method protected")
+	public static void createDepartmentalHead(Long id, DepartmentalHeadSpec spec) {
 
 		DepartmentEntity dpt = ofy().load().type(DepartmentEntity.class).id(spec.getDepartment()).safe();
 
@@ -426,7 +540,8 @@ public class DirectoryModel extends BaseModel {
 	protected static void appointDepartmentalHead(Long userId, long departmentId) {
 	}
 
-	protected static void createFacultyDean(Long id, FacultyDeanSpec spec) {
+	@Todo("make method protected")
+	public static void createFacultyDean(Long id, FacultyDeanSpec spec) {
 
 		FacultyEntity dpt = ofy().load().type(FacultyEntity.class).id(spec.getFaculty()).safe();
 
@@ -445,27 +560,47 @@ public class DirectoryModel extends BaseModel {
 	}
 
 	@ModelMethod(functionality = Functionality.MANAGE_COURSES)
-	public static void createCourse(CourseSpec spec) {
+	public static void createCourse(Long principal, CourseSpec spec) {
 
 		CourseEntity e = EntityHelper.fromObjectModel(spec);
 		ofy().save().entity(e).now();
 
+		List<LevelSemesterEntity> lse = new ArrayList<>();
+
 		e.getDepartmentLevels().forEach(l -> {
 
-			LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class).filter("departmentLevel = ", l.toString())
-					.filter("semester = ", e.getSemester()).first().safe();
+			LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class)
+					.filter("departmentLevel = ", l.toString()).filter("semester = ", e.getSemester()).first().safe();
 
 			ls.addCourse(e.getCode());
 
-			ofy().save().entity(ls);
+			lse.add(ls);
 		});
-		
+
+		ofy().save().entities(lse).now();
+
 		Long currentSemesterId = currentSemesterId();
-		
-		createAcademicSemesterCourse(currentSemesterId, new FluentArrayList<String>().with(spec.getCode()));
-		
+
+		// Create semester course, if the semester of this course falls under current
+		// academic semester
+		if (getAcademicSemesterValue(currentSemesterId).equals(spec.getSemester().getValue())) {
+			createAcademicSemesterCourse(currentSemesterId, new FluentArrayList<String>().with(spec.getCode()));
+		}
+
 		// Add to search index
 		SearchModel.addIndexedName(new IndexedNameSpec(e.getCode(), e.getCode(), e.getName()), IndexedNameType.COURSE);
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.CREATED)
+
+				.setObject(ObjectEntity.get(ObjectType.COURSE).setIdentifiers(FluentArrayList.asList(e.getCode()))
+						.setName(spec.getName()).addQualifier());
+
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+
 	}
 
 	@ModelMethod(functionality = Functionality.VIEW_COURSES)
@@ -473,14 +608,12 @@ public class DirectoryModel extends BaseModel {
 		return EntityHelper.toObjectModel(ofy().load().type(CourseEntity.class).id(courseCode).safe());
 	}
 
-	protected static Short getCourseUnitLoad(String courseCode) {
-		return EntityHelper.toObjectModel(ofy().load().type(CourseEntity.class).id(courseCode).safe()).getPoint();
+	public static String getCourseName(String courseCode) {
+		return EntityHelper.toObjectModel(ofy().load().type(CourseEntity.class).id(courseCode).safe()).getName();
 	}
 
-	protected static Long getCourseLevelSemester(String courseCode) {
-		// Because a course may be associated with multiple department levels, the entry
-		// @ index 0 is used as the default
-		return getCourse(courseCode).getDepartmentLevels().get(0);
+	protected static Short getCourseUnitLoad(String courseCode) {
+		return EntityHelper.toObjectModel(ofy().load().type(CourseEntity.class).id(courseCode).safe()).getPoint();
 	}
 
 	public static Boolean isCourseLecturer(Long principal, String courseCode) {
@@ -492,9 +625,10 @@ public class DirectoryModel extends BaseModel {
 
 		ofy().load().type(LevelSemesterEntity.class).filter("semester = ", semester.getValue()).forEach(ls -> {
 			ls.getCourses().forEach(c -> {
-				result.add(DirectoryModel.getCourse(c).getCode());
+				result.add(c);
 			});
 		});
+
 		return result;
 	}
 
@@ -503,14 +637,14 @@ public class DirectoryModel extends BaseModel {
 		List<CourseSpec> result = new FluentArrayList<>();
 
 		LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class)
-				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", semester.getValue()).first().safe();
+				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", semester.getValue())
+				.first().safe();
 
 		ls.getCourses().forEach(c -> {
 			result.add(DirectoryModel.getCourse(c));
 		});
 
-		return new FluentHashMap<Semester, List<CourseSpec>>()
-				.with(semester, result);
+		return new FluentHashMap<Semester, List<CourseSpec>>().with(semester, result);
 	}
 
 	@ModelMethod(functionality = Functionality.VIEW_COURSES)
@@ -523,7 +657,8 @@ public class DirectoryModel extends BaseModel {
 			List<CourseSpec> courses = new FluentArrayList<>();
 
 			LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class)
-					.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", s.getValue()).first().safe();
+					.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", s.getValue())
+					.first().safe();
 
 			ls.getCourses().forEach(c -> {
 				courses.add(DirectoryModel.getCourse(c));
@@ -535,7 +670,7 @@ public class DirectoryModel extends BaseModel {
 		return result;
 	}
 
-	//Not really needed
+	// Not really needed
 	@Unexposed
 	@ModelMethod(functionality = Functionality.VIEW_COURSES)
 	public static List<CourseSpec> listSemesterCoursesForLevel(Long departmentLevel, Long academicSemesterId) {
@@ -545,7 +680,8 @@ public class DirectoryModel extends BaseModel {
 		Integer semester = getAcademicSemesterValue(academicSemesterId);
 
 		LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class)
-				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", semester).first().safe();
+				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", semester).first()
+				.safe();
 
 		ls.getCourses().forEach(c -> {
 			courses.add(DirectoryModel.getCourse(c));
@@ -554,13 +690,14 @@ public class DirectoryModel extends BaseModel {
 		return courses;
 	}
 
-	protected static List<String> listCourseKeys(Long departmentLevel, long academicSemesterId) {
+	protected static List<String> listCourseKeys(Long departmentLevel, Long academicSemesterId) {
 		List<String> result = new FluentArrayList<>();
 
 		Integer currentSemester = DirectoryModel.getAcademicSemesterValue(academicSemesterId);
 
 		LevelSemesterEntity ls = ofy().load().type(LevelSemesterEntity.class)
-				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", currentSemester).first().safe();
+				.filter("departmentLevel = ", departmentLevel.toString()).filter("semester = ", currentSemester).first()
+				.safe();
 
 		ls.getCourses().forEach(c -> {
 			result.add(c);
@@ -572,13 +709,24 @@ public class DirectoryModel extends BaseModel {
 	@Unexposed
 	@BlockerTodo()
 	@ModelMethod(functionality = Functionality.MANAGE_COURSES)
-	public static void deleteCourse(String courseCode) {
+	public static void deleteCourse(Long principal, String courseCode) {
 
 		// Consolidate
 
 		ofy().delete().type(CourseEntity.class).id(courseCode).now();
-		
+
 		SearchModel.removeIndexedName(courseCode, IndexedNameType.COURSE);
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.DELETED)
+
+				.setObject(ObjectEntity.get(ObjectType.COURSE).setIdentifiers(FluentArrayList.asList(courseCode))
+						.setName(getCourseName(courseCode)));
+
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
 	}
 
 	/**
@@ -589,21 +737,31 @@ public class DirectoryModel extends BaseModel {
 
 		Long currentSemesterId = DirectoryModel.currentSemesterId();
 		Semester currentSemester = Semester.from(DirectoryModel.getAcademicSemesterValue(currentSemesterId));
-		
+
 		long departmentLevel = ofy().load().type(StudentEntity.class).id(studentId).safe().getDepartmentLevel();
 
 		return listCoursesForSemesterLevel(departmentLevel, currentSemester).get(currentSemester);
 	}
 
 	@ModelMethod(functionality = Functionality.REGISTER_STUDENT_COURSES)
+	@BlockerTodo("Here, Verify that for course in <courses>, it is valid for user's department")
 	public static void registerStudentCourses(Long studentId, List<String> courses) {
 
+		// First, verify that student has not registered his semester courses yet
+		if (ofy().load().type(StudentSemesterCoursesEntity.class).filter("studentId", studentId.toString()).chunkAll()
+				.count() > 0) {
+			throw new SystemValidationException(SystemErrorCodes.STUDENT_ALREADY_REGISTERED_COURSES_FOR_THIS_SEMESTER);
+		}
+
+		// Then, Verify that for course in <courses>, it is valid for user's department
+
 		Long currentSemesterId = DirectoryModel.currentSemesterId();
+
 		long departmentLevel = ofy().load().type(StudentEntity.class).id(studentId).safe().getDepartmentLevel();
 
 		List<String> levelCourses = listCourseKeys(departmentLevel, currentSemesterId);
 
-		List<String> carryoverCourses = courses;
+		List<String> carryoverCourses = new ArrayList<>(courses);
 		carryoverCourses.removeIf(s -> {
 			return levelCourses.contains(s);
 		});
@@ -627,31 +785,50 @@ public class DirectoryModel extends BaseModel {
 
 		courses.forEach(c -> {
 
-			// verify that score sheets has not yet been created for these courses
+			// verify that score sheets has not yet been created for this course
 
 			if (CalculationModel.isSemesterCourseSheetCreated((long) -1, c)) {
 				throw new SystemValidationException(SystemErrorCodes.COURSE_RESULT_SHEET_ALREADY_EXISTS, c);
 			}
 		});
 
+		List<AcademicSemesterCourseEntity> se = new ArrayList<>();
+
 		courses.forEach(c -> {
 
 			AcademicSemesterCourseEntity e = ofy().load().type(AcademicSemesterCourseEntity.class)
-					.filter("academicSemesterId = ", currentSemesterId().toString()).filter("courseCode = ", c).first().safe();
+					.filter("academicSemesterId = ", currentSemesterId().toString()).filter("courseCode = ", c).first()
+					.safe();
 
 			e.addStudent(studentId);
+			se.add(e);
+		});
 
-			ofy().save().entity(e);
+		ofy().save().entities(se).now();
 
+		Map<String, Short> finalCourses = new HashMap<>();
+
+		courses.forEach(c -> {
+			finalCourses.put(c, (short) 0);
 		});
 
 		StudentSemesterCoursesEntity e = new StudentSemesterCoursesEntity().setStudentId(studentId)
-				.setAcademicSemesterId(currentSemesterId()).setCourses(courses).setDateCreated(new Date());
+				.setAcademicSemesterId(currentSemesterId()).setCourses(finalCourses).setDateCreated(new Date());
 
-		ofy().save().entity(e);
+		ofy().save().entity(e).now();
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.STUDENT).setIdentifiers(FluentArrayList.asList(studentId)))
+				.setPredicate(CustomPredicate.REGISTERED).setObject(ObjectEntity.get(ObjectType.SEMESTER_COURSES)
+						.setArticle(BaseUserModel.isMaleUser(studentId) ? Article.HIS : Article.HER));
+
+		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(studentId), activity);
 	}
 
 	public static String getCourseCode(Long academicSemesterCourseId) {
-		return ofy().load().type(AcademicSemesterCourseEntity.class).id(academicSemesterCourseId.toString()).safe().getCourseCode();
+		return ofy().load().type(AcademicSemesterCourseEntity.class).id(academicSemesterCourseId.toString()).safe()
+				.getCourseCode();
 	}
 }

@@ -18,7 +18,7 @@ public enum SystemErrorCodes {
 	RESULT_SHEET_ALREADY_CREATED_FOR_ASSESSMENT_TOTAL(109, "At least one result sheet has already been created based on the assessment total"),
 	STUDENT_SCORE_EXCEEDS_RESULT_SHEET_TOTAL(110, "Student score exceeds result sheet total"),
 	INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET(111, "You have insuffiecient permission for creating result sheet for this course"),
-	
+	COURSE_RESULT_SHEET_ALREADY_SUBMITTED(130, "Course result sheet has already been submitted"),
 	
 	
 	// Directory Module
@@ -26,6 +26,8 @@ public enum SystemErrorCodes {
 	DEPARTMENTAL_HEAD_ALREADY_EXISTS(200, "A departmental head already exists"),
 	DEPARTMENTAL_HEAD_NOT_FOUND(201, "Departmental head was not found"),
 	FACULTY_DEAN_ALREADY_EXISTS(202, "A faculty dean already exists"),
+	COURSE_CANNOT_BE_REGISTERED_FOR_THE_CURRENT_SEMESTER(203, "Course cannot be registered for this semster."),
+	STUDENT_ALREADY_REGISTERED_COURSES_FOR_THIS_SEMESTER(210, "Your courses have already been registered for this semster"),
 	
 	
 	
@@ -94,6 +96,9 @@ public enum SystemErrorCodes {
 		case 111:
 			return SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET;
 			
+		case 130:
+			return SystemErrorCodes.COURSE_RESULT_SHEET_ALREADY_SUBMITTED;
+			
 			
 			
 			
@@ -105,6 +110,12 @@ public enum SystemErrorCodes {
 			
 		case 202:
 			return SystemErrorCodes.FACULTY_DEAN_ALREADY_EXISTS;
+			
+		case 203:
+			return SystemErrorCodes.COURSE_CANNOT_BE_REGISTERED_FOR_THE_CURRENT_SEMESTER;
+			
+		case 210:
+			return SystemErrorCodes.STUDENT_ALREADY_REGISTERED_COURSES_FOR_THIS_SEMESTER;
 			
 			
 			

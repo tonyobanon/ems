@@ -2,13 +2,10 @@ package com.ce.ems.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.Locale;
-
 import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.ConfigEntity;
-import com.ce.ems.utils.LocaleUtils;
 import com.googlecode.objectify.Key;
 import com.kylantis.eaa.core.keys.ConfigKeys;
 
@@ -36,9 +33,6 @@ public class ConfigModel extends BaseModel {
 		ConfigModel.put(ConfigKeys.DEFAULT_CURRENCY, options.getCurrency());
 		ConfigModel.put(ConfigKeys.DEFAULT_TIMEZONE, options.getTimezone());
 		
-		Locale locale = Locale.forLanguageTag(LocaleUtils.buildLocaleString(options.getLanguage(), options.getCountry()));
-		
-		ConfigModel.put(ConfigKeys.DEFAULT_LOCALE, locale.toString());
 	}
 	
 	public static String get(String key) {

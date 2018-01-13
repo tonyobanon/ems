@@ -1,5 +1,6 @@
 package com.ce.ems.utils;
 
+import java.text.ParseException;
 import java.util.Date;
 
 public class BackendObjectMarshaller {
@@ -18,7 +19,7 @@ public class BackendObjectMarshaller {
 		return Dates.toString(object);
 	}
 
-	public static Date unmarshalDate(String object) {
+	public static Date unmarshalDate(String object) throws ParseException {
 		return Dates.toDate(object);
 	}
 

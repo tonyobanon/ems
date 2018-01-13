@@ -3,9 +3,11 @@ package com.ce.ems.base.classes.spec;
 public class StudentSpec {
 
 	private Long id;
+	private String name;
 	private String matricNumber;
 	private Long departmentLevel;
 	private String jambRegNo;
+	private Double cgpa;
 	
 	public Long getId() {
 		return id;
@@ -13,6 +15,15 @@ public class StudentSpec {
 
 	public StudentSpec setId(Long id) {
 		this.id = id;
+		return this;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public StudentSpec setName(String name) {
+		this.name = name;
 		return this;
 	}
 
@@ -40,6 +51,15 @@ public class StudentSpec {
 
 	public StudentSpec setDepartmentLevel(Long departmentLevel) {
 		this.departmentLevel = departmentLevel;
+		return this;
+	}
+
+	public Double getCgpa() {
+		return cgpa;
+	}
+
+	public StudentSpec setCgpa(Double cgpa) {
+		this.cgpa = cgpa;
 		return this;
 	}
 	

@@ -63,7 +63,7 @@ public class ApplicationsList extends Listable<BaseApplicationSpec> {
 	}
 
 	@Override
-	public Class<?> entityClass() {
+	public Class<ApplicationEntity> entityType() {
 		return ApplicationEntity.class;
 	}
 	
@@ -74,6 +74,6 @@ public class ApplicationsList extends Listable<BaseApplicationSpec> {
 
 	@Override
 	public SearchableUISpec searchableUiSpec() {
-		return new SearchableUISpec().setName("Applications").setListingPageUrl("/applications-search");
+		return new SearchableUISpec().setName("applications").setListingPageUrl("/applications-search");
 	}
 }

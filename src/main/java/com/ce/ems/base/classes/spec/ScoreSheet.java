@@ -7,9 +7,10 @@ import com.ce.ems.base.classes.FluentArrayList;
 public class ScoreSheet {
 
 	Long academicSemesterCourseId;
-	List<Integer> totals;
+	List<TotalSpec> totals;
 	List<ResultRecordSheetSpec> resultRecord;
-
+	Boolean isFinal;
+	
 	public ScoreSheet() {
 		this.resultRecord = new FluentArrayList<>();
 	}
@@ -23,11 +24,11 @@ public class ScoreSheet {
 		return this;
 	}
 
-	public List<Integer> getTotals() {
+	public List<TotalSpec> getTotals() {
 		return totals;
 	}
 
-	public ScoreSheet setTotals(List<Integer> totals) {
+	public ScoreSheet setTotals(List<TotalSpec> totals) {
 		this.totals = totals;
 		return this;
 	}
@@ -43,6 +44,15 @@ public class ScoreSheet {
 
 	public ScoreSheet addRecord(ResultRecordSheetSpec record) {
 		this.resultRecord.add(record);
+		return this;
+	}
+
+	public Boolean getIsFinal() {
+		return isFinal;
+	}
+
+	public ScoreSheet setIsFinal(Boolean isFinal) {
+		this.isFinal = isFinal;
 		return this;
 	}
 

@@ -2,12 +2,24 @@ package com.ce.ems.base.classes.spec;
 
 public class DepartmentSpec {
 
+	private Long id;
 	private String name;
 	private Long faculty;
+	private String facultyName;
 	private Long headOfDepartment;
 	private Boolean isAccredited;
 	private Short duration;
 
+
+	public Long getId() {
+		return id;
+	}
+
+	public DepartmentSpec setId(Long id) {
+		this.id = id;
+		return this;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -26,6 +38,15 @@ public class DepartmentSpec {
 		return this;
 	}
 	
+	public String getFacultyName() {
+		return facultyName;
+	}
+
+	public DepartmentSpec setFacultyName(String facultyName) {
+		this.facultyName = facultyName;
+		return this;
+	}
+
 	public Long getHeadOfDepartment() {
 		return headOfDepartment;
 	}
@@ -47,9 +68,9 @@ public class DepartmentSpec {
 	public Short getDuration() {
 		return duration;
 	}
-
-	public DepartmentSpec setDuration(Short duration) {
-		this.duration = duration;
+	
+	public DepartmentSpec setDuration(int duration) {
+		this.duration = (short) duration;
 		return this;
 	}
 

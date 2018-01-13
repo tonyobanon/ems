@@ -1,5 +1,7 @@
 package com.ce.ems.base.core;
 
+import java.io.IOException;
+
 import com.ce.ems.base.classes.ObjectWrapper;
 import com.ce.ems.base.core.Logger.verboseLevel;
 import com.ce.ems.models.BaseModel;
@@ -52,7 +54,11 @@ public class Application {
 		
 		APIRoutes.scanRoutes();
 		
-		WebRoutes.scanRoutes();
+		try {
+			WebRoutes.scanRoutes();
+		} catch (IOException e1) {
+			Exceptions.throwRuntime(e1);
+		}
 
 		BaseModel.scanModels();
 
@@ -140,6 +146,22 @@ public class Application {
 		isStarted = true;
 	}
 
+	public static void stop() {
+		
+		//Stop Vertx
+		
+		if(!Application.isProduction()) {
+
+			WebRoutes.fileWatcherPool.shutdownNow();
+			try {
+				WebRoutes.watchService.close();
+			} catch (IOException e) {
+				Exceptions.throwRuntime(e);
+			}
+		}
+		
+	}
+	
 	public static Boolean isProduction() {
 		return isProduction;
 	}
