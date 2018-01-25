@@ -1,0 +1,47 @@
+<html>
+    <head></head>
+    <body>
+
+
+
+
+        <div id="ce-page-main-container">
+
+            <div id="academic-semesters-container">
+                <div class="row">
+                    <div class="sixteen wide tablet sixteen wide computer column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header ce-translate">
+                                    Select_academic_semester
+                                </h5>
+                            </div>
+                            <div class="ui segment"> 
+                                <style type="text/css">
+                                    #academic-semesters > .item .content {
+                                        text-transform: uppercase;
+                                        font-weight: bold;
+                                    } 
+                                </style>
+                                <div id="academic-semesters" class="ui middle aligned divided list"></div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>  
+            </div> 
+
+        </div>
+
+
+        <div id="ce-page-scripts"> 
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/academic-semester-list-fragment.js"></script>
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

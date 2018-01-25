@@ -39,11 +39,14 @@ public class BlobstoreService extends BaseService {
 	}
 
 	@EndpointMethod(uri = "/get", requestParams = { "blobId" }, createXhrClient = false,
-			functionality = Functionality.GET_BINARY_DATA)
+			functionality = Functionality.GET_BINARY_DATA, cache = true)
 	public void getBlob(RoutingContext ctx) {
 		String blobId = ctx.request().getParam("blobId");
 		BlobSpec blob = BlobStoreModel.get(blobId);
-		ctx.response().putHeader("Content-Type", blob.getMimeType()).bodyEndHandler(v -> {
+		ctx.response()
+		.putHeader("Content-Type", blob.getMimeType())
+		.putHeader("Content-Length", blob.getSize().toString())
+		.bodyEndHandler(v -> {
 			ctx.response().end();
 		}).write(Buffer.buffer(blob.getData()));
 	} 

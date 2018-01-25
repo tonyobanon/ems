@@ -9,6 +9,7 @@ import com.ce.ems.base.classes.ApplicationStatus;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameSpec;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.spec.BaseApplicationSpec;
 import com.ce.ems.base.core.Listable;
@@ -30,35 +31,31 @@ public class ApplicationsList extends Listable<BaseApplicationSpec> {
 	public Map<String, BaseApplicationSpec> getAll(List<String> keys) {
 
 		Map<String, BaseApplicationSpec> result = new FluentHashMap<>();
-		
+
 		keys.forEach(k -> {
-			
+
 			Long applicationId = Long.parseLong(k);
 
 			String role = ApplicationModel.getApplicationRole(applicationId);
 			RoleRealm realm = RoleModel.getRealm(role);
-			
+
 			IndexedNameSpec nameSpec = ApplicationModel.getNameSpec(applicationId, realm);
-			
+
 			ApplicationEntity e = ofy().load().type(ApplicationEntity.class).id(applicationId).safe();
-			
-			BaseApplicationSpec spec = new BaseApplicationSpec()
-					.setId(applicationId)
-					.setRole(e.getRole())
-					.setStatus(ApplicationStatus.from(e.getStatus()))
-					.setNameSpec(nameSpec)
-					.setDateCreated(e.getDateCreated())
-					.setDateUpdated(e.getDateUpdated());
-			
-			 result.put(k, spec);
-			
+
+			BaseApplicationSpec spec = new BaseApplicationSpec().setId(applicationId).setRole(e.getRole())
+					.setStatus(ApplicationStatus.from(e.getStatus())).setNameSpec(nameSpec)
+					.setDateCreated(e.getDateCreated()).setDateUpdated(e.getDateUpdated());
+
+			result.put(k, spec);
+
 		});
-		
+
 		return result;
 	}
 
 	@Override
-	public boolean authenticate(Long userId, Map<String, Object> filters) {
+	public boolean authenticate(Long userId, List<ListingFilter> listingFilters) {
 		return RoleModel.isAccessAllowed(BaseUserModel.getRole(userId), Functionality.VIEW_APPLICATIONS);
 	}
 
@@ -66,7 +63,7 @@ public class ApplicationsList extends Listable<BaseApplicationSpec> {
 	public Class<ApplicationEntity> entityType() {
 		return ApplicationEntity.class;
 	}
-	
+
 	@Override
 	public boolean searchable() {
 		return true;

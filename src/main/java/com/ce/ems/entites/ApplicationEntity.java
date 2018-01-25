@@ -2,18 +2,20 @@ package com.ce.ems.entites;
 
 import java.util.Date;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
 @Entity
+@Cache
 public class ApplicationEntity {
 
 	@Id
 	Long id;
 	//@Index 
 	String role;
-	@Index Integer status;
+	@Index String status;
 	Date dateCreated;
 	Date dateUpdated;
 
@@ -36,11 +38,11 @@ public class ApplicationEntity {
 	}
 
 	public Integer getStatus() {
-		return status;
+		return Integer.parseInt(status);
 	}
 
 	public ApplicationEntity setStatus(Integer status) {
-		this.status = status;
+		this.status = status.toString();
 		return this;
 	}
 

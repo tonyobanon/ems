@@ -31,6 +31,7 @@ import com.ce.ems.base.classes.Gender;
 import com.ce.ems.base.classes.IndexedNameSpec;
 import com.ce.ems.base.classes.IndexedNameType;
 import com.ce.ems.base.classes.InstallOptions;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.spec.DepartmentalHeadSpec;
 import com.ce.ems.base.classes.spec.FacultyDeanSpec;
 import com.ce.ems.base.classes.spec.LecturerSpec;
@@ -58,7 +59,7 @@ import com.kylantis.eaa.core.users.Functionality;
 import com.kylantis.eaa.core.users.RoleRealm;
 import com.kylantis.eaa.core.users.UserProfileSpec;
 
-@Model(dependencies = { ConfigModel.class, FormModel.class})
+@Model(dependencies = { ConfigModel.class, FormModel.class })
 public class ApplicationModel extends BaseModel {
 
 	@Override
@@ -67,21 +68,28 @@ public class ApplicationModel extends BaseModel {
 	}
 
 	@Override
-	public void preInstall() {		
-	}
-
-	@Override
-	public void install(InstallOptions options) { 
+	public void preInstall() {
 
 		Logger.debug("Generating application questionnaires for all role realms");
-		 
-		for(RoleRealm realm : RoleRealm.values()) {
+
+		boolean b = false;
+		
+		//I need to write a new FontProvider to use the GAE Memcache Service to caching fonts
+		if(b) {
+		
+		for (RoleRealm realm : RoleRealm.values()) {
 
 			String blobId = generatePDFQuestionnaire(realm);
 			ConfigModel.put(ConfigKeys.$REALM_APPLICATION_FORM_BLOB_ID.replace("$REALM", realm.name()), blobId);
 
 			Logger.debug("Generated Questionnaire for " + realm.toString() + " with blob-id: " + blobId);
 		}
+		}
+	}
+
+	@Override
+	public void install(InstallOptions options) {
+
 	}
 
 	@Todo("Add to activity stream")
@@ -93,13 +101,12 @@ public class ApplicationModel extends BaseModel {
 		Long applicationId = ofy().save().entity(new ApplicationEntity().setRole(role)
 				.setStatus(ApplicationStatus.CREATED.getValue()).setDateCreated(new Date())).now().getId();
 
-		
 		// Update cached list index
 
 		SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
-				FluentHashMap.forValueMap().with("status", ApplicationStatus.CREATED.getValue()),
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.CREATED.getValue())),
 				applicationId);
-		
+
 		return applicationId;
 	}
 
@@ -109,10 +116,11 @@ public class ApplicationModel extends BaseModel {
 		ApplicationStatus status = getApplicationStatus(applicationId);
 
 		if (!(status.equals(ApplicationStatus.CREATED) || status.equals(ApplicationStatus.OPEN))) {
-			throw new ResourceException(ResourceException.UPDATE_NOT_ALLOWED);
+			throw new ResourceException(ResourceException.UPDATE_NOT_ALLOWED,
+					"Application cannot be updated. It may have already been submitted");
 		}
 
-		validateApplicationValues(applicationId, values);
+		//validateApplicationValues(applicationId, values);
 
 		// Delete old values
 		deleteFieldValuesForApplication(applicationId);
@@ -123,95 +131,84 @@ public class ApplicationModel extends BaseModel {
 			entries.add(new ApplicationFormValueEntity().setApplicationId(applicationId).setFieldId(k)
 					.setValue(v.toString()).setDateUpdated(new Date()));
 		});
-
+ 
 		ofy().save().entities(entries).now();
 
-		if(status.equals(ApplicationStatus.CREATED)) {
+		if (status.equals(ApplicationStatus.CREATED)) {
 
 			// Update status
 			updateApplicationStatus(applicationId, ApplicationStatus.OPEN);
-			
+
 			// Update cached list index
 
 			SearchModel.removeCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.CREATED.getValue()),
+					FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.CREATED.getValue())),
 					applicationId);
-			
+
 			SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.OPEN.getValue()),
+					FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.OPEN.getValue())),
 					applicationId);
 		}
 
 		String role = getApplicationRole(applicationId);
 		RoleRealm realm = RoleModel.getRealm(role);
-		
-		
-		//Add to activity stream
-		
-		Sentence activity = Sentence.newInstance()
-				.setSubject(getNameSpec(applicationId, realm))
-				.setPredicate(CustomPredicate.UPDATED)
-				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
-								.setIdentifiers(FluentArrayList.asList(applicationId))
-								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER)
-						);
-		
-		ActivityStreamModel.newActivity(getApplicantImage(applicationId, realm), activity);
+
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance().setSubject(getNameSpec(applicationId, realm))
+				.setPredicate(CustomPredicate.UPDATED).setObject(
+						ObjectEntity.get(ObjectType.APPLICATION).setIdentifiers(FluentArrayList.asList(applicationId))
+								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER));
+
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	@ModelMethod(functionality = Functionality.SUBMIT_APPLICATION)
 	public static Long submitApplication(Long applicationId) {
+
+		if (!getApplicationStatus(applicationId).equals(ApplicationStatus.OPEN)) {
+			throw new ResourceException(ResourceException.UPDATE_NOT_ALLOWED);
+		}
 
 		String role = getApplicationRole(applicationId);
 		RoleRealm realm = RoleModel.getRealm(role);
 
 		Map<String, String> values = getFieldValues(applicationId);
 
-		validateApplicationValues(applicationId, values);
-
-		updateApplicationStatus(applicationId, ApplicationStatus.PENDING);
+		//validateApplicationValues(applicationId, values);
 
 		// Update status
-		updateApplicationStatus(applicationId, ApplicationStatus.OPEN);
-		
-		
+		updateApplicationStatus(applicationId, ApplicationStatus.PENDING);
+
 		// Update cached list index
 
 		SearchModel.removeCachedListKey(IndexedNameType.APPLICATION,
-				FluentHashMap.forValueMap().with("status", ApplicationStatus.OPEN.getValue()),
-				applicationId);
-		
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.OPEN.getValue())), applicationId);
+
 		SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
-				FluentHashMap.forValueMap().with("status", ApplicationStatus.PENDING.getValue()),
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.PENDING.getValue())),
 				applicationId);
 
-		
 		// Add to search index
-		
+
 		IndexedNameSpec nameSpec = getNameSpec(applicationId, realm, values);
 		SearchModel.addIndexedName(nameSpec, IndexedNameType.APPLICATION);
-		
 
-		//Add to activity stream
-		
-		Sentence activity = Sentence.newInstance()
-				.setSubject(getNameSpec(applicationId, realm))
-				.setPredicate(CustomPredicate.SUBMITED)
-				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
-								.setIdentifiers(FluentArrayList.asList(applicationId))
-								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER)
-						);
-		
-		ActivityStreamModel.newActivity(getApplicantImage(applicationId, realm), activity);
-		
+		// Add to activity stream
+
+		Sentence activity = Sentence.newInstance().setSubject(getNameSpec(applicationId, realm))
+				.setPredicate(CustomPredicate.SUBMITTED).setObject(
+						ObjectEntity.get(ObjectType.APPLICATION).setIdentifiers(FluentArrayList.asList(applicationId))
+								.setArticle(isMaleApplicant(applicationId, realm) ? Article.HIS : Article.HER));
+
+		ActivityStreamModel.newActivity(activity);
+
 		return applicationId;
 	}
 
 	private static void validateApplicationValues(Long applicationId, Map<String, String> values) {
 
 		RoleRealm realm = RoleModel.getRealm(getApplicationRole(applicationId));
-
-		System.out.println(realm);
 
 		// Scan for relevant fields, verify that proper values are provided for them
 
@@ -223,9 +220,8 @@ public class ApplicationModel extends BaseModel {
 			}
 
 			String value = values.get(e.getKey());
-
 			if (value == null || value.trim().equals("")) {
-				throw new ResourceException(ResourceException.FAILED_VALIDATION);
+				throw new ResourceException(ResourceException.FAILED_VALIDATION, e.getKey());
 			}
 		}
 		;
@@ -249,22 +245,23 @@ public class ApplicationModel extends BaseModel {
 	private static String generatePDFQuestionnaire(RoleRealm realm) {
 
 		String orgenizationName = ConfigModel.get(ConfigKeys.ORGANIZATION_NAME);
-		
+
 		PDFForm form = new PDFForm().setLogoURL(ConfigModel.get(ConfigKeys.ORGANIZATION_LOGO_URL))
-				.setSubtitleLeft(orgenizationName).setTitle(Utils.prettify(realm.name().toLowerCase() + "  e-Registration"))
+				.setSubtitleLeft(orgenizationName)
+				.setTitle(Utils.prettify(realm.name().toLowerCase() + "  e-Registration"))
 				.setSubtitleRight(Application.SOFTRWARE_VENDER_EMAIL);
 
 		FormModel.listSections(FormSectionType.APPLICATION_FORM, realm).forEach((section) -> {
 
 			section.withEntries(FormModel.getFields(FormSectionType.APPLICATION_FORM, section.getId()));
-
+ 
 			form.withSection(section);
 		});
 
 		File tmp = FormFactory.toPDF(new SizeSpec(4), new SizeSpec(5), new SizeSpec(3), form);
 
 		Logger.debug("Saving questionairre form for " + realm.name() + " to " + tmp.toString());
-		
+
 		try {
 
 			String blobId = BlobStoreModel.save(new FileInputStream(tmp));
@@ -293,6 +290,7 @@ public class ApplicationModel extends BaseModel {
 		return result;
 	}
 
+	@ModelMethod(functionality = Functionality.VIEW_APPLICATION_FORM)
 	public static String getApplicationRole(Long id) {
 		ApplicationEntity e = ofy().load().type(ApplicationEntity.class).id(id).safe();
 		return e.getRole();
@@ -318,8 +316,59 @@ public class ApplicationModel extends BaseModel {
 					.filter("fieldId = ", fieldId).filter("applicationId = ", applicationId.toString()).first().now();
 
 			result.put(fieldId, e != null ? e.getValue() : null);
+
 		});
 		return result;
+	}
+
+	@ModelMethod(functionality = Functionality.VIEW_APPLICATIONS)
+	public static Map<String, String> getConsolidatedFieldValues(Long applicationId) {
+
+		Map<String, String> result = new FluentHashMap<>();
+
+		RoleRealm realm = RoleModel.getRealm(getApplicationRole(applicationId));
+
+		Map<FieldType, String> fieldTypes = FormFieldRepository.getFieldIds(realm);
+		Map<String, FieldType> invertedFieldTypes = new HashMap<>(fieldTypes.size());
+
+		fieldTypes.forEach((k, v) -> {
+			invertedFieldTypes.put(v, k);
+		});
+
+		Collection<String> fieldIds = FormModel.listAllFieldKeys(FormSectionType.APPLICATION_FORM, realm).keySet();
+
+		fieldIds.forEach(fieldId -> {
+
+			ApplicationFormValueEntity e = ofy().load().type(ApplicationFormValueEntity.class)
+					.filter("fieldId = ", fieldId).filter("applicationId = ", applicationId.toString()).first().now();
+
+			FieldType fieldType = invertedFieldTypes.get(fieldId);
+
+			result.put(fieldId, e != null ? getConsolidatedFieldValue(fieldType, e.getValue()) : null);
+
+		});
+		return result;
+	}
+
+	private static String getConsolidatedFieldValue(FieldType type, String value) {
+		switch (type) {
+		case CITY:
+			return LocationModel.getCityName(value);
+		case COUNTRY:
+			return LocationModel.getCountryName(value);
+		case DEPARTMENT:
+			return DModel.getDepartmentName(Long.parseLong(value));
+		case FACULTY:
+			return DModel.getFacultyName(Long.parseLong(value));
+		case GENDER:
+			return Utils.prettify(Gender.from(Integer.parseInt(value)).name());
+		case LEVEL:
+			return ClientRBRef.get(DModel.getDepartmentLevelForId(Long.parseLong(value))).toString();
+		case STATE:
+			return LocationModel.getTerritoryName(value);
+		default:
+			return value;
+		}
 	}
 
 	protected static void deleteFieldValues(String fieldId) {
@@ -368,46 +417,41 @@ public class ApplicationModel extends BaseModel {
 		// Delete field values for application
 		// deleteFieldValuesForApplication(applicationId);
 
-		
 		// Update cached list index
 
 		SearchModel.removeCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.PENDING.getValue()),
-					applicationId);
-				
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.PENDING.getValue())),
+				applicationId);
+
 		SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.ACCEPTED.getValue()),
-					applicationId);
-		
-		
-		//Update type and entity Id of indexed name
-		
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.ACCEPTED.getValue())),
+				applicationId);
+
+		// Update type and entity Id of indexed name
+
 		SearchModel.updateIndexedNameType(applicationId, userId, IndexedNameType.APPLICATION, IndexedNameType.USER);
 
+		// Add to activity stream
 
-		//Add to activity stream
-		
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
-				.setPredicate(CustomPredicate.APPROVED)
-				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
-								.setIdentifiers(FluentArrayList.asList(applicationId))
-						);
-		
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
-		
+				.setPredicate(CustomPredicate.APPROVED).setObject(
+						ObjectEntity.get(ObjectType.APPLICATION).setIdentifiers(FluentArrayList.asList(applicationId)));
+
+		ActivityStreamModel.newActivity(activity);
+
 		return userId;
 	}
 
 	@ModelMethod(functionality = Functionality.REVIEW_APPLICATION)
 	public static Map<Integer, Object> getApplicationDeclineReasons() {
 		Map<Integer, Object> reasons = new HashMap<>();
-		for(ApplicationDeclineReason reason : ApplicationDeclineReason.values()) {
+		for (ApplicationDeclineReason reason : ApplicationDeclineReason.values()) {
 			reasons.put(reason.getValue(), ClientRBRef.get(reason));
 		}
 		return reasons;
 	}
-	
+
 	@ModelMethod(functionality = Functionality.REVIEW_APPLICATION)
 	public static void declineApplication(Long applicationId, Long principal, Integer reason) {
 
@@ -423,34 +467,31 @@ public class ApplicationModel extends BaseModel {
 		// Delete field values for application
 		// deleteFieldValuesForApplication(applicationId);
 
-
 		// Update cached list index
 
 		SearchModel.removeCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.PENDING.getValue()),
-					applicationId);
-				
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.PENDING.getValue())),
+				applicationId);
+
 		SearchModel.addCachedListKey(IndexedNameType.APPLICATION,
-					FluentHashMap.forValueMap().with("status", ApplicationStatus.DECLINED.getValue()),
-					applicationId);
-		
-		
-		//remove indexed name
-		
+				FluentArrayList.asList(new ListingFilter("status", ApplicationStatus.DECLINED.getValue())),
+				applicationId);
+
+		// remove indexed name
+
 		SearchModel.removeIndexedName(applicationId.toString(), IndexedNameType.APPLICATION);
-		
-		
-		//Add to activity stream
-		
+
+		// Add to activity stream
+
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
 				.setPredicate(CustomPredicate.DECLINED)
-				.setObject(ObjectEntity.get(ObjectType.APPLICATION)
-								.setIdentifiers(FluentArrayList.asList(applicationId))
-						)
-				.setSubordinativeClause(SubordinatingConjuction.BECAUSE, ClientRBRef.get(ApplicationDeclineReason.from(reason)));
-		
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+				.setObject(
+						ObjectEntity.get(ObjectType.APPLICATION).setIdentifiers(FluentArrayList.asList(applicationId)))
+				.setSubordinativeClause(SubordinatingConjuction.BECAUSE,
+						ClientRBRef.get(ApplicationDeclineReason.from(reason)));
+
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	private static Long consolidateApplication(Long principal, Long applicationId) {
@@ -466,23 +507,23 @@ public class ApplicationModel extends BaseModel {
 
 		switch (realm) {
 		case DEAN:
-			DirectoryModel.createFacultyDean(userId, getConsolidatedDean(keys, values));
+			DModel.createFacultyDean(userId, getConsolidatedDean(keys, values));
 			break;
 		case HEAD_OF_DEPARTMENT:
-			DirectoryModel.createDepartmentalHead(userId, getConsolidatedHod(keys, values));
+			DModel.createDepartmentalHead(userId, getConsolidatedHod(keys, values));
 			break;
 		case LECTURER:
-			DirectoryModel.createLecturer(userId, getConsolidatedLecturer(keys, values));
+			DModel.createLecturer(userId, getConsolidatedLecturer(keys, values));
 			break;
 		case STUDENT:
-			DirectoryModel.createStudent(userId, getConsolidatedStudent(keys, values));
+			DModel.createStudent(userId, getConsolidatedStudent(keys, values));
 			break;
 		case ADMIN:
 			break;
 		case EXAM_OFFICER:
-			break;
+			break; 
 		default:
-			break;
+			break; 
 		}
 
 		// Notify user of new account creation
@@ -508,9 +549,7 @@ public class ApplicationModel extends BaseModel {
 	private static StudentSpec getConsolidatedStudent(Map<FieldType, String> keys, Map<String, String> values) {
 
 		Long department = Long.parseLong(values.get(keys.get(FieldType.DEPARTMENT)));
-		Integer level = Integer.parseInt(values.get(keys.get(FieldType.LEVEL)));
-
-		Long departmentLevelId = DirectoryModel.getDepartmentLevel(department, level);
+		Long departmentLevelId = Long.parseLong(values.get(keys.get(FieldType.LEVEL)));
 
 		return new StudentSpec().setJambRegNo(values.get(keys.get(FieldType.JAMB_REG_NO)))
 				.setMatricNumber(values.get(keys.get(FieldType.MATRIC_NUMBER))).setDepartmentLevel(departmentLevelId);
@@ -524,9 +563,8 @@ public class ApplicationModel extends BaseModel {
 		return new UserProfileSpec()
 
 				.setFirstName(values.get(keys.get(FieldType.FIRST_NAME)))
-				.setLastName(values.get(keys.get(FieldType.LAST_NAME)))
-				.setImage(values.get(keys.get(FieldType.IMAGE)))
-				
+				.setLastName(values.get(keys.get(FieldType.LAST_NAME))).setImage(values.get(keys.get(FieldType.IMAGE)))
+
 				.setMiddleName(values.get(keys.get(FieldType.MIDDLE_NAME)))
 				.setDateOfBirth(FrontendObjectMarshaller.unmarshalDate(values.get(keys.get(FieldType.DATE_OF_BIRTH))))
 				.setGender(Gender.from(Integer.parseInt(values.get(keys.get(FieldType.GENDER)))))
@@ -538,50 +576,42 @@ public class ApplicationModel extends BaseModel {
 				.setTerritory(values.get(keys.get(FieldType.STATE)))
 				.setCountry(values.get(keys.get(FieldType.COUNTRY)));
 	}
-	
 
-	
-	
-	
-	
-	////////		Utils	//////////
-	
-	
+	//////// Utils //////////
+
 	private static String getApplicantImage(Long applicationId, RoleRealm realm) {
 		return getApplicantImage(applicationId, realm, null);
 	}
-	
+
 	private static String getApplicantImage(Long applicationId, RoleRealm realm, Map<String, String> fieldValues) {
 
 		String imageField = FormFieldRepository.getFieldId(realm, FormFieldRepository.FieldType.IMAGE);
 
 		if (fieldValues == null) {
-			fieldValues = getFieldValues(applicationId,
-					new FluentArrayList<String>().with(imageField));
+			fieldValues = getFieldValues(applicationId, new FluentArrayList<String>().with(imageField));
 		}
-		
+
 		return fieldValues.get(imageField);
 	}
-	
+
 	private static Boolean isMaleApplicant(Long applicationId, RoleRealm realm) {
 		return isMaleApplicant(applicationId, realm, null);
 	}
-	
+
 	private static Boolean isMaleApplicant(Long applicationId, RoleRealm realm, Map<String, String> fieldValues) {
 
 		String genderField = FormFieldRepository.getFieldId(realm, FormFieldRepository.FieldType.GENDER);
 
 		if (fieldValues == null) {
-			fieldValues = getFieldValues(applicationId,
-					new FluentArrayList<String>().with(genderField));
+			fieldValues = getFieldValues(applicationId, new FluentArrayList<String>().with(genderField));
 		}
-		
+
 		Integer value = Integer.parseInt(fieldValues.get(genderField));
 		Gender gender = Gender.from(value);
 
 		return gender.equals(Gender.MALE);
 	}
-	
+
 	public static IndexedNameSpec getNameSpec(Long applicationId, RoleRealm realm) {
 		return getNameSpec(applicationId, realm, null);
 	}
@@ -599,8 +629,8 @@ public class ApplicationModel extends BaseModel {
 					new FluentArrayList<String>().with(firstNameField).with(middleNameField).with(lastNameField));
 		}
 
-		spec.setKey(applicationId.toString()).setX(fieldValues.get(firstNameField))
-				.setY(fieldValues.get(lastNameField)).setZ(fieldValues.get(middleNameField));
+		spec.setKey(applicationId.toString()).setX(fieldValues.get(firstNameField)).setY(fieldValues.get(lastNameField))
+				.setZ(fieldValues.get(middleNameField));
 
 		return spec;
 	}

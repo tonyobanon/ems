@@ -18,25 +18,29 @@ public class ConfigModel extends BaseModel {
 	public String path() {
 		return "core/config";
 	}
-	
+
+	@Override
+	public void preInstall() {
+	}
+
 	@Override
 	public void install(InstallOptions options) {
-		
+
 		ConfigModel.put(ConfigKeys.ORGANIZATION_NAME, options.getCompanyName());
 		ConfigModel.put(ConfigKeys.ORGANIZATION_LOGO_URL, options.getCompanyLogoUrl());
 		ConfigModel.put(ConfigKeys.ORGANIZATION_COUNTRY, options.getCountry());
 		ConfigModel.put(ConfigKeys.ORGANIZATION_AUDIENCE, options.getAudience());
-		
+
 		ConfigModel.put(ConfigKeys.ORGANIZATION_STUDENT_COUNT, options.getStudentCount());
 		ConfigModel.put(ConfigKeys.ORGANIZATION_EMPLOYEE_COUNT, options.getEmployeeCount());
-		
+
 		ConfigModel.put(ConfigKeys.DEFAULT_CURRENCY, options.getCurrency());
 		ConfigModel.put(ConfigKeys.DEFAULT_TIMEZONE, options.getTimezone());
-		
+
 	}
-	
+
 	public static String get(String key) {
-		ConfigEntity e = ((ConfigEntity) ofy().load().key(Key.create(ConfigEntity.class, key)).now());
+		ConfigEntity e = ofy().load().type(ConfigEntity.class).id(key).now();
 		return e != null ? e.getValue() : null;
 	}
 

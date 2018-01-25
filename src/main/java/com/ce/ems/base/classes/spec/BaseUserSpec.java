@@ -2,14 +2,14 @@ package com.ce.ems.base.classes.spec;
 
 import java.util.Date;
 
-import com.ce.ems.base.classes.IndexedNameSpec;
-
 public class BaseUserSpec {
 	
 	private Long id;
 	private String role;
 	
-	private IndexedNameSpec nameSpec;
+	private String name;
+	private String image;
+	private String description;
 	
 	private Date dateCreated;
 	private Date dateUpdated;
@@ -32,12 +32,30 @@ public class BaseUserSpec {
 		return this;
 	}
 
-	public IndexedNameSpec getNameSpec() {
-		return nameSpec;
+	public String getName() {
+		return name;
 	}
 
-	public BaseUserSpec setNameSpec(IndexedNameSpec nameSpec) {
-		this.nameSpec = nameSpec;
+	public BaseUserSpec setName(Object nameSpec) {
+		this.name = nameSpec.toString();
+		return this;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public BaseUserSpec setImage(String image) {
+		this.image = image;
+		return this;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public BaseUserSpec setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 

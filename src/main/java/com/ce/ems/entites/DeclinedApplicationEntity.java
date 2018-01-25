@@ -2,9 +2,11 @@ package com.ce.ems.entites;
 
 import java.util.Date;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+@Cache
 @Entity
 public class DeclinedApplicationEntity {
 

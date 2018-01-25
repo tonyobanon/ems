@@ -1,16 +1,35 @@
 <html>
     <head>
-        
+        <link href="assets/css/chartist.min.css" rel="stylesheet" />
     </head>
 
     <body>
 
         <div id="ce-page-main-container">
-            
+
+            <!--  Main Lecturer Page -->
+
+            <div id='user-stats-menu' class="right menu">
+                <a href="/lecturers?assign-courses&id=45" class="item">
+                    <div class="ui mini statistic">
+                        <div class="label">ASSIGN COURSES</div>
+                    </div>
+                </a>
+            </div>
+
         </div>
- 
+
         <div id="ce-page-scripts">
-            
+            <script type="text/javascript" src="/assets/js/chartist.min.js"></script>
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/lecturers.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
         </div>
 
     </body>

@@ -1,0 +1,90 @@
+<html>
+    <head></head>
+
+    <body>
+        <div id="ce-page-main-container">           
+
+            <!--  Department Create Form  -->
+
+            <div class="row">
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header">
+                                <span class="ce_translate">Create_department</span>
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+
+                            <form id="department-create-form" class="ui form">
+
+                                <p>Department Information</p>
+                                <br>
+
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label class="ce-translate">Department_name</label> <input placeholder="Department Name"
+                                                                                                   name="dpt_name" type="text">
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="ce-translate">Faculty</label>
+                                        <div class="ui fluid selection dropdown">
+                                            <input type="hidden" name="dpt_faculty"> <i class="dropdown icon"></i>
+                                            <div class="default text">Select Faculty</div>
+                                            <div class="menu"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <br>
+
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label class="ce-translate">Duration_in_years</label> <input placeholder="Programme duration"
+                                                                                                     name="dpt_duration" type="text">
+                                    </div>
+                                </div>
+
+
+                                <br>
+                                <div class="inline field">
+                                    <div class="ui checkbox">
+                                        <input name="dpt_accreditation" tabindex="0" class="hidden"
+                                               type="checkbox"> <label><span class="ce-translate">Accreditation_status</span></label>
+                                    </div>
+                                </div>
+
+
+                                <br>
+
+                                <br>
+                                <div class="ui primary button">Save</div>
+                                <div class="ui error message"></div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="ce-page-scripts">
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/department-create-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

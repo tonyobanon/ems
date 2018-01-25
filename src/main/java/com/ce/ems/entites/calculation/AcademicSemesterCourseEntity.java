@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.ce.ems.base.classes.FluentArrayList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+@Cache
 @Entity
 public class AcademicSemesterCourseEntity {
 
@@ -20,6 +22,7 @@ public class AcademicSemesterCourseEntity {
 	Date dateSheetFinal;
 	List<Long> totals;
 	List<Long> students;
+	Integer highestScore;
 	Date dateUpdated;
 
 	public AcademicSemesterCourseEntity() {
@@ -110,6 +113,15 @@ public class AcademicSemesterCourseEntity {
 
 	public AcademicSemesterCourseEntity setDateSheetFinal(Date dateSheetFinal) {
 		this.dateSheetFinal = dateSheetFinal;
+		return this;
+	}
+	
+	public Integer getHighestScore() {
+		return highestScore;
+	}
+
+	public AcademicSemesterCourseEntity setHighestScore(Integer highestScore) {
+		this.highestScore = highestScore;
 		return this;
 	}
 

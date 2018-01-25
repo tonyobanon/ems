@@ -23,6 +23,10 @@ import com.ce.ems.utils.LocaleUtils;
 
 public class RBModel extends BaseModel {
 
+	private static final boolean STORE_IN_MEMORY = true;
+
+	private static final Map<String, Map<String, Object>> entries = new HashMap<>();
+
 	private static final CacheType defaultCacheType = CacheType.PERSISTENT;
 
 	private static String ext = ".properties";
@@ -44,7 +48,7 @@ public class RBModel extends BaseModel {
 	public void preInstall() {
 		start();
 	}
-	
+
 	@Override
 	public void install(InstallOptions options) {
 	}
@@ -80,60 +84,78 @@ public class RBModel extends BaseModel {
 					bundle.load(Files.newInputStream(p));
 				} catch (IOException e) {
 					Exceptions.throwRuntime(e);
-				} 
-   
+				}
+
 				Map<String, Object> entries = new HashMap<>();
-    
-				// Add To Cache 
+
+				// Add To Cache
 				bundle.forEach((k, v) -> {
-  
+
 					String key = checkKey(k.toString());
-					entries.put(key, v); 
-				}); 
+					entries.put(key, v);
+				});
 
 				putAll(localeString, entries);
 			}
 
 			if (!isBundle) {
-				//Logger.warn(filePath + " could not be identified as a resource bundle");
+				// Logger.warn(filePath + " could not be identified as a resource bundle");
 			}
 		});
 	}
 
+	public Map<String, Object> getAll(String locale) {
+		if (!STORE_IN_MEMORY) {
+			return CacheHelper.getMap(defaultCacheType, getKey(locale));
+		} else {
+			return entries.get(getKey(locale));
+		}
+	}
+
 	private void putAll(String locale, Map<String, Object> values) {
-		CacheHelper.addToMapOrCreate(defaultCacheType, getKey(locale), values);
+		if (!STORE_IN_MEMORY) {
+			CacheHelper.addToMapOrCreate(defaultCacheType, getKey(locale), values);
+		} else {
+			entries.put(getKey(locale), values);
+		}
 	}
 
 	public static String _get(String localeString, String key) {
-		Object value = CacheHelper.getMapEntry(defaultCacheType, getKey(localeString), key);
-		return value != null ? value.toString() : null;
+		if (!STORE_IN_MEMORY) {
+			Object value = CacheHelper.getMapEntry(defaultCacheType, getKey(localeString), key);
+			return value != null ? value.toString() : null;
+		} else {
+			Object value = entries.get(getKey(localeString)).get(key);
+			return value != null ? value.toString() : null;
+		}
 	}
 
 	@BlockerBlockerTodo("When translating, take into consideration, whether its's an email, phone number, e.t.c")
 	public static String get(String key) {
-		
-		//If this is called outside request context, then null will be returned
+
+		// If this is called outside request context, then null will be returned
 		String userLocale = LocaleModel.getUserLocale();
-		
+
 		String value = get(userLocale != null ? userLocale : LocaleModel.defaultLocale(), key);
-		if(value == null) {
-			
-			if(!userLocale.equals(LocaleModel.defaultLocale())) {
-				//Use the system's default locale instead
+		if (value == null) {
+
+			if (!userLocale.equals(LocaleModel.defaultLocale())) {
+				// Use the system's default locale instead
 				value = get(LocaleModel.defaultLocale(), key);
-				
-				if(value == null) {
+
+				if (value == null) {
 					throw new NullPointerException("No Resource Bundle entry for key: " + key);
 				}
 			} else {
-				throw new NullPointerException("No Resource Bundle entry for key: " + key);	
+				throw new NullPointerException("No Resource Bundle entry for key: " + key);
 			}
-		} 
+		}
 		return value;
 	}
 
 	public static String get(String localeString, String key) {
 
+		String _key = key;
 		key = checkKey(key);
 
 		Object value = _get(localeString, key);
@@ -163,25 +185,28 @@ public class RBModel extends BaseModel {
 								&& alternateCountries.get(country).equals(locale.getCountry())) {
 
 							// <locale.getCountry()> is already the alternate country of <country>
-							// Don't set as alternate country, to avoid a StackOverflowException happening in the future
+							// Don't set as alternate country, to avoid a StackOverflowException happening
+							// in the future
 
 						} else {
 
 							// Set as alternate country
 							alternateCountries.put(locale.getCountry(), country);
 						}
-						
+
 						break;
 					}
 				}
 			}
 		}
 
-		return value != null ? value.toString() : null;
-	}
+		if (Character.isUpperCase(_key.charAt(0)) && value != null) {
+			String _value = value.toString();
+			String fw = _value.substring(0, 1);
+			value = _value.replaceFirst(Pattern.quote(fw), fw.toUpperCase());
+		}
 
-	public Map<String, Object> getAll(String locale) {
-		return CacheHelper.getMap(defaultCacheType, getKey(locale));
+		return value != null ? value.toString() : null;
 	}
 
 	private static String getKey(String locale) {
@@ -203,7 +228,7 @@ public class RBModel extends BaseModel {
 		}
 		localeCountries.get(l.getLanguage()).add(l.getCountry());
 	}
-	
+
 	public static Map<String, List<String>> getLocaleCountries() {
 		return localeCountries;
 	}

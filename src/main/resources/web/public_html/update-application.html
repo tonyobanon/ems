@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="HMO Solution">
+        <meta name="author" content="Kylantis, Inc">
+        <link href="/assets/images/icon.png" rel="shortcut icon">
+
+        <link href="/assets/css/main.css" rel="stylesheet" />
+        <link href="/assets/css/semantic.min.css" rel="stylesheet" />
+
+        <title>EMS HQ Installation</title>
+
+    </head>
+
+    <body>
+
+        <div id="form-parent" class="ui raised very padded text container segment" style="display: none;">
+
+            <form class="ui form">
+
+                <!--                <p>APPLICATION FORM</p>-->
+
+                <div>
+                    <h4 class="ui header" style="color: rgba(0,0,0,.4);"> BASIC INFORMATION </h4>
+                </div>
+
+                <br>
+                <div class="three fields">
+                    <div class="field">
+                        <label>First Name</label> <input placeholder="First Name"
+                                                         name="user_fname" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Middle Name</label> <input placeholder="Middle Name"
+                                                          name="user_mname" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Last Name</label> <input placeholder="Last Name"
+                                                        name="user_lname" type="text">
+                    </div>
+                </div>
+
+
+                <div class="fields">
+
+                    <div class="seven wide field">
+                        <label>Email</label> <input type="text" name="user_email"
+                                                    placeholder="Email">
+                    </div>
+
+                    <div class="nine wide field">
+
+                        <label>Date of Birth</label>
+
+                        <div class="three fields">
+
+                            <input type="hidden" name="user_dob">
+
+                            <div class="field">
+                                <input type="text" name="user_dob_day" maxlength="2"
+                                       placeholder="Day" data-volatile-field="true">
+                            </div>
+
+                            <div class="field">
+                                <input type="text" name="user_dob_month" maxlength="2"
+                                       placeholder="Month" data-volatile-field="true">
+                            </div>
+
+                            <div class="field">
+                                <input type="text" name="user_dob_year" maxlength="4"
+                                       placeholder="Year" data-volatile-field="true">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="field">
+                        <label>Gender</label>
+                        <div class="ui fluid selection dropdown">
+                            <input type="hidden" name="user_gender"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Gender</div>
+                            <div class="menu">
+                                <div class="item" data-value="1">Female</div>
+                                <div class="item" data-value="2">Male</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+
+                <div>
+                    <h4 class="ui header" style="color: rgba(0,0,0,.4);"> CONTACT INFORMATION </h4>
+                </div>
+                <br>
+
+                <div class="three fields">
+                    <div class="field">
+                        <label>Address</label> 
+                        <input placeholder="Address" name="user_address" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Phone</label> 
+                        <input placeholder="Phone" name="user_phone" type="text" maxlength="15">
+                    </div>
+                </div>
+
+                <div class="three fields">
+
+                    <div class="field">
+                        <label>Country</label>
+                        <div class="ui fluid search selection dropdown">
+                            <input type="hidden" name="user_country"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Select Country</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>State</label>
+                        <div class="ui fluid search selection dropdown disabled">
+                            <input type="hidden" name="user_territory"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Select State</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>City</label>
+                        <div class="ui fluid search selection dropdown disabled">
+                            <input type="hidden" name="user_city"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Select City</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+
+
+                <br>
+
+                <div id="institution_profile">
+
+                    <div>
+                        <h4 class="ui header" style="color: rgba(0,0,0,.4);"> INSTITUTION PROFILE </h4>
+                    </div>
+
+                    <br>
+                    <div class="three fields">
+
+                        <div class="field">
+                            <label>Faculty</label>
+                            <div class="ui fluid search selection dropdown">
+                                <input type="hidden" name="user_faculty"> <i
+                                    class="dropdown icon"></i>
+                                <div class="default text">Select Faculty</div>
+                                <div class="menu"></div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Department</label>
+                            <div class="ui fluid search selection dropdown disabled">
+                                <input type="hidden" name="user_department"> <i
+                                    class="dropdown icon"></i>
+                                <div class="default text">Select Department</div>
+                                <div class="menu"></div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Level</label>
+                            <div class="ui fluid search selection dropdown disabled">
+                                <input type="hidden" name="user_level"> <i
+                                    class="dropdown icon"></i>
+                                <div class="default text">Select Level</div>
+                                <div class="menu"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="fields">
+
+                        <div class="seven wide field">
+                            <label>Matric Number</label> <input type="text" name="user_matric_number"
+                                                                placeholder="Matric Number">
+                        </div>
+
+                        <div class="seven wide field">
+                            <label>Jamb Reg. No.</label> <input type="text" name="user_jamb_reg_no"
+                                                                placeholder="Jamb Reg. No.">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="ui primary button">Submit</div>
+                <div class="ui error message"></div>
+
+            </form>
+
+        </div>
+
+
+
+
+        <div class="ui basic modal">
+            <div class="ui icon header">
+                <i class="checkmark icon"></i> 
+            </div>
+            <div class="content">
+                <p>
+                    Thank you for registering as a new user on our platform. Your application is currently being 
+                    reviewed by our staff, and you will be notified via email when your application is successful.
+                </p>
+            </div>
+            <div class="actions">
+                <div class="ui green ok inverted button" onclick="window.location = '/';">
+                    <i class="checkmark icon"></i> Continue
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <script src="/assets/js/jquery.js"></script>
+        <script src="/assets/js/clients/location.js"></script>
+        <script src="/assets/js/clients/form.js"></script>
+        <script src="/assets/js/clients/application.js"></script>
+        <script src="/assets/js/clients/roles.js"></script>
+        <script src="/assets/js/clients/directory.js"></script>
+
+        <script src="/assets/js/semantic.min.js"></script>
+
+        <script src="/assets/js/pages/utils.js"></script>
+        <script src="/assets/js/pages/update-application.js" onload="load();"></script>
+
+    </body>
+
+</html>
+

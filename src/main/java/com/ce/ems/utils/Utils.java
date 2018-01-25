@@ -59,7 +59,7 @@ public class Utils {
 		try {
 			o.load(in);
 			return o;
-		} catch (IOException e) {
+		} catch (IOException e) { 
 			Exceptions.throwRuntime(e);
 		}
 		return null;

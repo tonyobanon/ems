@@ -5,3 +5,8 @@
 # In base web folder, update route_mapping and route_params
 # Rewrite Models, Services, Resource Bundles
 # Remove solution-specific classes
+
+
+
+
+Notice the PROJECT_RESOURCES_FOLDER and webFolderURI field in WebRoutes and FUSION_CLIENT_PATH field in APIRoutes

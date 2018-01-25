@@ -1,10 +1,12 @@
 package com.ce.ems.entites;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.condition.IfNotNull;
 
+@Cache
 @Entity
 public class FormSectionEntity {
 

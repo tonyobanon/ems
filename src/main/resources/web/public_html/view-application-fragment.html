@@ -1,0 +1,70 @@
+<html>
+    <head>
+
+        <style>
+            .ui.segment .section {
+                padding-top: 2em;
+            }
+            .ui.segment .section .ui.header{
+                color: rgba(0,0,0,.4);
+                padding-bottom: 0.5em;
+            }
+            .ui.segment .section .field.name{
+                padding-right: 1em;
+            }
+            #application_sections{
+                padding-left: 2em;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div class="row">
+
+                <div class="sixteen wide column">
+
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header">
+                                <span class="ce_translate">Application Details</span>
+                            </h5>
+                        </div>
+                        <div id="application_sections" class="ui segment">
+
+                            <a class="ui small image">
+                                <img id='user_avatar' src="assets/images/no-avatar.png" alt="label-image" />
+                            </a>
+
+                        </div>
+                        
+                        <div id="application-actions" class="ui segment" style="display: none;">
+                            <button class="ui primary button" onclick="acceptAcceptionEvent();"> Accept</button>
+                            <button class="ui button" onclick="declineApplicationEvent();" disabled> Decline</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="ce-page-scripts">
+            <script type="text/javascript" src="/assets/js/clients/application.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/form.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/view-application-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+
+    </body>
+</html> 

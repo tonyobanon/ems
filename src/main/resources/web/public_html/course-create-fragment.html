@@ -1,0 +1,101 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">           
+
+            <!--  Course Create Form  -->
+
+            <div class="row">
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header">
+                                <span class="ce_translate">Create Course</span>
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+
+                            <form id="course-create-form" class="ui form">
+
+                                <p>Course Information</p>
+                                <br>
+
+                                <div class="two fields">
+                                    <div class="field">
+                                        <label class="ce-translate">Course_code</label> <input placeholder="Course Code"
+                                                                                               name="course_code" type="text">
+                                    </div>
+                                    <div class="field">
+                                        <label class="ce-translate">Course_name</label> <input placeholder="Course Name"
+                                                                                               name="course_name" type="text">
+                                    </div>
+                                </div>
+
+
+                                <div class="two fields">
+
+                                    <div class="field">
+                                        <label class="ce-translate">Unit_load</label> <input placeholder="Unit Load"
+                                                                                             name="course_unit_load" type="text">
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="ce-translate">Semester</label>
+                                        <div class="ui fluid selection dropdown">
+                                            <input type="hidden" name="course_semester"> <i class="dropdown icon"></i>
+                                            <div class="default text">Select Semester</div>
+                                            <div class="menu"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <br>
+
+                                <div class="two fields">
+
+                                    <div class="field">
+                                        <label class="ce-translate">Students_eligible</label>
+                                        <select name="course_dpt_levels" class="ui fluid search dropdown" multiple=""></select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="ce-translate">Lecturers</label>
+                                        <select name="course_lecturers" class="ui fluid search dropdown" multiple=""></select>
+                                    </div>
+
+                                </div>
+
+
+                                <br>
+
+                                <br>
+                                <div class="ui primary button">Save</div>
+                                <div class="ui error message"></div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="ce-page-scripts">
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/course-create-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

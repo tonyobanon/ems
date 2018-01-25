@@ -19,30 +19,31 @@ import io.vertx.ext.web.RoutingContext;
 @EndpointClass(uri = "/platform/tools")
 public class PlatformService extends BaseService {
 
-	@EndpointMethod(uri = "/setup", bodyParams = { "payload" }, method = HttpMethod.POST, isBlocking = true, functionality = Functionality.PLATFORM_INSTALLATION)
+	@EndpointMethod(uri = "/setup", bodyParams = {
+			"payload" }, method = HttpMethod.POST, isBlocking = true, functionality = Functionality.PLATFORM_INSTALLATION)
 	public void doSetup(RoutingContext context) {
 
 		try {
-		
-		if(PlatformModel.isInstalled()) {
-			return;
-		}
-		
-		JsonObject body = context.getBodyAsJson();
-		
-		InstallOptions spec = GsonFactory.newInstance().fromJson(body.getJsonObject("payload").encode(),InstallOptions.class);
 
-		//Perform installation
-		PlatformModel.doInstall(spec);
-	 
-		// Go to console
-		context.response().putHeader("X-Location", WebRoutes.DEFAULT_CONSOLE_URI)
-				.setStatusCode(HttpServletResponse.SC_FOUND);
-		
+			if (PlatformModel.isInstalled()) {
+				return;
+			}
+
+			JsonObject body = context.getBodyAsJson();
+
+			InstallOptions spec = GsonFactory.newInstance().fromJson(body.getJsonObject("payload").encode(),
+					InstallOptions.class);
+
+			// Perform installation
+			PlatformModel.doInstall(spec);
+
+			// Go to console
+			context.response().putHeader("X-Location", WebRoutes.DEFAULT_CONSOLE_URI)
+					.setStatusCode(HttpServletResponse.SC_FOUND);
+
 		} catch (Exception e) {
 			Exceptions.throwRuntime(e);
 		}
 	}
 
-	
 }

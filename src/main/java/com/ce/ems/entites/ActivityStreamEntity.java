@@ -2,17 +2,26 @@ package com.ce.ems.entites;
 
 import java.util.Date;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.condition.IfNotEmpty;
 
 @Entity
+@Cache
 public class ActivityStreamEntity {
 
 	@Id
 	Long id;
-	String image;
+	@Index(IfNotEmpty.class)
+	String subject;
+	@Index(IfNotEmpty.class)
+	String person;
+	String subjectImage;
+	String personImage;
 	String activity;
+	Integer likes;
 	@Index
 	Date date;
 
@@ -25,12 +34,39 @@ public class ActivityStreamEntity {
 		return this;
 	}
 
-	public String getImage() {
-		return image;
+	public Long getSubject() {
+		return Long.parseLong(subject);
 	}
 
-	public ActivityStreamEntity setImage(String image) {
-		this.image = image;
+	public ActivityStreamEntity setSubject(Long subject) {
+		this.subject = subject != null ? subject.toString() : null;
+		return this;
+	}
+
+	public Long getPerson() {
+		return Long.parseLong(person);
+	}
+	
+	public ActivityStreamEntity setPerson(Long person) {
+		this.person = person.toString();
+		return this;
+	}
+
+	public String getSubjectImage() {
+		return subjectImage;
+	}
+
+	public ActivityStreamEntity setSubjectImage(String subjectImage) {
+		this.subjectImage = subjectImage;
+		return this;
+	}
+
+	public String getPersonImage() {
+		return personImage;
+	}
+
+	public ActivityStreamEntity setPersonImage(String personImage) {
+		this.personImage = personImage;
 		return this;
 	}
 
@@ -40,6 +76,15 @@ public class ActivityStreamEntity {
 
 	public ActivityStreamEntity setActivity(String activity) {
 		this.activity = activity;
+		return this;
+	}
+
+	public Integer getLikes() {
+		return likes;
+	}
+
+	public ActivityStreamEntity setLikes(Integer likes) {
+		this.likes = likes;
 		return this;
 	}
 

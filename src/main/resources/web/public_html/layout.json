@@ -1,0 +1,760 @@
+{
+    "/console-fragment": {
+        "isParent": true
+    },
+    "/datatable-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+    "/editable-datatable-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment"
+            }
+        ]
+    },
+    "/users-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+    "/department-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment"
+            }
+        ]
+    },
+    "/faculty-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment"
+            }
+        ]
+    },
+    "/department-level-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#department-levels-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/academic-semester-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#academic-semesters-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/student-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#students-table-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/lecturer-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#lecturers-table-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/course-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#courses-table-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/course-result-sheet-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/editable-datatable-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#course-result-sheet",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "/score-grades-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/editable-datatable-fragment"
+            }
+        ]
+    },
+
+    "/application-list-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/datatable-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#application-table-container",
+                        "to": "#ce-page-main-container"
+                    }
+                ]
+            }
+        ]
+    },
+    "/view-application-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+    "/course-create-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+    "/department-create-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+    "/faculty-create-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+
+    "/register-courses-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/assign-courses-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/dashboard-fragment": {
+        "isParent": true,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment"
+            }
+        ]
+    },
+
+    "/new-application": {
+
+    },
+    "/update-application": {
+
+    },
+    "/user-login": {
+
+    },
+    "/own-profile": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/course-search": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": ["query"],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/manage-application-form": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/manage-system-configuration-form": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/applications-search": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": ["query"],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/applications": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/application-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "status"
+                ],
+                "path": "/application-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "id"
+                ],
+                "path": "/view-application-fragment",
+                "intersectionNodes": [],
+                "originUri": "/applications?status=2"
+            }
+        ]
+    },
+    "/users-search": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": ["query"],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/file-storage": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/roles": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/system-caches": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/system-configuration": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/dashboard": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/dashboard-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/users": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "id"
+                ],
+                "path": "/users-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/students": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/department-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentId"
+                ],
+                "path": "/department-level-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentLevelId"
+                ],
+                "path": "/student-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "id"
+                ],
+                "path": "/users-fragment",
+                "intersectionNodes": [
+                    {
+                        "from": "#user-stats-menu",
+                        "to": "#user-stats-menu"
+                    },
+                    {
+                        "from": "#user-role-custom-area",
+                        "to": "#user-role-custom-area"
+                    }
+                ],
+                "originUri": "/students"
+            },
+            {
+                "name": "",
+                "params": ["register-courses", "id"],
+                "path": "/register-courses-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/lecturers": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/department-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentId"
+                ],
+                "path": "/lecturer-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "id"
+                ],
+                "path": "/users-fragment",
+                "intersectionNodes": [{
+                        "from": "#user-stats-menu",
+                        "to": "#user-stats-menu"
+                    }],
+                "originUri": "/lecturers"
+            },
+            {
+                "name": "",
+                "params": ["assign-courses", "id"],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/courses": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/department-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentId"
+                ],
+                "path": "/department-level-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentLevelId"
+                ],
+                "path": "/course-list-fragment",
+                "intersectionNodes": [],
+                "setOriginUri": false
+            },
+            {
+                "name": "",
+                "params": [
+                    "create",
+                    "departmentLevelId"
+                ],
+                "path": "/course-create-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/departments": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/department-list-fragment",
+                "intersectionNodes": [],
+                "setOriginUri": false
+            },
+            {
+                "name": "",
+                "params": [
+                    "create"
+                ],
+                "path": "/department-create-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/faculties": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/faculty-list-fragment",
+                "intersectionNodes": [],
+                "setOriginUri": false
+            },
+            {
+                "name": "",
+                "params": [
+                    "create"
+                ],
+                "path": "/faculty-create-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+
+    "/course-result-sheet": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/course-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "academicSemesterCourseId"
+                ],
+                "path": "/course-result-sheet-fragment",
+                "intersectionNodes": [],
+                "originUri": "/students"
+            }
+        ]
+    },
+    "/assessment-totals": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/score-grades": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/score-grades-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/course-results": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/department-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentId"
+                ],
+                "path": "/department-level-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentLevelId"
+                ],
+                "path": "/academic-semester-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "departmentLevelId",
+                    "academicSemesterId"
+                ],
+                "path": "/course-list-fragment",
+                "intersectionNodes": []
+            },
+            {
+                "name": "",
+                "params": [
+                    "academicSemesterCourseId"
+                ],
+                "path": "/course-result-sheet-fragment",
+                "intersectionNodes": [],
+                "originUri": "/students"
+            }
+        ]
+    },
+    "/student-results": {
+        "isParent": false,
+        "parents": [
+            {
+                "name": "",
+                "params": [],
+                "path": "/console-fragment",
+                "intersectionNodes": []
+            }
+        ]
+    },
+    "/assets/js/pages/console-fragment.js": {
+
+    },
+    "/assets/js/pages/users-fragment.js": {
+
+    },
+    "/assets/js/pages/department-list-fragment.js": {
+
+    },
+    "/assets/js/pages/course-result-sheet-fragment.js": {
+
+    },
+    "/assets/js/pages/students.js": {
+
+    },
+    "/assets/js/pages/update-application.js": {
+
+    },
+    "/assets/js/pages/new-application.js": {
+
+    },
+    "/assets/js/pages/lecturers.js": {
+
+    },
+    "/css/main.css": {
+
+    },
+    "/assets/js/pages/academic-semester-list-fragment.js": {
+
+    },
+    "/assets/js/pages/course-list-fragment.js": {
+
+    },
+    "/assets/js/pages/score-grades-fragment.js": { 
+
+    },
+    "/assets/js/pages/course-create-fragment.js": {
+
+    },
+    "/assets/js/pages/department-create-fragment.js": {
+
+    },
+    "/assets/js/pages/faculty-create-fragment.js": {
+
+    },
+    "/assets/js/pages/student-list-fragment.js": {
+
+    },
+    "/assets/js/pages/faculty-list-fragment.js": {
+
+    },
+    "/assets/js/pages/lecturer-list-fragment.js": {
+
+    },
+    "/assets/js/pages/application-list-fragment.js": {
+
+    },
+    "/assets/js/pages/view-application-fragment.js": {
+
+    }
+}

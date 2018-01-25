@@ -6,15 +6,27 @@ import com.ce.ems.base.classes.Semester;
 
 public class AcademicSemesterSpec {
 
+	private Long id;
+	
 	private Short lowerYearBound;
 	private Short upperYearBound;
 
-	private Semester value;
+	private Semester semester;
+	private String semesterString;
 	
 	private Date startDate;
 	private Date endDate;
 	
-	 
+	
+	public Long getId() {
+		return id;
+	}
+
+	public AcademicSemesterSpec setId(Long id) {
+		this.id = id;
+		return this;
+	}
+
 	public Short getLowerYearBound() {
 		return lowerYearBound; 
 	}
@@ -33,12 +45,21 @@ public class AcademicSemesterSpec {
 		return this;
 	}
 
-	public Semester getValue() {
-		return value;
+	public Semester getSemester() {
+		return semester;
 	}
 
-	public AcademicSemesterSpec setValue(Semester value) {
-		this.value = value;
+	public AcademicSemesterSpec setSemester(Semester semester) {
+		this.semester = semester;
+		return this;
+	}
+	
+	public String getSemesterString() {
+		return semesterString;
+	}
+
+	public AcademicSemesterSpec setSemesterString(String semesterString) {
+		this.semesterString = semesterString;
 		return this;
 	}
 

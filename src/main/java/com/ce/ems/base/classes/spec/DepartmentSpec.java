@@ -6,6 +6,7 @@ public class DepartmentSpec {
 	private String name;
 	private Long faculty;
 	private String facultyName;
+	private String headOfDepartmentName;
 	private Long headOfDepartment;
 	private Boolean isAccredited;
 	private Short duration;
@@ -56,6 +57,15 @@ public class DepartmentSpec {
 		return this;
 	}
 	
+	public String getHeadOfDepartmentName() {
+		return headOfDepartmentName;
+	}
+
+	public DepartmentSpec setHeadOfDepartmentName(String headOfDepartmentName) {
+		this.headOfDepartmentName = headOfDepartmentName;
+		return this;
+	}
+
 	public Boolean getIsAccredited() {
 		return isAccredited;
 	}

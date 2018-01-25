@@ -15,7 +15,7 @@ public class ResultRecordSheetSpec {
 	private String departmentName;
 	private ClientRBRef level;
 	private List<Integer> scores;
-	private Short total;
+	private Integer total;
 	private Date lastUpdated;
 	private String lastUpdatedBy;
 	
@@ -87,11 +87,11 @@ public class ResultRecordSheetSpec {
 		return this;
 	}
 
-	public Short getTotal() {
+	public Integer getTotal() {
 		return total;
 	}
 
-	public ResultRecordSheetSpec setTotal(Short total) {
+	public ResultRecordSheetSpec setTotal(Integer total) {
 		this.total = total;
 		return this;
 	}

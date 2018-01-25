@@ -1,8 +1,8 @@
 {
 
-	"/view-application-form": ["realm"],
+	"/new-application": [],
 
-	"/update-application": ["applicationId"],
+	"/update-application": ["id"],
 
 	"/user-login": ["returnUrl"],
 
@@ -16,40 +16,39 @@
 
 	"/applications-search": ["query"],
 
-	"/applications": ["applicationId", "status"],
+	"/applications": ["id", "status"],
 
 	"/users-search": ["query"],
 
-	"/users": ["userId"],
+	"/users": ["id"],
 
 	"/file-storage": [],
 
-	"/roles": ["roleName"],
+	"/roles": ["name"],
 
-	"/system-caches": ["cacheType"],
+	"/system-caches": ["type"],
 
 	"/system-configuration": ["id"],
 
 	"/dashboard": [],
  
-	"/departments": ["departmentId", "facultyId"], 
+ 	"/faculties": [], 
+ 	
+	"/departments": [], 
 
-	"/students": ["studentId", "departmentLevelId"],
+	"/students": ["id", "departmentLevelId"],
 
-	"/lecturers": ["lecturerId"],
+	"/lecturers": ["id"],
 
-	"/courses": ["courseCode", "departmentLevelId"],
+	"/courses": ["departmentLevelId"],
 
-	"/register-courses": ["studentId"],
-
-	"/result-sheet": ["courseCode", "academicSemesterId"],
+	"/course-result-sheet": ["academicSemesterCourseId"],
  
 	"/assessment-totals": ["levelSemesterId"],
 	
 	"/score-grades": [],
 
-	"/course-results": ["courseCode", "academicSemesterId"],
+	"/course-results": ["academicSemesterCourseId"],
 
 	"/student-results": ["studentId", "academicSemesterId"]
-
 }

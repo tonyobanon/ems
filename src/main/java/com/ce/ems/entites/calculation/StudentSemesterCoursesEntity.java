@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+@Cache
 @Entity
 public class StudentSemesterCoursesEntity {
 
@@ -17,7 +19,7 @@ public class StudentSemesterCoursesEntity {
 	String studentId;
 	@Index
 	String academicSemesterId;
-	Map<String, Short> courses;
+	Map<String, Integer> courses;
 	Date dateCreated;
 
 	public StudentSemesterCoursesEntity() {
@@ -51,12 +53,17 @@ public class StudentSemesterCoursesEntity {
 		return this;
 	}
 
-	public Map<String, Short> getCourses() {
+	public Map<String, Integer> getCourses() {
 		return courses;
 	}
 
-	public StudentSemesterCoursesEntity setCourses(Map<String, Short> courses) {
+	public StudentSemesterCoursesEntity setCourses(Map<String, Integer> courses) {
 		this.courses = courses;
+		return this;
+	}
+	
+	public StudentSemesterCoursesEntity putCourse(String courseCode, Integer score) {
+		this.courses.put(courseCode, score);
 		return this;
 	}
 

@@ -16,12 +16,10 @@ public enum ObjectType {
 
 	SYSTEM_ROLE(Article.A, Functionality.MANAGE_ROLES),
 
-	COURSE_RESULT(Article.A, Functionality.VIEW_SEMESTER_COURSE_RESULT),
+	COURSE_RESULT_SHEET(Article.THE, Functionality.VIEW_COURSE_RESULT_SHEET),
 
-	COURSE_RESULT_SHEET(Article.THE, Functionality.MANAGE_COURSE_SCORE_SHEET),
-
-	STUDENT_RESULT(Article.THE, Functionality.VIEW_STUDENT_SEMESTER_RESULT),
-
+	SCORE_GRADES(Article.THE, Functionality.VIEW_SCORE_GRADES),
+	
 	ASSESSMENT_TOTAL(Article.THE, Functionality.VIEW_ASSESSMENT_TOTALS),
 
 	COURSE(Article.A, Functionality.VIEW_COURSES),

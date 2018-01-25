@@ -2,6 +2,7 @@ package com.ce.ems.utils;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class BackendObjectMarshaller {
 
@@ -16,7 +17,9 @@ public class BackendObjectMarshaller {
 
 	/* Date */
 	public static String marshal(Date object) {
-		return Dates.toString(object);
+		String date = Dates.toString(object);
+		//TimeZone.getTimeZone("PST").getRawOffset();
+		return date;
 	}
 
 	public static Date unmarshalDate(String object) throws ParseException {

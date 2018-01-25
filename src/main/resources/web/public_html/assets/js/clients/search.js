@@ -1,6 +1,6 @@
 
 
- function newListContext (type, filters, pageSize, sort) {
+ function newListContext (type, pageSize, listingFilters, order) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
 			 method : "PUT",
@@ -8,7 +8,7 @@
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
 			 contentType : 'application/json', 
-			 data : JSON.stringify({type: type, filters: filters, pageSize: pageSize, sort: sort}), 
+			 data : JSON.stringify({type: type, pageSize: pageSize, listingFilters: listingFilters, order: order}), 
 			 url: "/api/search/service/new-list-context"
 			 }).done(function(o) {
 				 resolve(o);

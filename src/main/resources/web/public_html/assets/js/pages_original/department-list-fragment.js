@@ -1,0 +1,84 @@
+
+var RETURN_URL;
+
+function initPage() {
+    
+    if (Object.keys(window).indexOf("CE_ORIGIN_URL") !== -1) {
+        RETURN_URL = CE_ORIGIN_URL;
+    }
+
+    init_departments_list_table().then(() => {
+        $(window).trigger('ce-load-page-end');
+    });
+
+}
+
+function init_departments_list_table() {
+
+        return listDepartments().then((results) => {
+
+            canUserManageDepartments().then(b => {
+                if (b) {
+                    $('#create-dpt-btn-container').show();
+                    $('#create-dpt-btn-container a').attr('href', "?create");
+                }
+            });
+
+            var table = $('#departments-table');
+
+            if (Object.keys(results).length === 0) {
+                table.parent().html('<h2 class="ui header" style="color: rgba(0,0,0,.4);"> No departments are currently available. </h2>');
+            }
+            
+
+            var thParent = table.find('> thead > tr');
+
+            thParent.append($('<th></th>').html(get_ce_translate_node('Name')));
+            thParent.append($('<th></th>').html(get_ce_translate_node('Head_of_department')));
+            thParent.append($('<th></th>').html(get_ce_translate_node('Faculty')));
+            thParent.append($('<th></th>').html(get_ce_translate_node('Duration')));
+            thParent.append($('<th></th>').html(get_ce_translate_node('Accreditation')));
+
+            var rows = table.find(' > tbody');
+
+            for (var k in results) {
+
+                var v = results[k];
+
+                var row = $('<tr></tr>').attr('data-department-id', v['id']).attr('data-faculty-id', v['faculty']);
+
+                row.append($('<td></td>').text(v['name']));
+                row.append($('<td></td>').html(v['headOfDepartmentName'] ? v['headOfDepartmentName'] : ''));
+                row.append($('<td></td>').text(v['facultyName']));
+                row.append($('<td></td>').html(v['duration'] + '&#32;' + get_ce_translate_node('years')));
+                row.append($('<td></td>').html(v['isAccredited'] ? '<i class="checkmark icon green large"></i>' : ''));
+
+                rows.append(row);
+
+            }
+
+            // Initialize Table
+            var dtable = table.DataTable({
+                "pagingType": "full_numbers_icon",
+                order: [1, 'desc'],
+                responsive: true
+            });
+
+            table.on('click', '> tbody > tr', function () {
+
+                var departmentId = $(this).attr('data-department-id');
+
+                if (RETURN_URL) {
+                    window.location = RETURN_URL + "?departmentId=" + departmentId;
+                } else {
+                    // Display department page
+                }
+
+            });
+
+
+        });
+}
+
+
+

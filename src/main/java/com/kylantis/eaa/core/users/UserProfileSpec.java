@@ -6,24 +6,33 @@ import com.ce.ems.base.classes.Gender;
 
 public class UserProfileSpec {
 
-	public String email;
-	public String password;
+	private String email;
+	private String password;
 
-	String firstName;
-	String middleName;
-	String lastName;
-	String image;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String image;
 
-	Long phone;
-	Date dateOfBirth;
-	Gender gender;
+	private Long phone;
+	private Date dateOfBirth;
+	private Gender gender;
 
-	public String address;
+	private String address;
 
-	public int city;
-	public String territory; 
-	public String country;
+	private Integer city;
+	private String cityName;
+	
+	private String territory; 
+	private String territoryName;
+	
+	private String country;
+	private String countryName;
+	private String countryDialingCode;
+	
+	private String role;
 
+	
 	public String getEmail() {
 		return email;
 	} 
@@ -78,7 +87,7 @@ public class UserProfileSpec {
 		return this;
 	}
 
-	public long getPhone() {
+	public Long getPhone() {
 		return phone;
 	}
 
@@ -114,11 +123,11 @@ public class UserProfileSpec {
 		return this;
 	}
 
-	public int getCity() {
+	public Integer getCity() {
 		return city;
 	}
 
-	public UserProfileSpec setCity(int city) {
+	public UserProfileSpec setCity(Integer city) {
 		this.city = city;
 		return this;
 	}
@@ -140,5 +149,52 @@ public class UserProfileSpec {
 		this.country = country;
 		return this;
 	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public UserProfileSpec setRole(String role) {
+		this.role = role;
+		return this;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public UserProfileSpec setCityName(String cityName) {
+		this.cityName = cityName;
+		return this;
+	}
+
+	public String getTerritoryName() {
+		return territoryName;
+	}
+
+	public UserProfileSpec setTerritoryName(String territoryName) {
+		this.territoryName = territoryName;
+		return this;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public UserProfileSpec setCountryName(String countryName) {
+		this.countryName = countryName;
+		return this;
+	}
+
+	public String getCountryDialingCode() {
+		return countryDialingCode;
+	}
+
+	public UserProfileSpec setCountryDialingCode(String countryDialingCode) {
+		this.countryDialingCode = countryDialingCode;
+		return this;
+	}
+	
+	
 
 }

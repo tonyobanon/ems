@@ -1,15 +1,21 @@
 package com.kylantis.eaa.core.fusion.services;
 
+import java.util.List;
+
+import com.ce.ems.base.classes.spec.BaseUserSpec;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.GsonFactory;
 import com.ce.ems.models.BaseUserModel;
-import com.ce.ems.models.CacheModel;
+import com.ce.ems.models.LocationModel;
+import com.ce.ems.models.UserModel;
 import com.kylantis.eaa.core.fusion.BaseService;
+import com.kylantis.eaa.core.fusion.CacheAdapter;
 import com.kylantis.eaa.core.fusion.EndpointClass;
 import com.kylantis.eaa.core.fusion.EndpointMethod;
 import com.kylantis.eaa.core.fusion.FusionHelper;
 import com.kylantis.eaa.core.keys.CacheKeys;
 import com.kylantis.eaa.core.users.Functionality;
+import com.kylantis.eaa.core.users.UserProfileSpec;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
@@ -21,28 +27,15 @@ public class UserService extends BaseService {
 
 	@EndpointMethod(uri = "/get-own-profile", functionality = Functionality.VIEW_OWN_PROFILE)
 	public void getOwnProfile(RoutingContext ctx) {
+
 		Long userId = FusionHelper.getUserId(ctx.request());
-		String json = (String) CacheModel.get(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+
+		String json = (String) CacheAdapter.get(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 		if (json != null) {
 			ctx.response().setChunked(true).write(json);
 		} else {
 			json = GsonFactory.newInstance().toJson(BaseUserModel.getProfile(userId));
-			CacheModel.put(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()), json);
-			ctx.response().setChunked(true).write(json);
-		}
-	}
-
-	@EndpointMethod(uri = "/get-user-profile", requestParams = {
-			"userId" }, functionality = Functionality.GET_USER_PROFILE)
-	public void getUserProfile(RoutingContext ctx) {
-
-		Long userId = Long.parseLong(ctx.request().getParam("userId"));
-		String json = (String) CacheModel.get(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
-		if (json != null) {
-			ctx.response().setChunked(true).write(json);
-		} else {
-			json = GsonFactory.newInstance().toJson(BaseUserModel.getProfile(userId));
-			CacheModel.put(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()), json);
+			CacheAdapter.put(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()), json);
 			ctx.response().setChunked(true).write(json);
 		}
 	}
@@ -61,7 +54,7 @@ public class UserService extends BaseService {
 		String image = BaseUserModel.getAvatar(userId);
 		ctx.response().setChunked(true).write(new JsonObject().put("image", image).encode());
 	}
- 
+
 	@EndpointMethod(uri = "/get-own-role", functionality = Functionality.VIEW_OWN_PROFILE)
 	public void getOwnRole(RoutingContext ctx) {
 		Long userId = FusionHelper.getUserId(ctx.request());
@@ -87,7 +80,7 @@ public class UserService extends BaseService {
 		String email = body.getString("email");
 
 		BaseUserModel.updateEmail(null, userId, email);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-user-email", bodyParams = { "userId",
@@ -102,7 +95,7 @@ public class UserService extends BaseService {
 		String email = body.getString("email");
 
 		BaseUserModel.updateEmail(principal, userId, email);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-own-phone", bodyParams = {
@@ -115,7 +108,7 @@ public class UserService extends BaseService {
 		Long phone = Long.parseLong(body.getString("phone"));
 
 		BaseUserModel.updatePhone(null, userId, phone);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-user-phone", bodyParams = { "userId",
@@ -130,7 +123,7 @@ public class UserService extends BaseService {
 		Long phone = Long.parseLong(body.getString("phone"));
 
 		BaseUserModel.updatePhone(principal, userId, phone);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-own-password", bodyParams = { "current",
@@ -144,7 +137,7 @@ public class UserService extends BaseService {
 		String newPassword = body.getString("newPassword");
 
 		BaseUserModel.updatePassword(null, userId, current, newPassword);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-user-password", bodyParams = { "userId", "current",
@@ -160,7 +153,7 @@ public class UserService extends BaseService {
 		String newPassword = body.getString("newPassword");
 
 		BaseUserModel.updatePassword(principal, userId, current, newPassword);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-own-avatar", bodyParams = {
@@ -173,7 +166,7 @@ public class UserService extends BaseService {
 		String blobId = body.getString("blobId");
 
 		BaseUserModel.updateAvatar(null, userId, blobId);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-user-avatar", bodyParams = { "userId",
@@ -188,7 +181,7 @@ public class UserService extends BaseService {
 		String blobId = body.getString("blobId");
 
 		BaseUserModel.updateAvatar(principal, userId, blobId);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/update-role", bodyParams = { "userId",
@@ -203,26 +196,74 @@ public class UserService extends BaseService {
 		String role = body.getString("role");
 
 		BaseUserModel.updateRole(principal, userId, role);
-		CacheModel.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		CacheAdapter.del(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
 	}
 
 	@EndpointMethod(uri = "/get-person-name", requestParams = { "userId",
 			"full" }, functionality = Functionality.GET_PERSON_NAMES)
 	public void getPersonName(RoutingContext ctx) {
-		   
+
 		Long userId = null;
-  
+
 		if (ctx.request().getParam("userId").equals("undefined")) {
 			userId = FusionHelper.getUserId(ctx.request());
-		} else { 
+		} else {
 			userId = Long.parseLong(ctx.request().getParam("userId"));
-		}  
+		}
 
 		Boolean full = Boolean.parseBoolean(ctx.request().getParam("full"));
- 
+
 		Object personName = BaseUserModel.getPersonName(userId, full);
- 
+
 		ctx.response().setChunked(true).write(new JsonObject().put("name", personName).encode());
 	}
- 
+
+	@EndpointMethod(uri = "/get-user-profile", requestParams = {
+			"userId" }, functionality = Functionality.GET_USER_PROFILE)
+	public void getUserProfile(RoutingContext ctx) {
+
+		Long principal = FusionHelper.getUserId(ctx.request());
+		Long userId = Long.parseLong(ctx.request().getParam("userId"));
+
+		String json = (String) CacheAdapter.get(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()));
+		if (json != null) {
+			ctx.response().setChunked(true).write(json);
+		} else {
+
+			UserProfileSpec spec = BaseUserModel.getProfile(principal, userId);
+			spec.setCityName(LocationModel.getCityName(spec.getCity().toString()))
+					.setTerritoryName(LocationModel.getTerritoryName(spec.getTerritory()))
+					.setCountryName(LocationModel.getCountryName(spec.getCountry()))
+					.setCountryDialingCode(LocationModel.getCountryDialingCode(spec.getCountry()));
+
+			json = GsonFactory.newInstance().toJson(spec);
+			CacheAdapter.put(CacheKeys.USER_PROFILE_$USER.replace("$USER", userId.toString()), json);
+			ctx.response().setChunked(true).write(json);
+		}
+	}
+
+	@EndpointMethod(uri = "/get-suggested-profiles", requestParams = {
+			"userId" }, functionality = Functionality.GET_USER_PROFILE)
+	public void getSuggestedProfiles(RoutingContext ctx) {
+
+		Long principal = FusionHelper.getUserId(ctx.request());
+		Long userId = Long.parseLong(ctx.request().getParam("userId"));
+
+		List<BaseUserSpec> profiles = UserModel.getSuggestedProfiles(principal, userId);
+
+		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(profiles));
+	}
+
+	@EndpointMethod(uri = "/can-access-user-profile", requestParams = {
+			"userId" }, functionality = Functionality.GET_USER_PROFILE)
+	public void canAccessUserProfile(RoutingContext ctx) {
+
+		Long principal = FusionHelper.getUserId(ctx.request());
+		Long userId = Long.parseLong(ctx.request().getParam("userId"));
+
+		boolean b = BaseUserModel.canAccessUserProfile(principal, userId);
+
+		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(b));
+	}
+
 }

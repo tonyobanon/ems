@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ce.ems.base.classes.ObjectWrapper;
 import com.ce.ems.base.core.AppUtils;
+import com.ce.ems.base.core.Application;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.ClassIdentityType;
 import com.ce.ems.base.core.ClasspathScanner;
@@ -43,6 +44,8 @@ import io.vertx.ext.web.Router;
  */
 public class APIRoutes {
 
+	private static final String FUSION_CLIENT_PATH = "C:/tmp/ems/fusion-service-clients/";
+
 	public static Pattern endpointClassUriPattern = Pattern
 			.compile("\\A\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+(\\Q/\\E[a-zA-Z]+[-]*[a-zA-Z]+)*\\z");
 
@@ -52,13 +55,13 @@ public class APIRoutes {
 	private static Multimap<Route, RouteHandler> routes = LinkedHashMultimap.create();
 
 	protected static Map<Object, Integer> routesMappings = new HashMap<>();
-  
+
 	protected static Map<Integer, List<String>> functionalityToRoutesMappings = new HashMap<>();
-  
+
 	protected static final String USER_ID_PARAM_NAME = "x_uid";
 	public static final String BASE_PATH = "/api";
-  
-	/**  
+
+	/**
 	 * This discovers fusion services by scanning the classpath
 	 */
 	private static void scanServices(Consumer<FusionServiceContext> consumer) {
@@ -92,7 +95,11 @@ public class APIRoutes {
 			List<Method> methodsList = new ArrayList<Method>();
 
 			for (Method m : service.getDeclaredMethods()) {
-				if (!m.isSynthetic()) {
+
+				// Note: Lambda functions are compiled as synthetic members of the declaring
+				// class, and some private helper methods may be contained in Service classes
+
+				if (!m.isSynthetic() && m.getAnnotation(EndpointMethod.class) != null) {
 					methodsList.add(m);
 				}
 			}
@@ -124,7 +131,7 @@ public class APIRoutes {
 
 		String name = service.getClass().getSimpleName();
 
-		String path = "/tmp/ems/fusion-service-clients/" + name.replace("Service", "").toLowerCase() + ".js";
+		String path = FUSION_CLIENT_PATH + name.replace("Service", "").toLowerCase() + ".js";
 
 		File clientStubFile = new File(path);
 
@@ -164,7 +171,6 @@ public class APIRoutes {
 
 		registerRoute(new Route(), new RouteHandler(Handlers::APIAuthHandler, false));
 
-		
 		// Then, add locale handler, for detecting user's language
 
 		registerRoute(new Route(), new RouteHandler(ctx -> {
@@ -241,10 +247,19 @@ public class APIRoutes {
 					}
 				}
 
+				if (context.getEndpointMethod().cache()) {
+					// allow proxies to cache the data
+					ctx.response().putHeader("Cache-Control", "public, max-age=" + WebRoutes.DEFAULT_CACHE_MAX_AGE);
+				} else {
+					ctx.response().putHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				}
+
 				try {
 					context.getMethod().invoke(context.getServiceInstance(), ctx);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				} catch (IllegalAccessException | IllegalArgumentException e) {
 					Exceptions.throwRuntime(e);
+				} catch (InvocationTargetException e) {
+					Exceptions.throwRuntime(e.getTargetException());
 				}
 
 			}), context.getEndpointMethod().isBlocking());
@@ -253,7 +268,7 @@ public class APIRoutes {
 
 			// Generate Javascript client
 
-			if (context.isClassEnd()) {
+			if (context.isClassEnd() && !Application.isProduction()) {
 				saveServiceClient(serviceCientBuffer.get().toString(), context.getServiceInstance());
 				serviceCientBuffer.set(new StringBuilder());
 			}

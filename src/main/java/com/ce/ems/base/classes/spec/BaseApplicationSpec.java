@@ -11,6 +11,7 @@ public class BaseApplicationSpec {
 	private String role;
 	private ApplicationStatus status;
 	
+	private String name;
 	private IndexedNameSpec nameSpec;
 	
 	private Date dateCreated;
@@ -23,7 +24,7 @@ public class BaseApplicationSpec {
 	public BaseApplicationSpec setId(Long id) {
 		this.id = id;
 		return this;
-	}
+	} 
 	
 	public String getRole() {
 		return role;
@@ -49,6 +50,7 @@ public class BaseApplicationSpec {
 
 	public BaseApplicationSpec setNameSpec(IndexedNameSpec nameSpec) {
 		this.nameSpec = nameSpec;
+		this.name = nameSpec.toString();
 		return this;
 	}
 
@@ -67,6 +69,15 @@ public class BaseApplicationSpec {
 
 	public BaseApplicationSpec setDateUpdated(Date dateUpdated) {
 		this.dateUpdated = dateUpdated;
+		return this;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public BaseApplicationSpec setName(String name) {
+		this.name = name;
 		return this;
 	}
 

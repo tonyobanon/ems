@@ -26,6 +26,8 @@ import com.ce.ems.base.classes.SystemErrorCodes;
 import com.ce.ems.base.core.BlockerTodo;
 import com.ce.ems.base.core.Model;
 import com.ce.ems.base.core.ModelMethod;
+import com.ce.ems.base.core.Note;
+import com.ce.ems.base.core.ResourceException;
 import com.ce.ems.base.core.SystemValidationException;
 import com.ce.ems.base.core.Todo;
 import com.ce.ems.entites.BaseUserEntity;
@@ -102,6 +104,7 @@ public class BaseUserModel extends BaseModel {
 		}
 	}
 
+	@Note("The phone index has been commented out in the entity")
 	@BlockerTodo("Phone Index is currently not used on the frontend. Indexes are expensive remember")
 	@ModelMethod(functionality = Functionality.PHONE_LOGIN_USER)
 	public static Long loginByPhone(Long phone, String password) {
@@ -155,7 +158,7 @@ public class BaseUserModel extends BaseModel {
 		return ofy().load().type(BaseUserEntity.class).filter("phone = ", phone.toString()).first().now() != null;
 	}
 
-	private static BaseUserEntity get(Long userId) {
+	protected static BaseUserEntity get(Long userId) {
 		return ofy().load().type(BaseUserEntity.class).id(userId).safe();
 	}
 
@@ -167,8 +170,27 @@ public class BaseUserModel extends BaseModel {
 	protected static Boolean isMaleUser(Long userId) {
 		return Gender.from(get(userId).getGender()).equals(Gender.MALE);
 	}
+	
+	@ModelMethod(functionality = Functionality.GET_USER_PROFILE)
+	public static boolean canAccessUserProfile(Long principal, Long userId) {
+		
+		RoleRealm principalRealm = RoleModel.getRealm(getRole(principal));
+		RoleRealm userRealm = RoleModel.getRealm(getRole(userId));
+		
+		return principalRealm.getAuthority() >= userRealm.getAuthority();
+	}
 
 	@ModelMethod(functionality = Functionality.GET_USER_PROFILE)
+	public static UserProfileSpec getProfile(Long principal, Long userId) {
+		
+		if(!canAccessUserProfile(principal, userId)) {
+			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
+		}
+		
+		return EntityHelper.toObjectModel(get(userId));
+	}
+	
+	@ModelMethod(functionality = Functionality.VIEW_OWN_PROFILE)
 	public static UserProfileSpec getProfile(Long userId) {
 		return EntityHelper.toObjectModel(get(userId));
 	}
@@ -202,7 +224,7 @@ public class BaseUserModel extends BaseModel {
 					SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)));
 		}
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(userId), activity);
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	@ModelMethod(functionality = { Functionality.MANAGE_OWN_PROFILE, Functionality.MANAGE_USER_ACCOUNTS })
@@ -229,7 +251,7 @@ public class BaseUserModel extends BaseModel {
 					SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)));
 		}
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(userId), activity);
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	@ModelMethod(functionality = { Functionality.MANAGE_OWN_PROFILE, Functionality.MANAGE_USER_ACCOUNTS })
@@ -256,7 +278,7 @@ public class BaseUserModel extends BaseModel {
 					SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)));
 		}
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(userId), activity);
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	@ModelMethod(functionality = { Functionality.MANAGE_OWN_PROFILE, Functionality.MANAGE_USER_ACCOUNTS })
@@ -276,7 +298,7 @@ public class BaseUserModel extends BaseModel {
 					SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)));
 		}
 
-		ActivityStreamModel.newActivity(blobId, activity);
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	@BlockerTodo("Based on user role, consolidate all other entities that belong to this user")
@@ -294,7 +316,7 @@ public class BaseUserModel extends BaseModel {
 				.withPreposition(Preposition.OF, SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(userId)))
 				.withPreposition(Preposition.TO, ObjectEntity.get(ObjectType.SYSTEM_ROLE).setIdentifiers(FluentArrayList.asList(role)));
 
-		ActivityStreamModel.newActivity(null, activity);
+		ActivityStreamModel.newActivity(activity);
 	}
 
 	protected static void deleteFieldValues(String fieldId) {
@@ -357,4 +379,5 @@ public class BaseUserModel extends BaseModel {
 						+ ClientResources.HtmlCharacterEnties.SPACE + v.getLastName()
 				: v.getFirstName() + ClientResources.HtmlCharacterEnties.SPACE + v.getLastName());
 	}
+	
 }

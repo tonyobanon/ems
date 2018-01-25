@@ -11,8 +11,8 @@ import com.github.zafarkhaja.semver.Version;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.VoidWork;
-import com.googlecode.objectify.annotation.Entity;
 import com.kylantis.eaa.core.fusion.APIRoutes;
+import com.kylantis.eaa.core.fusion.CacheAdapter;
 import com.kylantis.eaa.core.fusion.WebRoutes;
 import com.kylantis.eaa.core.keys.ConfigKeys;
 
@@ -21,7 +21,6 @@ public class Application {
 	public static final String SOFTRWARE_VENDER_NAME = "Compute Essentials, Inc";
 	public static final String SOFTRWARE_VENDER_EMAIL = "corporate@compute-essentials.com";
 	
-	private static Boolean isProduction;
 	private static boolean isStarted = false;
 
 	public static void start() {
@@ -30,36 +29,23 @@ public class Application {
 			return;
 		}
 
-		// Detect runtime environment
-		
-		isProduction = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
-		
-		
 		Logger.debug("Starting Engine ..");
 
 		// @DEV
 		Logger.enableSystemOutput();
-		
-		Logger.verboseMode(isProduction ? verboseLevel.TRACE : verboseLevel.DEBUG);
-		
-		
-		Logger.debug("Scanning for entities");
 
-		new ClasspathScanner<>("Entity", Entity.class, ClassIdentityType.ANNOTATION).scanClasses().forEach(e -> {
+		// Detect runtime environment		
+		//boolean isProduction = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;		
+		//Logger.verboseMode(isProduction ? verboseLevel.TRACE : verboseLevel.DEBUG);
+		
+		Logger.verboseMode(verboseLevel.DEBUG);
+		
+		CacheAdapter.start();
 
-			Logger.debug("Registering " + e.getSimpleName());
-			ObjectifyService.register(e);
-		});
-		
-		
 		APIRoutes.scanRoutes();
 		
-		try {
-			WebRoutes.scanRoutes();
-		} catch (IOException e1) {
-			Exceptions.throwRuntime(e1);
-		}
-
+		WebRoutes.scanRoutes();
+		
 		BaseModel.scanModels();
 
 		ObjectifyService.run(new VoidWork() {
@@ -130,7 +116,6 @@ public class Application {
 			}
 		});
 		
-		
 
 		// Logger.info("Launching API web server ..");
 		//
@@ -144,6 +129,10 @@ public class Application {
 		// }
 
 		isStarted = true;
+	}
+
+	public static boolean isStarted() {
+		return isStarted;
 	}
 
 	public static void stop() {
@@ -162,8 +151,8 @@ public class Application {
 		
 	}
 	
-	public static Boolean isProduction() {
-		return isProduction;
+	public static final boolean isProduction() {
+		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
 	}
 	
 }

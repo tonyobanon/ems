@@ -3,6 +3,7 @@ package com.ce.ems.models;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,29 +28,33 @@ import com.ce.ems.base.classes.InstallOptions;
 import com.ce.ems.base.classes.IntegerWrapper;
 import com.ce.ems.base.classes.ObjectWrapper;
 import com.ce.ems.base.classes.QueryFilter;
+import com.ce.ems.base.classes.ScoreGrade;
 import com.ce.ems.base.classes.Semester;
 import com.ce.ems.base.classes.SystemErrorCodes;
 import com.ce.ems.base.classes.spec.AcademicSemesterCourseSpec;
 import com.ce.ems.base.classes.spec.AssessmentTotalSpec;
 import com.ce.ems.base.classes.spec.DepartmentLevelSpec;
 import com.ce.ems.base.classes.spec.ResultRecordSheetSpec;
+import com.ce.ems.base.classes.spec.ScoreGradeSpec;
 import com.ce.ems.base.classes.spec.ScoreSheet;
 import com.ce.ems.base.classes.spec.TotalSpec;
 import com.ce.ems.base.core.BlockerTodo;
+import com.ce.ems.base.core.Logger;
 import com.ce.ems.base.core.Model;
 import com.ce.ems.base.core.ModelMethod;
 import com.ce.ems.base.core.ResourceException;
 import com.ce.ems.base.core.SystemValidationException;
 import com.ce.ems.base.core.Todo;
+import com.ce.ems.entites.ScoreGradeEntity;
 import com.ce.ems.entites.calculation.AcademicSemesterCourseEntity;
 import com.ce.ems.entites.calculation.ResultRecordSheetEntity;
 import com.ce.ems.entites.calculation.StudentSemesterCoursesEntity;
 import com.ce.ems.entites.directory.AssessmentTotalEntity;
+import com.ce.ems.entites.directory.CourseEntity;
 import com.ce.ems.entites.directory.DepartmentalLevelEntity;
 import com.ce.ems.entites.directory.LevelSemesterEntity;
 import com.ce.ems.entites.directory.StudentEntity;
 import com.google.common.collect.Lists;
-import com.kylantis.eaa.core.fusion.Unexposed;
 import com.kylantis.eaa.core.keys.ConfigKeys;
 import com.kylantis.eaa.core.users.Functionality;
 import com.kylantis.eaa.core.users.RoleRealm;
@@ -59,7 +64,7 @@ import com.kylantis.eaa.core.users.RoleRealm;
 
 @Todo("Create setting to create global assessment total")
 
-@Model(dependencies = { DirectoryModel.class })
+@Model(dependencies = { DModel.class })
 public class CalculationModel extends BaseModel {
 
 	@Override
@@ -70,18 +75,115 @@ public class CalculationModel extends BaseModel {
 	@Override
 	@BlockerTodo("Create configuration for this")
 	public void preInstall() {
+		
 		ConfigModel.put(ConfigKeys.MAX_CARRY_OVER_UNIT_LOAD, 10);
+
+		Logger.debug("Creating score grades");
+
+		// Create score grades
+
+		List<ScoreGradeSpec> grades = new FluentArrayList<ScoreGradeSpec>()
+				.with(new ScoreGradeSpec(ScoreGrade.A.name(), 70, 100))
+				.with(new ScoreGradeSpec(ScoreGrade.B.name(), 65, 69))
+				.with(new ScoreGradeSpec(ScoreGrade.C.name(), 60, 64))
+				.with(new ScoreGradeSpec(ScoreGrade.D.name(), 55, 59))
+				.with(new ScoreGradeSpec(ScoreGrade.E.name(), 50, 54))
+				.with(new ScoreGradeSpec(ScoreGrade.F.name(), 0, 49));
+
+		CalculationModel.updateScoreGrades(-1l, grades);
 	}
 
 	@Override
 	public void install(InstallOptions options) {
+
 	}
 
-	@ModelMethod(functionality = Functionality.VIEW_SEMESTER_COURSE_RESULT)
-	public static Map<String, AcademicSemesterCourseSpec> getAcademicSemesterCourses(Long academicSemesterId,
-			List<String> courseCodes) {
+	private static boolean validateGrades(List<ScoreGradeSpec> grades) {
 
-		Map<String, AcademicSemesterCourseSpec> result = new FluentHashMap<>();
+		boolean b = true;
+
+		// First verify length
+		b = ScoreGrade.values().length == grades.size();
+		if (!b) {
+			throw new ResourceException(ResourceException.FAILED_VALIDATION,
+					"A validation error occured: Invalid length");
+		}
+
+		// Then, verify that all scores are tentatively between 0 and 100
+		b = grades.get(0).getUpperBound() == 100 && grades.get(grades.size() - 1).getLowerBound() == 0;
+		if (!b) {
+			throw new ResourceException(ResourceException.FAILED_VALIDATION,
+					"A validation error occured: All values not within 0 .. 100");
+		}
+
+		// Then, verify the edges are numerically successive
+		for (int i = 0; i < grades.size() - 1; i++) {
+			b = grades.get(i).getLowerBound() == grades.get(i + 1).getUpperBound() + 1;
+			if (!b) {
+				throw new ResourceException(ResourceException.FAILED_VALIDATION,
+						"A validation error occured. Edges are not numerically successive.");
+			}
+		}
+
+		// Then verify that from n + 1 [bounds] < .... < n [bounds]
+		List<Integer> vs = new ArrayList<Integer>(grades.size() * 2);
+		for (int i = 0; i < grades.size(); i++) {
+			ScoreGradeSpec v = grades.get(i);
+			vs.add(v.getUpperBound());
+			vs.add(v.getLowerBound());
+		}
+		int c = 101;
+		for (int i : vs) {
+			if (c > i) {
+				c = i;
+			} else {
+				throw new ResourceException(ResourceException.FAILED_VALIDATION,
+						"A validation error occured while verifying n + 1 [bounds] < .... < n [bounds]");
+			}
+		}
+
+		return b;
+	}
+
+	@ModelMethod(functionality = Functionality.VIEW_SCORE_GRADES)
+	public static List<ScoreGradeSpec> getScoreGrades() {
+
+		List<ScoreGradeSpec> result = new ArrayList<>();
+
+		ofy().load().type(ScoreGradeEntity.class).list().forEach(e -> {
+			result.add(new ScoreGradeSpec(e.getGrade(), e.getLowerBound(), e.getUpperBound()));
+		});
+
+		return result;
+	}
+
+	@ModelMethod(functionality = Functionality.MANAGE_SCORE_GRADES)
+	public static void updateScoreGrades(Long principal, List<ScoreGradeSpec> grades) {
+
+		validateGrades(grades);
+
+		List<ScoreGradeEntity> entities = new ArrayList<>();
+
+		grades.forEach(e -> {
+			entities.add(new ScoreGradeEntity().setGrade(e.getGrade()).setLowerBound(e.getLowerBound())
+					.setUpperBound(e.getUpperBound()));
+		});
+
+		ofy().save().entities(entities);
+		
+		Sentence activity = Sentence.newInstance()
+				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+				.setPredicate(CustomPredicate.UPDATED)
+				.setObject(ObjectEntity.get(ObjectType.SCORE_GRADES)
+						);
+
+		ActivityStreamModel.newActivity(activity);
+	}
+
+	protected static Map<String, Integer> getAcademicSemesterCourseHighScore(Long academicSemesterId,
+			Collection<String> courseCodes) {
+
+		Map<String, Integer> result = new FluentHashMap<>();
 
 		courseCodes.forEach(courseCode -> {
 
@@ -89,39 +191,39 @@ public class CalculationModel extends BaseModel {
 					QueryFilter.get("academicSemesterId", academicSemesterId.toString()),
 					QueryFilter.get("courseCode", courseCode)).first().safe();
 
-			result.put(courseCode, EntityHelper.toObjectModel(e));
+			result.put(courseCode, e.getHighestScore());
 		});
 		return result;
 	}
 
-	@BlockerTodo("This method was provided for short term. It is expensive for the web client and should be removed. See DM.getLecturerCourses(..)")
-	protected static Map<String, AcademicSemesterCourseSpec> getAcademicSemesterCourses(Long academicSemesterId) {
+	protected static Map<String, AcademicSemesterCourseSpec> getAcademicSemesterCoursesHtghScores(
+			Long academicSemesterId) {
 
 		Map<String, AcademicSemesterCourseSpec> result = new HashMap<>();
 
 		EntityUtils.lazyQuery(AcademicSemesterCourseEntity.class,
 				QueryFilter.get("academicSemesterId = ", academicSemesterId.toString())).list().forEach(e -> {
 					AcademicSemesterCourseSpec spec = EntityHelper.toObjectModel(e)
-							.setCourseTitle(DirectoryModel.getCourseName(e.getCourseCode()));
+							.setCourseTitle(DModel.getCourseName(e.getCourseCode()));
 					result.put(spec.getCourseCode(), spec);
 				});
 
 		return result;
 	}
 
-	@ModelMethod(functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
 	public static Boolean isSemesterCourseSheetCreated(Long principal, String courseCode) {
 
-		if (principal != -1 && !DirectoryModel.isCourseLecturer(principal, courseCode)) {
+		if (principal != -1 && !DModel.isCourseLecturer(principal, courseCode)) {
 			throw new SystemValidationException(SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET);
 		}
 
 		return ofy().load().type(AcademicSemesterCourseEntity.class)
-				.filter("academicSemesterId = ", DirectoryModel.currentSemesterId().toString())
+				.filter("academicSemesterId = ", DModel.currentSemesterId().toString())
 				.filter("courseCode = ", courseCode).first().safe().getIsSheetCreated();
 	}
 
-	@ModelMethod(functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
 	public static Long createScoreSheet(Long principal, Long academicSemesterCourseId) {
 
 		AcademicSemesterCourseEntity e = ofy().load().type(AcademicSemesterCourseEntity.class)
@@ -135,16 +237,16 @@ public class CalculationModel extends BaseModel {
 		RoleRealm realm = RoleModel.getRealm(role);
 
 		if (realm.equals(RoleRealm.LECTURER)) {
-			if (!DirectoryModel.isCourseLecturer(principal, e.getCourseCode())) {
+			if (!DModel.isCourseLecturer(principal, e.getCourseCode())) {
 				throw new SystemValidationException(SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET);
 			}
 		}
 
 		// Because a course may be associated with multiple department levels, the entry
 		// @ index 0 is used as the default
-		Long departmentLevel = DirectoryModel.getCourse(e.getCourseCode()).getDepartmentLevels().get(0);
+		Long departmentLevel = DModel.getCourse(e.getCourseCode()).getDepartmentLevels().get(0);
 		Long levelSemester = CalculationModel.getLevelSemester(departmentLevel,
-				Semester.from(DirectoryModel.getAcademicSemesterValue(e.getAcademicSemesterId())));
+				Semester.from(DModel.getAcademicSemesterValue(e.getAcademicSemesterId())));
 
 		// add totals
 		List<Long> totals = validateTotals(levelSemester);
@@ -161,7 +263,7 @@ public class CalculationModel extends BaseModel {
 		e.getStudents().forEach(s -> {
 
 			ResultRecordSheetEntity re = new ResultRecordSheetEntity().setAcademicSemesterCourseId(e.getId())
-					.setStudentId(s).setScores(defaultScores).setTotal((short) 0);
+					.setStudentId(s).setScores(defaultScores).setTotal(0);
 
 			sheetEntries.add(re);
 		});
@@ -177,17 +279,18 @@ public class CalculationModel extends BaseModel {
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
 				.setPredicate(CustomPredicate.CREATED)
-				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET).addIdentifier(e.getCourseCode())
-						.addIdentifier(e.getAcademicSemesterId()))
-				.withPreposition(Preposition.FOR, ObjectEntity.get(ObjectType.COURSE).setName(e.getCourseCode())
-						.addIdentifier(e.getCourseCode()));
+				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET).addIdentifier(e.getId()))
+				.withPreposition(Preposition.FOR,
+						ObjectEntity.get(ObjectType.COURSE).setName(e.getCourseCode()).addIdentifier(departmentLevel)
+		// .addIdentifier(e.getCourseCode())
+		);
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		ActivityStreamModel.newActivity(activity);
 
 		return e.getId();
 	}
 
-	@ModelMethod(functionality = Functionality.VIEW_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.VIEW_COURSE_RESULT_SHEET)
 	public static ScoreSheet getScoreSheet(Long principal, Long academicSemesterCourseId,
 			@Nullable AcademicSemesterCourseEntity e) {
 
@@ -205,7 +308,7 @@ public class CalculationModel extends BaseModel {
 		result.setTotals(getAcademicSemesterCourseTotals(e.getId()));
 
 		ofy().load().type(ResultRecordSheetEntity.class).filter("academicSemesterCourseId = ", e.getId().toString())
-				.forEach(se -> { 
+				.forEach(se -> {
 
 					ResultRecordSheetSpec entry = EntityHelper.toObjectModel(se);
 
@@ -215,12 +318,14 @@ public class CalculationModel extends BaseModel {
 					DepartmentLevelSpec departmentLevel = EntityHelper.toObjectModel(
 							ofy().load().type(DepartmentalLevelEntity.class).id(departmentLevelId).safe());
 
-					result.addRecord(entry
-							.setStudentName(BaseUserModel.getPersonName(se.getStudentId(), true).toString())
-							.setStudentMatricNumber(DirectoryModel.getStudentMatricNumber(se.getStudentId()))
-							.setDepartmentName(DirectoryModel.getDepartmentName(departmentLevel.getDepartment()))
-							.setLevel(ClientRBRef.get(departmentLevel.toString()))
-							.setLastUpdatedBy(se.getLastUpdatedBy()!= null ? BaseUserModel.getPersonName(se.getLastUpdatedBy(), false).toString() : null));
+					result.addRecord(
+							entry.setStudentName(BaseUserModel.getPersonName(se.getStudentId(), true).toString())
+									.setStudentMatricNumber(DModel.getStudentMatricNumber(se.getStudentId()))
+									.setDepartmentName(DModel.getDepartmentName(departmentLevel.getDepartment()))
+									.setLevel(ClientRBRef.get(departmentLevel.toString()))
+									.setLastUpdatedBy(se.getLastUpdatedBy() != null
+											? BaseUserModel.getPersonName(se.getLastUpdatedBy(), false).toString()
+											: null));
 				});
 
 		result.setIsFinal(e.getIsSheetFinal());
@@ -230,28 +335,30 @@ public class CalculationModel extends BaseModel {
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
 				.setPredicate(CustomPredicate.VIEWED)
-				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET).addIdentifier(e.getCourseCode())
-						.addIdentifier(e.getAcademicSemesterId()))
-				.withPreposition(Preposition.FOR, ObjectEntity.get(ObjectType.COURSE).setName(e.getCourseCode())
-						.addIdentifier(e.getCourseCode()));
+				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET).addIdentifier(e.getId()))
+				.withPreposition(Preposition.FOR,
+						ObjectEntity.get(ObjectType.COURSE).setName(e.getCourseCode()).addIdentifier(ofy().load()
+								.type(CourseEntity.class).id(e.getCourseCode()).safe().getDepartmentLevels().get(0))
+		// .addIdentifier(e.getCourseCode())
+		);
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		ActivityStreamModel.newActivity(activity);
 
 		return result;
 	}
 
-	@ModelMethod(functionality = Functionality.VIEW_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.VIEW_COURSE_RESULT_SHEET)
 	public static ScoreSheet getScoreSheet(Long principal, String courseCode, Long academicSemesterId) {
 
 		if (academicSemesterId == null) {
-			academicSemesterId = DirectoryModel.currentSemesterId();
+			academicSemesterId = DModel.currentSemesterId();
 		}
 
 		String role = BaseUserModel.getRole(principal);
 		RoleRealm realm = RoleModel.getRealm(role);
 
 		if (realm.equals(RoleRealm.LECTURER)) {
-			if (!DirectoryModel.isCourseLecturer(principal, courseCode)) {
+			if (!DModel.isCourseLecturer(principal, courseCode)) {
 				throw new SystemValidationException(SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET);
 			}
 		}
@@ -267,18 +374,37 @@ public class CalculationModel extends BaseModel {
 		return getScoreSheet(principal, e.getId(), e);
 	}
 
-	@ModelMethod(functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.VIEW_COURSE_RESULT_SHEET)
+	public static Boolean canManageResultSheet(Long principal, Long academicSemesterCourseId) {
+
+		AcademicSemesterCourseEntity entity = ofy().load().type(AcademicSemesterCourseEntity.class)
+				.id(academicSemesterCourseId).safe();
+
+		// Get associated course code
+		String courseCode = entity.getCourseCode();
+
+		String role = BaseUserModel.getRole(principal);
+		RoleRealm realm = RoleModel.getRealm(role);
+
+		boolean b = RoleModel.isAccessAllowed(role, Functionality.MANAGE_COURSE_RESULT_SHEET);
+
+		if (b && realm.equals(RoleRealm.LECTURER)) {
+			b = DModel.isCourseLecturer(principal, courseCode);
+		}
+
+		return b;
+	}
+
+	@ModelMethod(functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
 	public static List<Long> updateScoreSheet(Long principal, Long academicSemesterCourseId,
 			Map<Long, List<Integer>> scores) {
 
 		AcademicSemesterCourseEntity entity = ofy().load().type(AcademicSemesterCourseEntity.class)
 				.id(academicSemesterCourseId).safe();
 
-		entity.setDateUpdated(new Date());
+		ObjectWrapper<Integer> highScore = new ObjectWrapper<Integer>().set(entity.getHighestScore());
 
-		ofy().save().entity(entity).now();
-
-		Long currentSemesterId = DirectoryModel.currentSemesterId();
+		Long currentSemesterId = DModel.currentSemesterId();
 		if (!entity.getAcademicSemesterId().equals(currentSemesterId)) {
 			throw new ResourceException(ResourceException.UPDATE_NOT_ALLOWED);
 		}
@@ -290,7 +416,7 @@ public class CalculationModel extends BaseModel {
 		RoleRealm realm = RoleModel.getRealm(role);
 
 		if (realm.equals(RoleRealm.LECTURER)) {
-			if (!DirectoryModel.isCourseLecturer(principal, courseCode)) {
+			if (!DModel.isCourseLecturer(principal, courseCode)) {
 				throw new SystemValidationException(SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET);
 			}
 		}
@@ -307,18 +433,18 @@ public class CalculationModel extends BaseModel {
 		// This represents the score sheet ids whose scores were successfully updated
 		List<Long> result = new FluentArrayList<>();
 
-		List<ResultRecordSheetEntity> re = new ArrayList<>();
+		List<Object> entities = new ArrayList<>();
 
 		scores.forEach((k, v) -> {
 
 			// validate scores against totals
 
-			for (int i = 0; i < totals.size(); i++) {
-				if (v.get(i) > totals.get(i)) {
-					throw new SystemValidationException(SystemErrorCodes.STUDENT_SCORE_EXCEEDS_RESULT_SHEET_TOTAL,
-							k.toString());
-				}
-			}
+//			for (int i = 0; i < totals.size(); i++) {
+//				if (v.get(i) > totals.get(i)) {
+//					throw new SystemValidationException(SystemErrorCodes.STUDENT_SCORE_EXCEEDS_RESULT_SHEET_TOTAL,
+//							k.toString());
+//				}
+//			}
 
 			ResultRecordSheetEntity e = EntityUtils.query(ResultRecordSheetEntity.class,
 					QueryFilter.get("academicSemesterCourseId =", academicSemesterCourseId.toString()),
@@ -328,19 +454,39 @@ public class CalculationModel extends BaseModel {
 			e.setLastUpdated(new Date());
 			e.setLastUpdatedBy(principal);
 
-			short total = 0;
+			int total = 0;
 			for (int s : v) {
 				total += s;
 			}
 
 			e.setTotal(total);
 
-			re.add(e);
+			entities.add(e);
+
+			if (total > highScore.get()) {
+				highScore.set(total);
+			}
+
+			StudentSemesterCoursesEntity sse = EntityUtils.query(StudentSemesterCoursesEntity.class,
+					QueryFilter.get("academicSemesterId =", currentSemesterId.toString()),
+					QueryFilter.get("studentId =", k.toString())).get(0);
+
+			sse.putCourse(courseCode, total);
+
+			entities.add(sse);
 
 			result.add(k);
+
 		});
 
-		ofy().save().entities(re).now();
+		if (highScore.get() > entity.getHighestScore()) {
+			entity.setHighestScore(highScore.get());
+		}
+		entity.setDateUpdated(new Date());
+
+		entities.add(entity);
+
+		ofy().save().entities(entities).now();
 
 		// Add to activity stream
 
@@ -348,17 +494,21 @@ public class CalculationModel extends BaseModel {
 				.setSubject(SubjectEntity.get(SubjectType.USER).addIdentifier(principal))
 				.setPredicate(CustomPredicate.UPDATED)
 				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET)
-						.setIdentifiers(FluentArrayList.asList((Object) courseCode).with(currentSemesterId)))
-				.withPreposition(Preposition.FOR, ObjectEntity.get(ObjectType.COURSE).setName(courseCode)
-						.setIdentifiers(FluentArrayList.asList(courseCode)));
+						.setIdentifiers(FluentArrayList.asList(entity.getId())))
+				.withPreposition(Preposition.FOR,
+						ObjectEntity.get(ObjectType.COURSE).setName(courseCode)
+								.addIdentifier(ofy().load().type(CourseEntity.class).id(entity.getCourseCode()).safe()
+										.getDepartmentLevels().get(0))
+		// .setIdentifiers(FluentArrayList.asList(courseCode))
+		);
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		ActivityStreamModel.newActivity(activity);
 
 		return result;
 	}
 
 	@BlockerTodo("Add code for compiling results, and  generating reports")
-	@ModelMethod(functionality = Functionality.MANAGE_COURSE_SCORE_SHEET)
+	@ModelMethod(functionality = Functionality.MANAGE_COURSE_RESULT_SHEET)
 	public static void submitScoreSheet(Long principal, Long academicSemesterCourseId) {
 
 		AcademicSemesterCourseEntity entity = ofy().load().type(AcademicSemesterCourseEntity.class)
@@ -366,6 +516,15 @@ public class CalculationModel extends BaseModel {
 
 		if (entity.getIsSheetFinal()) {
 			throw new SystemValidationException(SystemErrorCodes.COURSE_RESULT_SHEET_ALREADY_SUBMITTED);
+		}
+
+		String role = BaseUserModel.getRole(principal);
+		RoleRealm realm = RoleModel.getRealm(role);
+
+		if (realm.equals(RoleRealm.LECTURER)) {
+			if (!DModel.isCourseLecturer(principal, entity.getCourseCode())) {
+				throw new SystemValidationException(SystemErrorCodes.INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET);
+			}
 		}
 
 		entity.setIsSheetFinal(true);
@@ -377,73 +536,78 @@ public class CalculationModel extends BaseModel {
 
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).addIdentifier(principal))
-				.setPredicate(CustomPredicate.SUBMITED)
+				.setPredicate(CustomPredicate.SUBMITTED)
 				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET).addIdentifier(entity.getCourseCode())
 						.addIdentifier(entity.getAcademicSemesterId()))
 				.withPreposition(Preposition.FOR, ObjectEntity.get(ObjectType.COURSE).setName(entity.getCourseCode())
 						.addIdentifier(entity.getCourseCode()));
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		ActivityStreamModel.newActivity(activity);
 
 	}
 
-	@Unexposed
-	@BlockerTodo("Implement this ASAP")
-	@ModelMethod(functionality = Functionality.VIEW_SEMESTER_COURSE_RESULT)
-	public static Long getSemesterCourseReport(Long principal, Long academicSemesterCourseId) {
-
-		AcademicSemesterCourseEntity entity = ofy().load().type(AcademicSemesterCourseEntity.class)
-				.id(academicSemesterCourseId).safe();
-
-		String courseCode = entity.getCourseCode();
-		Long academicSemesterId = entity.getAcademicSemesterId();
-
-		// Generate PDF document, if not generated. This should have been done
-		// immediately the sheet becomes final
-
-		// Add to activity stream
-
-		Sentence activity = Sentence.newInstance()
-				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
-				.setPredicate(CustomPredicate.DOWNLOADED)
-				.setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET)
-						.setIdentifiers(FluentArrayList.asList((Object) courseCode).with(academicSemesterId)))
-				.withPreposition(Preposition.FOR,
-						ObjectEntity.get(ObjectType.COURSE).setName(courseCode).addIdentifier(courseCode));
-
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
-
-		return null;
-	}
-
-	@Unexposed
-	@BlockerTodo
-	@ModelMethod(functionality = Functionality.VIEW_STUDENT_SEMESTER_RESULT)
-	public static Long getStudentSemesterReport(Long principal, Long studentId, Long academicSemesterId) {
-
-		StudentSemesterCoursesEntity e;
-
-		// Generate PDF document, if not generated. This should have been done
-		// immediately the semester ends
-
-		// To generate it, we first query ResultRecordSheetEntity, for each of the
-		// student's registered courses, then update
-		// StudentSemesterCoursesEntity.courses Map
-
-		// Add to activity stream
-
-		Sentence activity = Sentence.newInstance()
-				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
-				.setPredicate(CustomPredicate.DOWNLOADED)
-				.setObject(ObjectEntity.get(ObjectType.STUDENT_RESULT)
-						.setIdentifiers(FluentArrayList.asList((Object) studentId).with(academicSemesterId)))
-				.withPreposition(Preposition.FOR,
-						SubjectEntity.get(SubjectType.STUDENT).setIdentifiers(FluentArrayList.asList(studentId)));
-
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
-
-		return null;
-	}
+	/**
+	 * @Unexposed @BlockerTodo("Implement this ASAP") //@ModelMethod(functionality =
+	 *            Functionality.VIEW_SEMESTER_COURSE_RESULT) public static Long
+	 *            getSemesterCourseReport(Long principal, Long
+	 *            academicSemesterCourseId) {
+	 * 
+	 *            AcademicSemesterCourseEntity entity =
+	 *            ofy().load().type(AcademicSemesterCourseEntity.class)
+	 *            .id(academicSemesterCourseId).safe();
+	 * 
+	 *            String courseCode = entity.getCourseCode(); Long
+	 *            academicSemesterId = entity.getAcademicSemesterId();
+	 * 
+	 *            // Generate PDF document, if not generated. This should have been
+	 *            done // immediately the sheet becomes final
+	 * 
+	 *            // Add to activity stream
+	 * 
+	 *            Sentence activity = Sentence.newInstance()
+	 *            .setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+	 *            .setPredicate(CustomPredicate.DOWNLOADED)
+	 *            .setObject(ObjectEntity.get(ObjectType.COURSE_RESULT_SHEET)
+	 *            .setIdentifiers(FluentArrayList.asList((Object)
+	 *            courseCode).with(academicSemesterId)))
+	 *            .withPreposition(Preposition.FOR,
+	 *            ObjectEntity.get(ObjectType.COURSE).setName(courseCode).addIdentifier(courseCode));
+	 * 
+	 *            ActivityStreamModel.newActivity(activity);
+	 * 
+	 *            return null; }
+	 * 
+	 * @Unexposed
+	 * @BlockerTodo //@ModelMethod(functionality =
+	 *              Functionality.VIEW_STUDENT_SEMESTER_RESULT) public static Long
+	 *              getStudentSemesterReport(Long principal, Long studentId, Long
+	 *              academicSemesterId) {
+	 * 
+	 *              StudentSemesterCoursesEntity e;
+	 * 
+	 *              // Generate PDF document, if not generated. This should have
+	 *              been done // immediately the semester ends
+	 * 
+	 *              // To generate it, we first query ResultRecordSheetEntity, for
+	 *              each of the // student's registered courses, then update //
+	 *              StudentSemesterCoursesEntity.courses Map
+	 * 
+	 *              // Add to activity stream
+	 * 
+	 *              Sentence activity = Sentence.newInstance()
+	 *              .setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+	 *              .setPredicate(CustomPredicate.DOWNLOADED)
+	 *              .setObject(ObjectEntity.get(ObjectType.STUDENT_RESULT)
+	 *              .setIdentifiers(FluentArrayList.asList((Object)
+	 *              studentId).with(academicSemesterId)))
+	 *              .withPreposition(Preposition.FOR,
+	 *              SubjectEntity.get(SubjectType.STUDENT).setIdentifiers(FluentArrayList.asList(studentId)));
+	 * 
+	 *              ActivityStreamModel.newActivity(activity);
+	 * 
+	 *              return null; }
+	 * 
+	 **/
 
 	@ModelMethod(functionality = Functionality.LIST_DEPARTMENT_LEVELS)
 	public static Long getLevelSemester(Long departmentLevelId, Semester s) {
@@ -467,7 +631,7 @@ public class CalculationModel extends BaseModel {
 
 		// Add to activity stream
 
-		DepartmentLevelSpec levelSpec = DirectoryModel.getDepartmentLevel(levelSemesterId);
+		DepartmentLevelSpec levelSpec = DModel.getDepartmentLevel(levelSemesterId);
 
 		Sentence activity = Sentence.newInstance()
 				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
@@ -478,11 +642,11 @@ public class CalculationModel extends BaseModel {
 				.withPreposition(Preposition.FOR,
 						ObjectEntity.get(ObjectType.DEPARTMENT)
 								.setIdentifiers(FluentArrayList.asList(levelSpec.getDepartment()))
-								.setName(DirectoryModel.getDepartmentName(levelSpec.getDepartment()))
+								.setName(DModel.getDepartmentName(levelSpec.getDepartment()))
 								.addQualifier(ClientRBRef.get(levelSpec))
-								.addQualifier(ClientRBRef.get(DirectoryModel.getSemester(levelSemesterId))));
+								.addQualifier(ClientRBRef.get(DModel.getSemester(levelSemesterId))));
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+		ActivityStreamModel.newActivity(activity);
 
 		return totals;
 	}
@@ -583,22 +747,27 @@ public class CalculationModel extends BaseModel {
 
 		// Add to activity stream
 
-		DepartmentLevelSpec levelSpec = DirectoryModel.getDepartmentLevel(spec.getLevelSemester());
+		DepartmentLevelSpec levelSpec = DModel.getDepartmentLevel(spec.getLevelSemester());
 
-		Sentence activity = Sentence.newInstance()
-				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
-				.setPredicate(CustomPredicate.UPDATED)
-				.setObject(ObjectEntity.get(ObjectType.ASSESSMENT_TOTAL)
-						.setIdentifiers(FluentArrayList.asList(spec.getLevelSemester())))
+		boolean b = false;
 
-				.withPreposition(Preposition.FOR,
-						ObjectEntity.get(ObjectType.DEPARTMENT)
-								.setIdentifiers(FluentArrayList.asList(levelSpec.getDepartment()))
-								.setName(DirectoryModel.getDepartmentName(levelSpec.getDepartment()))
-								.addQualifier(ClientRBRef.get(levelSpec))
-								.addQualifier(ClientRBRef.get(DirectoryModel.getSemester(e.getLevelSemester()))));
+		if (b) {
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+			Sentence activity = Sentence.newInstance()
+					.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+					.setPredicate(CustomPredicate.UPDATED)
+					.setObject(ObjectEntity.get(ObjectType.ASSESSMENT_TOTAL)
+							.setIdentifiers(FluentArrayList.asList(spec.getLevelSemester())))
+
+					.withPreposition(Preposition.FOR,
+							ObjectEntity.get(ObjectType.DEPARTMENT)
+									.setIdentifiers(FluentArrayList.asList(levelSpec.getDepartment()))
+									.setName(DModel.getDepartmentName(levelSpec.getDepartment()))
+									.addQualifier(ClientRBRef.get(levelSpec))
+									.addQualifier(ClientRBRef.get(DModel.getSemester(e.getLevelSemester()))));
+
+			ActivityStreamModel.newActivity(activity);
+		}
 
 		return e.getId();
 	}
@@ -668,22 +837,28 @@ public class CalculationModel extends BaseModel {
 
 		// Add to activity stream
 
-		DepartmentLevelSpec levelSpec = DirectoryModel.getDepartmentLevel(e.getLevelSemester());
+		DepartmentLevelSpec levelSpec = DModel.getDepartmentLevel(e.getLevelSemester());
 
-		Sentence activity = Sentence.newInstance()
-				.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
-				.setPredicate(CustomPredicate.UPDATED)
-				.setObject(ObjectEntity.get(ObjectType.ASSESSMENT_TOTAL)
-						.setIdentifiers(FluentArrayList.asList(e.getLevelSemester())))
+		boolean b = false;
 
-				.withPreposition(Preposition.FOR,
-						ObjectEntity.get(ObjectType.DEPARTMENT)
-								.setIdentifiers(FluentArrayList.asList(levelSpec.getDepartment()))
-								.setName(DirectoryModel.getDepartmentName(levelSpec.getDepartment()))
-								.addQualifier(ClientRBRef.get(levelSpec))
-								.addQualifier(ClientRBRef.get(DirectoryModel.getSemester(e.getLevelSemester()))));
+		if (b) {
 
-		ActivityStreamModel.newActivity(BaseUserModel.getAvatar(principal), activity);
+			Sentence activity = Sentence.newInstance()
+					.setSubject(SubjectEntity.get(SubjectType.USER).setIdentifiers(FluentArrayList.asList(principal)))
+					.setPredicate(CustomPredicate.UPDATED)
+					.setObject(ObjectEntity.get(ObjectType.ASSESSMENT_TOTAL)
+							.setIdentifiers(FluentArrayList.asList(e.getLevelSemester())))
+
+					.withPreposition(Preposition.FOR,
+							ObjectEntity.get(ObjectType.DEPARTMENT)
+									.setIdentifiers(FluentArrayList.asList(levelSpec.getDepartment()))
+									.setName(DModel.getDepartmentName(levelSpec.getDepartment()))
+									.addQualifier(ClientRBRef.get(levelSpec))
+									.addQualifier(ClientRBRef.get(DModel.getSemester(e.getLevelSemester()))));
+
+			ActivityStreamModel.newActivity(activity);
+
+		}
 	}
 
 }

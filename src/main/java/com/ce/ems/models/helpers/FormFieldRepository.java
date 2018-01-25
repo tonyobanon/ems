@@ -25,7 +25,7 @@ public class FormFieldRepository {
 		FormModel.newSection("Profile Information", FormSectionType.APPLICATION_FORM).forEach((k, v) -> {
 
 			saveFieldId(k, FieldType.IMAGE, FormModel.newSimpleField(v,
-					(SimpleEntry) new SimpleEntry(InputType.IMAGE, "Passport").setSortOrder(1).setIsDefault(true)));
+					(SimpleEntry) new SimpleEntry(InputType.IMAGE, "Passport").setSortOrder(1).setIsDefault(true).setIsRequired(false)));
 			
 			saveFieldId(k, FieldType.FIRST_NAME, FormModel.newSimpleField(v,
 					(SimpleEntry) new SimpleEntry(InputType.PLAIN, "First Name").setSortOrder(2).setIsDefault(true)));

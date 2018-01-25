@@ -1,6 +1,6 @@
 {
 
-	"/view-application-form": {"min": [-8], "max":[]},
+	"/new-application": {"min": [-10], "max":[]},
 
 	"/update-application": {"min": [-20], "max":[-21]},
 
@@ -34,24 +34,24 @@
 	
 	"/console": {"min": [0], "max": []},
 	
+	"/faculties": {"min": [170], "max": [160]},
+	
 	"/departments": {"min": [150], "max": [140]},
 	
-	"/students": {"min": [190], "max":[180]},
+	"/students": {"min": [190], "max":[180, 20, 260]},
 	
 	"/lecturers": {"min": [210], "max":[200]},
 	
 	"/courses": {"min": [250], "max":[240]},
 	
-	"/register-courses": {"min": [20, 260], "max":[]},
-	
-	"/result-sheet": {"min": [270], "max":[]},
+	"/course-result-sheet": {"min": [268], "max":[270]},
 	
 	"/assessment-totals": {"min": [280], "max":[290]},
 	
 	"/score-grades": {"min": [320], "max":[330]},
 	
-	"/course-results": {"min": [300], "max":[]},
+	"/course-results": {"min": [268], "max":[270]},
 	
-	"/student-results": {"min": [310], "max":[]}
+	"/student-results": {"min": [], "max":[]}
 	
 }

@@ -1,0 +1,59 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div id="course-result-sheet" class="row">
+
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header ce-translate">
+                                Course_score_sheet
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+                            <table id="course-result-sheet-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+
+                            <br>
+
+                            <div id="submit-course-result-sheet" style="display: none;">
+                                <button class="ui button small" onclick="submit_result_sheet();"> Submit Result</button>
+                            </div>
+
+                        </div>
+
+                        <div id="save-course-result-sheet" style="display: none;" class="ui segment">
+                            <button class="ui primary button large" onclick="save_result_sheet_updates();"> Save Changes</button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div id="ce-page-scripts">
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/calculation.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/course-result-sheet-fragment.js"></script>
+
+            <script>
+                                $(window).on('ce-load-page-start', function () {
+                                    initPage();
+                                });
+            </script>
+        </div>
+
+    </body>
+</html> 

@@ -4,12 +4,15 @@ public enum Functionality {
 	
 	/* No Auth */
 	
+	NO_OP(-1, "NO_OP"),
+	
 	// Forms Module ..
 	VIEW_APPLICATION_FORM(-8, "View application form"),
 	
 	CREATE_APPLICATION(-10, "Create new application"),
 	DOWNLOAD_QUESTIONNAIRE(-30, "Download questionairre"),
 	
+	GET_FORM_FIELD_IDS(-15, "Get form field Ids"),
 	UPDATE_APPLICATION(-20, "Update existing application"),
 	SUBMIT_APPLICATION(-21, "Sumit application"),
 	
@@ -19,9 +22,12 @@ public enum Functionality {
 	LIST_DEPARTMENT_LEVELS(-60, "List department levels"),
 	LIST_LEVEL_SEMESTERS(-61, "List level semesters"),
 	LIST_ACADEMIC_SEMESTER(-70, "List academic semesters"),
-	LIST_ROLE_REALMS(-80, "List role realms"),
+	GET_ROLE_REALMS(-80, "List role realms"),
+	LIST_ROLES(-81, "List role names"),
 	
 	GET_CURRENT_SEMESTER(-90, "Get current semester"),
+	GET_ALL_SEMESTERS(-95, "Get all semesters"),
+	
 	SEARCH_COURSES(250, "View courses"),
 	
 	// Auth/Roles Module
@@ -46,6 +52,8 @@ public enum Functionality {
 	
 	
 	/* Basic Auth */
+	
+	ADD_SYSTEM_MOCK_DATA(1, "Add system mock data", false),
 	
 	VIEW_OWN_PROFILE(10, "View own profile", false),
 	MANAGE_OWN_PROFILE(12, "Manage own profile", false),
@@ -103,7 +111,7 @@ public enum Functionality {
 	VIEW_FACULTY_PROFILES(170, "View faculty profiles"), //////////
 	
 	MANAGE_STUDENT_PROFILES(180, "Manage student profiles"),
-	VIEW_STUDENT_PROFILES(190, ""),
+	VIEW_STUDENT_PROFILES(190, "View student profiles"),
 	
 	MANAGE_LECTURER_PROFILES(200, "Manage lecturer profiles"),
 	VIEW_LECTURER_PROFILES(210, "View lecturer profiles"),
@@ -120,20 +128,21 @@ public enum Functionality {
 	
 	
 	// Calculation Module
-	VIEW_COURSE_SCORE_SHEET(268, "View course result sheet"),
-	MANAGE_COURSE_SCORE_SHEET(270, "Manage course result sheet"),
+	VIEW_COURSE_RESULT_SHEET(268, "View course result sheet"),
+	MANAGE_COURSE_RESULT_SHEET(270, "Manage course result sheet"),
+	
 	VIEW_ALL_SEMESTER_COURSES(272, "View all semester courses"),
 	
 	VIEW_ASSESSMENT_TOTALS(280, "View assessment totals"),
 	MANAGE_ASSESSMENT_TOTALS(290, "Manage assessment totals"),
 	
-	VIEW_SEMESTER_COURSE_RESULT(300, "View course results"),
-	VIEW_STUDENT_SEMESTER_RESULT(310, "View students result"),
 	
 	VIEW_SCORE_GRADES(320, "View score grades"),
 	MANAGE_SCORE_GRADES(330, "Manage score grades"),
 	  
 	MANAGE_ACTIVITY_STREAM(340, "Manage activity Stream"); 
+	
+	
 	
 	private final int id;
 	private final String name;
@@ -157,6 +166,8 @@ public enum Functionality {
 			return Functionality.VIEW_APPLICATION_FORM;
 		case -10:
 			return Functionality.CREATE_APPLICATION;
+		case -15:
+			return Functionality.GET_FORM_FIELD_IDS;
 		case -20:
 			return Functionality.UPDATE_APPLICATION;
 		case -21:
@@ -174,9 +185,13 @@ public enum Functionality {
 		case -70:
 			return Functionality.LIST_ACADEMIC_SEMESTER;
 		case -80:
-			return Functionality.LIST_ROLE_REALMS;
+			return Functionality.GET_ROLE_REALMS;
+		case -81:
+			return Functionality.LIST_ROLES;
 		case -90:
 			return Functionality.GET_CURRENT_SEMESTER;
+		case -95:
+			return Functionality.GET_ALL_SEMESTERS;
 		case -100:
 			return Functionality.EMAIL_LOGIN_USER;
 			
@@ -202,7 +217,8 @@ public enum Functionality {
 			return Functionality.GET_RESOURCE_BUNDLE_ENTRIES;
 			
 			
-			
+		case 1:
+			return Functionality.ADD_SYSTEM_MOCK_DATA;
 		case 10:
 			return Functionality.VIEW_OWN_PROFILE;
 		case 12:
@@ -276,19 +292,15 @@ public enum Functionality {
 	
 			
 		case 268:
-			return Functionality.VIEW_COURSE_SCORE_SHEET;
+			return Functionality.VIEW_COURSE_RESULT_SHEET;
 		case 270:
-			return Functionality.MANAGE_COURSE_SCORE_SHEET;
+			return Functionality.MANAGE_COURSE_RESULT_SHEET;
 		case 272:
 			return Functionality.VIEW_ALL_SEMESTER_COURSES;
 		case 280:
 			return Functionality.VIEW_ASSESSMENT_TOTALS;
 		case 290:
 			return Functionality.MANAGE_ASSESSMENT_TOTALS;
-		case 300:
-			return Functionality.VIEW_SEMESTER_COURSE_RESULT;
-		case 310:
-			return Functionality.VIEW_STUDENT_SEMESTER_RESULT;
 		case 320:
 			return Functionality.VIEW_SCORE_GRADES;
 		case 330:

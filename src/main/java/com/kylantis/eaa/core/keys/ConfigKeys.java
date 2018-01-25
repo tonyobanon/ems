@@ -23,11 +23,6 @@ public class ConfigKeys {
 	public static final String MAIL_PROVIDER_USERNAME = "MAIL_PROVIDER_USERNAME";
 	public static final String MAIL_PROVIDER_PASSWORD = "MAIL_PROVIDER_PASSWORD";
 	
-	
-	public static final String VOLATILE_CACHE_EXPIRY_DELTA = "VOLATILE_CACHE_EXPIRY_DELTA";
-	public static final String SHORTLIVED_CACHE_EXPIRY_DELTA = "SHORTLIVED_CACHE_EXPIRY_DELTA";
-	public static final String LONGLIVED_CACHE_EXPIRY_DELTA = "LONGLIVED_CACHE_EXPIRY_DELTA";
-	
 	public static final String $REALM_APPLICATION_FORM_BLOB_ID = "$REALM_APPLICATION_FORM";
 	
 	public static final String CURRENT_SEMESTER = "CURRENT_SEMESTER";

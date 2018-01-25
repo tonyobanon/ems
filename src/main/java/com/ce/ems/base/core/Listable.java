@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 
 public abstract class Listable<S> {
 
@@ -19,7 +20,7 @@ public abstract class Listable<S> {
 	/**
 	 * This authenticates the user that wants to access this data table
 	 */
-	public abstract boolean authenticate(Long userId, Map<String, Object> filters);
+	public abstract boolean authenticate(Long userId, List<ListingFilter> listingFilters);
 
 	public abstract Class<?> entityType();
 

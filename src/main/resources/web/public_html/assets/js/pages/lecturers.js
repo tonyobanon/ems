@@ -1,0 +1,1 @@
+IS_USER_FRAGMENT=!0;function initPage(){$(window).trigger('ce-load-page-end');$('#user-stats-menu').parent().show();$('#user-role-custom-area').show()}

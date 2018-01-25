@@ -290,6 +290,11 @@ public class LocationModel extends BaseModel {
 	public static String getCountryName(String countryCode) {
 		return ((CountryEntity) ofy().load().type(CountryEntity.class).id(countryCode).safe()).getCountryName();
 	}
+	
+	@ModelMethod(functionality = Functionality.GET_LOCATION_DATA)
+	public static String getCountryDialingCode(String countryCode) {
+		return ((CountryEntity) ofy().load().type(CountryEntity.class).id(countryCode).safe()).getDialingCode();
+	}
 
 	@Unexposed
 	@ModelMethod(functionality = Functionality.GET_LOCATION_DATA)

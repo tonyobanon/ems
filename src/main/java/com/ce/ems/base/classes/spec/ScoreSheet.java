@@ -9,6 +9,7 @@ public class ScoreSheet {
 	Long academicSemesterCourseId;
 	List<TotalSpec> totals;
 	List<ResultRecordSheetSpec> resultRecord;
+	
 	Boolean isFinal;
 	
 	public ScoreSheet() {

@@ -1,0 +1,44 @@
+<html>
+    <head></head>
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div id="department-levels-container">
+                <div class="row">
+                    <div class="sixteen wide tablet sixteen wide computer column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header ce-translate">
+                                    Select_level
+                                </h5>
+                            </div>
+                            <div class="ui segment"> 
+                                <style type="text/css">
+                                    #department-levels > .item .content {
+                                        text-transform: uppercase;
+                                        font-weight: bold;
+                                    } 
+                                </style>
+                                <div id="department-levels" class="ui middle aligned divided list"></div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>  
+            </div> 
+
+        </div>
+
+
+        <div id="ce-page-scripts"> 
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/department-level-list-fragment.js"></script>
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

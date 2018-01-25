@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.ce.ems.base.classes.CursorMoveType;
 import com.ce.ems.base.classes.EntityUtils;
@@ -14,6 +15,7 @@ import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameSpec;
 import com.ce.ems.base.classes.IndexedNameType;
 import com.ce.ems.base.classes.ListableContext;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.ListingType;
 import com.ce.ems.base.classes.QueryFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
@@ -33,6 +35,8 @@ import com.ce.ems.models.helpers.CacheHelper;
 import com.ce.ems.utils.ObjectUtils;
 import com.ce.ems.utils.Utils;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.cmd.QueryKeys;
+import com.kylantis.eaa.core.fusion.CacheAdapter;
 import com.kylantis.eaa.core.users.Functionality;
 
 @BlockerTodo("Cleanup of listing contexts is poorly done, and this could be expensive")
@@ -102,13 +106,18 @@ public class SearchModel extends BaseModel {
 
 	}
 
-	private static final String buildCacheListKey(IndexedNameType type, Map<String, Object> filtersMap) {
+	private static final String buildCacheListKey(IndexedNameType type, List<ListingFilter> listingFilters) {
 
 		StringBuilder key = new StringBuilder().append(CACHE_KEY_LIST_$TYPE.replace("$TYPE", type.name().toString()));
 
-		filtersMap.forEach((k, v) -> {
-			key.append("__" + k + "_" + v);
-		});
+		for (ListingFilter listingFilter : listingFilters) {
+
+			key.append("____");
+
+			for (Entry<String, Object> filter : listingFilter.getFilters().entrySet()) {
+				key.append("__" + filter.getKey() + "_" + filter.getValue());
+			}
+		}
 
 		return key.toString();
 	}
@@ -122,13 +131,13 @@ public class SearchModel extends BaseModel {
 	 * addCachedListKey(..) and removeCachedListKey(..), it always contains
 	 * up-to-date data, and therefore has a cache type of PERSISTENT
 	 */
-	private static final List<String> _list(IndexedNameType type, Map<String, Object> filtersMap, String order) {
-		String key = buildCacheListKey(type, filtersMap);
+	private static final List<String> _list(IndexedNameType type, String order, List<ListingFilter> listingFilters) {
+		String key = buildCacheListKey(type, listingFilters);
 
 		List<String> cachedValue = CacheHelper.getListOrDefault(CacheType.PERSISTENT, key, () -> {
 			CacheHelper.addToListOrCreate(CacheType.PERSISTENT, CACHE_KEY_LIST_ENTRIES, key);
 
-			List<String> fetchedValue = list(type, filtersMap, order);
+			List<String> fetchedValue = list(type, order, listingFilters);
 			return fetchedValue;
 		});
 
@@ -152,26 +161,26 @@ public class SearchModel extends BaseModel {
 	}
 
 	public static void addCachedListKey(IndexedNameType type, Object elem) {
-		addCachedListKey(type, FluentHashMap.forValueMap(), elem);
+		addCachedListKey(type, new ArrayList<>(), elem);
 	}
 
 	public static void removeCachedListKey(IndexedNameType type, Object elem) {
-		removeCachedListKey(type, FluentHashMap.forValueMap(), elem);
+		removeCachedListKey(type, new ArrayList<>(), elem);
 	}
 
 	/**
 	 * Add a new key to a set of existing list keys for the specified type
 	 */
-	public static void addCachedListKey(IndexedNameType type, Map<String, Object> filtersMap, Object elem) {
-		String key = buildCacheListKey(type, filtersMap);
+	public static void addCachedListKey(IndexedNameType type, List<ListingFilter> listingFilters, Object elem) {
+		String key = buildCacheListKey(type, listingFilters);
 		CacheHelper.addToList(CacheType.PERSISTENT, key, elem.toString());
 	}
 
 	/**
 	 * Remove a key to a set of existing list keys for the specified type
 	 */
-	public static void removeCachedListKey(IndexedNameType type, Map<String, Object> filtersMap, Object elem) {
-		String key = buildCacheListKey(type, filtersMap);
+	public static void removeCachedListKey(IndexedNameType type, List<ListingFilter> listingFilters, Object elem) {
+		String key = buildCacheListKey(type, listingFilters);
 		CacheHelper.removeFromList(CacheType.PERSISTENT, key, elem.toString());
 	}
 
@@ -214,8 +223,8 @@ public class SearchModel extends BaseModel {
 		}
 
 		ctx.setPageCount(pageCount);
-
-		CacheModel.put(CacheType.SHORT_LIVED, getCacheContextKey(ctx.getId()), ctx);
+		
+		CacheAdapter.put(CacheType.SHORT_LIVED, getCacheContextKey(ctx.getId()), ctx);
 
 		return ctx.getId();
 	}
@@ -230,21 +239,22 @@ public class SearchModel extends BaseModel {
 
 	private static ListableContext getContext(String contextKey) {
 		String cacheKey = getCacheContextKey(contextKey);
-		ListableContext ctx = (ListableContext) CacheModel.get(cacheKey);
+		ListableContext ctx = (ListableContext) CacheAdapter.get(cacheKey);
 		return ctx;
 	}
 
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
-	public static String newListContext(Long userId, IndexedNameType type, Map<String, Object> filtersMap,
-			Integer pageSize, String order) {
+	public static String newListContext(Long userId, IndexedNameType type, Integer pageSize, String order,
+			List<ListingFilter> listingFilters) {
 
 		Listable<?> model = listables.get(type.getValue());
 
-		if (!model.authenticate(userId, null)) {
+		if (!model.authenticate(userId, listingFilters)) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
 
-		List<String> keys = _list(type, filtersMap, order);
+		List<String> keys = _list(type, order, listingFilters);
+
 		return newContext(type, keys, pageSize);
 	}
 
@@ -270,12 +280,12 @@ public class SearchModel extends BaseModel {
 		switch (type) {
 		case LIST:
 			getListKeys().forEach(k -> {
-				CacheModel.del(CacheType.PERSISTENT, k);
+				CacheAdapter.del(CacheType.PERSISTENT, k);
 			});
 			break;
 		case SEARCH:
 			getSearchKeys().forEach(k -> {
-				CacheModel.del(CacheType.SHORT_LIVED, k);
+				CacheAdapter.del(CacheType.SHORT_LIVED, k);
 			});
 			break;
 		}
@@ -303,7 +313,7 @@ public class SearchModel extends BaseModel {
 
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
 	public static Boolean isContextAvailable(String contextKey) {
-		return CacheModel.containsKey(CacheType.SHORT_LIVED, getCacheContextKey(contextKey));
+		return CacheAdapter.containsKey(CacheType.SHORT_LIVED, getCacheContextKey(contextKey));
 	}
 
 	@ModelMethod(functionality = Functionality.PERFORM_LIST_OPERATION)
@@ -335,10 +345,10 @@ public class SearchModel extends BaseModel {
 		Integer currentPage = ctx.getCurrentPage() + (moveType.equals(CursorMoveType.NEXT) ? 1 : -1);
 
 		List<String> keys = ctx.getPage(currentPage);
-
+		
 		ctx.setCurrentPage(currentPage);
 
-		CacheModel.put(CacheType.SHORT_LIVED, getCacheContextKey(contextKey), ctx);
+		CacheAdapter.put(CacheType.SHORT_LIVED, getCacheContextKey(contextKey), ctx);
 
 		return o.getAll(keys);
 	}
@@ -440,15 +450,9 @@ public class SearchModel extends BaseModel {
 		ofy().save().entities(ies).now();
 	}
 
-	private static final <T> List<String> list(IndexedNameType type, Map<String, Object> filtersMap, String order) {
+	private static final <T> List<String> list(IndexedNameType type, String order, List<ListingFilter> listingFilters) {
 
 		Listable<?> o = listables.get(type.getValue());
-
-		List<QueryFilter> filters = new FluentArrayList<>();
-
-		filtersMap.forEach((k, v) -> {
-			filters.add(QueryFilter.get(k, v));
-		});
 
 		Class<T> T = (Class<T>) o.entityType();
 
@@ -456,9 +460,27 @@ public class SearchModel extends BaseModel {
 
 		List<String> keys = new FluentArrayList<>();
 
-		EntityUtils.lazyQuery(T, order, filters.toArray(new QueryFilter[filters.size()])).keys().forEach(k -> {
-			keys.add(ObjectUtils.toKeyString(k));
-		});
+		if (listingFilters.isEmpty()) {
+			EntityUtils.lazyQuery(T, order).keys().forEach(k -> {
+				keys.add(ObjectUtils.toKeyString(k));
+			});
+		} else {
+
+			for (ListingFilter listingFilter : listingFilters) {
+
+				List<QueryFilter> filters = new FluentArrayList<>();
+
+				listingFilter.getFilters().forEach((k, v) -> {
+					filters.add(QueryFilter.get(k, v));
+				});
+				
+				QueryKeys<T> queryKeys = EntityUtils.lazyQuery(T, order, filters.toArray(new QueryFilter[filters.size()])).keys();
+				
+				for(Key<T> k : queryKeys) {
+					keys.add(ObjectUtils.toKeyString(k));	
+				}
+			}
+		}
 
 		return keys;
 	}

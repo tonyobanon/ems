@@ -6,12 +6,14 @@ import com.ce.ems.base.classes.FluentArrayList;
 
 public enum RoleRealm {
 
-	ADMIN(1), EXAM_OFFICER(2), HEAD_OF_DEPARTMENT(3), LECTURER(4), DEAN(5), STUDENT(6);
+	ADMIN(1, 6), EXAM_OFFICER(2, 3), HEAD_OF_DEPARTMENT(3, 4), LECTURER(4, 2), DEAN(5, 5), STUDENT(6, 1);
 
-	private Integer value;
-
-	private RoleRealm(Integer value) {
+	private final Integer value;
+	private final Integer authority;
+	
+	private RoleRealm(Integer value, Integer authority) {
 		this.value = value;
+		this.authority = authority;
 	}
 
 	public static RoleRealm from(int value) {
@@ -27,7 +29,7 @@ public enum RoleRealm {
 		case 3:
 			return RoleRealm.HEAD_OF_DEPARTMENT;
 
-		case 4:
+		case 4: 
 			return RoleRealm.LECTURER;
 			
 		case 5:
@@ -44,7 +46,10 @@ public enum RoleRealm {
 	public Integer getValue() {
 		return value;
 	}
-	
+
+	public Integer getAuthority() {
+		return authority;
+	}
 	
 	public List<Integer> spec() {
 		List<Integer> result = null;
@@ -91,7 +96,10 @@ public enum RoleRealm {
 			.with(Functionality.GET_PERSON_NAMES.getId())
 			.with(Functionality.GET_REALM_FUNCTIONALITIES.getId())
 			.with(Functionality.GET_ROLE_FUNCTIONALITIES.getId())			
-			.with(Functionality.VIEW_SCORE_GRADES.getId());
+			.with(Functionality.VIEW_SCORE_GRADES.getId())
+			
+			.with(Functionality.PERFORM_LIST_OPERATION.getId())
+			.with(Functionality.GET_USER_PROFILE.getId());
 	}
 	
 	private static List<Integer> baseStaffFunctionalities() {
@@ -101,14 +109,13 @@ public enum RoleRealm {
 			
 			.with(Functionality.VIEW_COURSES.getId())
 			.with(Functionality.VIEW_ASSESSMENT_TOTALS.getId())
-			.with(Functionality.VIEW_SEMESTER_COURSE_RESULT.getId())
 			
 			.with(Functionality.VIEW_FACULTY_PROFILES.getId())
 			.with(Functionality.VIEW_DEPARTMENT_PROFILES.getId())
 			.with(Functionality.VIEW_LECTURER_PROFILES.getId())
 			.with(Functionality.VIEW_STUDENT_PROFILES.getId())
 
-			.with(Functionality.VIEW_COURSE_SCORE_SHEET.getId());
+			.with(Functionality.VIEW_COURSE_RESULT_SHEET.getId());
 	}
 	
 	private static List<Integer> examOfficerFunctionalities() {
@@ -126,8 +133,7 @@ public enum RoleRealm {
 				
 				.withAll(examOfficerFunctionalities())
 	
-				.with(Functionality.MANAGE_LECTURER_PROFILES.getId())
-				.with(Functionality.VIEW_STUDENT_SEMESTER_RESULT.getId());
+				.with(Functionality.MANAGE_LECTURER_PROFILES.getId());
 				
 	}
 	
@@ -142,7 +148,7 @@ public enum RoleRealm {
 		return new FluentArrayList<Integer>()
 				
 				.withAll(baseStaffFunctionalities())				
-				.with(Functionality.MANAGE_COURSE_SCORE_SHEET.getId());
+				.with(Functionality.MANAGE_COURSE_RESULT_SHEET.getId());
 	}
 	
 	private static List<Integer> studentFunctionalities(){
@@ -152,4 +158,5 @@ public enum RoleRealm {
 				
 					.with(Functionality.REGISTER_STUDENT_COURSES.getId());
 	}
+
 }

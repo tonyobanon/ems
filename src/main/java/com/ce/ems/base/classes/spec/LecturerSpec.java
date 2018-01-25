@@ -6,6 +6,7 @@ import java.util.List;
 public class LecturerSpec {
 
 	private Long id;
+	private String name;
 	private Long department;
 	private List<String> courses;
 	private Date startDate;
@@ -19,6 +20,15 @@ public class LecturerSpec {
 		return this;
 	}
 	
+	public String getName() {
+		return name;
+	}
+
+	public LecturerSpec setName(String name) {
+		this.name = name;
+		return this;
+	}
+
 	public Long getDepartment() {
 		return department;
 	}

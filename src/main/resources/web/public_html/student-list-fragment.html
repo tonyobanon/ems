@@ -1,0 +1,48 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+            
+            
+            <!--  Student List Table  -->
+            
+            <div id="students-table-container">
+                <div class="row">
+                    <div class="sixteen wide column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header">
+                                    <span class="ce_translate">Students</span>
+                                </h5>
+                            </div>
+                            <div class="ui segment">
+                                <table id="students-list-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+ 
+        <div id="ce-page-scripts">
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/student-list-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

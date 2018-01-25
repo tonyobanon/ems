@@ -163,7 +163,8 @@ public class EntityHelper {
 				.setAddress(entity.getAddress())
 				.setCity(entity.getCity())
 				.setTerritory(entity.getTerritory())
-				.setCountry(entity.getCountry());
+				.setCountry(entity.getCountry())
+				.setRole(entity.getRole());
 		
 		return o;
 	}
@@ -239,7 +240,9 @@ public class EntityHelper {
 	public static FacultySpec toObjectModel(FacultyEntity entity) {
 	
 		FacultySpec o = new FacultySpec()
-				.setName(entity.getName());
+				.setId(entity.getId())
+				.setName(entity.getName())
+				.setDean(entity.getDean());
 		
 		return o;
 	}
@@ -299,9 +302,10 @@ public class EntityHelper {
 	public static AcademicSemesterSpec toObjectModel(AcademicSemesterEntity entity) {
 	
 		AcademicSemesterSpec o = new AcademicSemesterSpec()
+				.setId(entity.getId())
 				.setLowerYearBound(entity.getLowerYearBound())
 				.setUpperYearBound(entity.getUpperYearBound())
-				.setValue(Semester.from(entity.getValue()))
+				.setSemester(Semester.from(entity.getValue()))
 				.setStartDate(entity.getStartDate())
 				.setEndDate(entity.getEndDate());
 		
@@ -314,7 +318,7 @@ public class EntityHelper {
 				
 				.setLowerYearBound(spec.getLowerYearBound())
 				.setUpperYearBound(spec.getUpperYearBound())
-				.setValue(spec.getValue().getValue())
+				.setValue(spec.getSemester().getValue())
 				.setStartDate(spec.getStartDate())
 				.setEndDate(spec.getEndDate());
 		
@@ -684,7 +688,9 @@ public class EntityHelper {
 		ActivitySpec o = new ActivitySpec()
 				.setId(entity.getId())
 				.setHtml(entity.getActivity())
-				.setImage(entity.getImage())
+				.setSubjectImage(entity.getSubjectImage())
+				.setPersonImage(entity.getPersonImage())
+				.setLikes(entity.getLikes())
 				.setDate(entity.getDate());
 		
 		return o;

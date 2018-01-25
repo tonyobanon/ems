@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,7 +18,7 @@ import com.kylantis.eaa.core.gaefusion.GAERouteContext;
 import io.vertx.core.http.HttpMethod;
 
 @WebServlet(urlPatterns = APIRoutes.BASE_PATH + "/*", loadOnStartup = 10)
-public class BaseApiServlet extends HttpServlet {
+public class BaseApiServlet extends BaseServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,7 +60,6 @@ public class BaseApiServlet extends HttpServlet {
 			try {
 				handler.getHandler().handle(ctx);
 			} catch (Exception e) {
-				e.printStackTrace();
 				ctx.response().setStatusCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).end(com.kylantis.eaa.core.fusion.Utils.toResponse(ErrorHelper.getError(e)));
 				break; 
 			}

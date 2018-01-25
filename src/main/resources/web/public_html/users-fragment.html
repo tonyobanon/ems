@@ -1,0 +1,104 @@
+<html>
+    <head>
+
+        <style type="text/css">
+            .ui.items>.item .meta {
+                font-size: 1.1em;
+                line-height: 1.5em;
+            }
+            .ui.items>.item>.image>img {
+                width: 100px;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div class="sixteen wide tablet sixteen wide computer profileheader column row no-padding">
+                <div class="column  left floated">
+                    <div class="ui items">
+                        <div class="item">
+                            <a class="ui small image">
+                                <img id='user_avatar' src="assets/images/no-avatar.png" alt="label-image" />
+                            </a>
+                            <div class="middle aligned content hiddenui">
+                                <div class="header" id='user_full_name'></div>
+                                <div class="meta">
+                                    <b>Contact:</b> <span id='user_contact'></span><br>
+                                    <b>Date of Birth:</b> <span id='user_dob'></span> <br>
+                                    <b>Gender:</b> <span id='user_gender'></span><br>
+                                    <b>Address:</b> <span id='user_address'></span><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui menu fluid no-radius borderless stackable" style="margin-top:0;display: none;">
+                <div id='user-stats-menu' class="right menu"></div>
+            </div>
+
+            <div id="user-role-custom-area" class="row" style="display: none;"></div>
+
+            <div class="row">
+                <div class="sixteen wide tablet ten wide computer column">
+                    <div class="ui segments">
+                        <div class="ui segment"> 
+                            <h3 class="ui header ce-translate">Activity_stream</h3> 
+                        </div>
+                        <div class="ui segment" style="display: none;">
+                            <div id='user-activity-stream-events' class="ui feed timeline"></div>
+
+                            <div id="user_activity_stream_next_container" style="display: none;"> 
+                                <div class="ui divider"></div> 
+                                <button id="user_activity_stream_next_button" class="ui mini button" onclick="user_activity_stream_next();"> Show more</button> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div id="user_profile_suggestions" class="sixteen wide tablet six wide computer column" style="display: none;">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h3 class="ui header ce-translate">Profile_suggestions</h3>
+                        </div>
+                        <div class="ui segment">
+                            <div id='user_suggested_profile_items' class="ui items"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div id="ce-page-scripts">
+
+            <script type="text/javascript" src="/assets/js/clients/users.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/location.js"></script>
+
+            <script type="text/javascript" src="/assets/js/pages/users-fragment.js"></script>
+
+            <script>
+                                    $(window).on('ce-load-page-start.users-fragment', function (e) {
+
+                                        //Stop immediately from bubbling up
+                                        e.stopImmediatePropagation();
+
+                                        initUserPage().then(() => {
+
+                                            $(window).off('ce-load-page-start.users-fragment');
+
+                                            //Re-trigger
+                                            $(window).trigger('ce-load-page-start');
+                                        });
+                                    });
+            </script>
+        </div>
+
+    </body>
+</html> 

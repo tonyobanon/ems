@@ -1,0 +1,47 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">           
+            
+            <!--  Lecturer List Table  -->
+            
+            <div id="lecturers-table-container">
+                <div class="row">
+                    <div class="sixteen wide column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header">
+                                    <span class="ce_translate">Lecturers</span>
+                                </h5>
+                            </div>
+                            <div class="ui segment">
+                                <table id="lecturers-list-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+ 
+        <div id="ce-page-scripts">
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/lecturer-list-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

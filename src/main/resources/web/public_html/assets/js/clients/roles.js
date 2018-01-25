@@ -1,5 +1,24 @@
 
 
+ function getRoleRealm (role) {
+	 return new Promise(function(resolve, reject) {
+		 $.ajax({
+			 method : "GET",
+			 async: true,
+			 processData: false,
+			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
+			 url: "/api/roles/get-role-realm?role=" + role
+			 }).done(function(o) {
+				 resolve(o);
+			 }).fail(function(jqXHR, status, error){
+				 if(jqXHR.getResponseHeader("X-Location") === null && jqXHR.status !== 302){
+					 reject(jqXHR);
+				 }
+			 });
+		 });
+ }
+
+
  function newRole (roleName, realm) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
@@ -69,6 +88,27 @@
 			 contentType : 'application/json', 
 			 data : JSON.stringify({roleNames: roleNames}), 
 			 url: "/api/roles/user-count"
+			 }).done(function(o) {
+				 resolve(o);
+			 }).fail(function(jqXHR, status, error){
+				 if(jqXHR.getResponseHeader("X-Location") === null && jqXHR.status !== 302){
+					 reject(jqXHR);
+				 }
+			 });
+		 });
+ }
+
+
+ function doesUserRoleAllow (functionalities) {
+	 return new Promise(function(resolve, reject) {
+		 $.ajax({
+			 method : "POST",
+			 async: true,
+			 processData: false,
+			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
+			 contentType : 'application/json', 
+			 data : JSON.stringify({functionalities: functionalities}), 
+			 url: "/api/roles/does-user-role-allow"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

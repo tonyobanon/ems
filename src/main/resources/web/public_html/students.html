@@ -1,300 +1,104 @@
 <html>
     <head>
-
-        <style type="text/css">
-
-            #department-levels > .item {
-
-            }
-
-            #department-levels > .item .content {
-                text-transform: uppercase;
-                font-weight: bold;
-            }
-
-            .ui.items>.item .meta {
-                font-size: 1.1em;
-                line-height: 1.5em;
-            }
-            .ui.items>.item>.image>img {
-                width: 100px;
-            }
-        </style>
-
+        <link href="assets/css/chartist.min.css" rel="stylesheet" />
     </head>
 
     <body>
 
         <div id="ce-page-main-container">
 
+            <!--  Main Student Page -->
 
-            <div class="row" id="department-levels-container" style="display: none;">
-                <div class="sixteen wide tablet sixteen wide computer column">
-                    <div class="ui segments">
-                        <div class="ui segment">
-                            <h5 class="ui header">
-                                Select Level
-                            </h5>
-                        </div>
-                        <div class="ui segment">
-                            <div id="department-levels" class="ui middle aligned divided list"></div>
-                        </div>
+            <div id='user-stats-menu' class="right menu">
+                <a href="/students?register-courses&id=45" class="item">
+                    <div class="ui mini statistic">
+                        <div class="label">REGISTER COURSES</div>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="row" id="students-table-container" style="display: none;">
-                <div class="sixteen wide column">
-                    <div class="ui segments">
-                        <div class="ui segment">
-                            <h5 class="ui header">
-                                Students
-                            </h5>
-                        </div>
-                        <div class="ui segment">
-                            <table id="students-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
-                                <thead>
-                                    <tr></tr>
-                                </thead>
-
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                </a>
+                <a class="item">
+                    <div class="ui mini statistic">
+                        <div class="value">3.5</div>
+                        <div class="label">CGPA</div>
                     </div>
-                </div>
+                </a>
             </div>
 
 
+            <div id="user-role-custom-area">
 
-
-
-
-
-            <div class="sixteen wide tablet sixteen wide computer column profileheader row no-padding">
-                <div class="column  left floated">
-                    <div class="ui items">
-                        <div class="item">
-                            <a class="ui small image">
-                                <img src="assets/images/no-avatar.png" alt="label-image" />
-                            </a>
-                            <div class="middle aligned content hiddenui">
-                                <div class="header">
-                                    Anthony Anyanwu (Student)
-                                </div>
-                                <div class="meta">
-                                    <b>Contact:</b> tonyobanon@gmail.com, 08165414256<br>
-                                    <b>Date of Birth:</b> 19/04/1996 <br>
-                                    <b>Gender:</b> Male <br>
-                                    <b>Address:</b> 34, Victoria Street, Ojota, Lagos<br>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            
-            <div class="ui menu fluid no-radius borderless stackable" style="margin-top:0">
-                <div id='user-stats-menu' class="right menu">
-                    <a class="item">
-                        <div class="ui mini statistic">
-                            <div class="value">
-                                1.6k
-                            </div>
-                            <div class="label">
-                                Followers
-                            </div>
-                        </div>
-                    </a>
-                    <a class="item">
-                        <div class="ui mini statistic">
-                            <div class="value">
-                                102
-                            </div>
-                            <div class="label">
-                                Following
-                            </div>
-                        </div>
-                    </a>
-                    <a class="item">
-                        <div class="ui mini statistic">
-                            <div class="value">
-                                206
-                            </div>
-                            <div class="label">
-                                Activities
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            
-
-            <div class="row">
                 <div class="sixteen wide tablet ten wide computer column">
-                    <div class="ui segment">
-                        <div class="ui feed timeline">
-                           
-                            <div class="event">
-                                <div class="label">
-                                    <img src="img/avatar/people/Abraham.png" alt="label-image" />
-                                </div>
-                                <div class="content">
-                                    <div class="summary">
-                                        <a class="user">
-                                            Francis	Baldwin
-                                        </a> added you as a friend
-                                        <div class="date">
-                                            1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div class="meta">
-                                        <a class="like">
-                                            <i class="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            
-                            <div class="event">
-                                <div class="label">
-                                    <img src="img/avatar/people/Abraham.png" alt="label-image" />
-                                </div>
-                                <div class="content">
-                                    <div class="summary">
-                                        <a class="user">
-                                            Francis	Baldwin
-                                        </a> added you as a friend
-                                        <div class="date">
-                                            1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div class="meta">
-                                        <a class="like">
-                                            <i class="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="event">
-                                <div class="label">
-                                    <img src="img/avatar/people/Abraham.png" alt="label-image" />
-                                </div>
-                                <div class="content">
-                                    <div class="summary">
-                                        <a class="user">
-                                            Francis	Baldwin
-                                        </a> added you as a friend
-                                        <div class="date">
-                                            1 Hour Ago
-                                        </div>
-                                    </div>
-                                    <div class="meta">
-                                        <a class="like">
-                                            <i class="like icon"></i> 4 Likes
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                         
-     <div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5046758371491840">assessment total</a> for <a href="/departments?departmentId=5328233348202496">Petro-chemical Engineering</a> 100 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/api/blobstore/get?blobId=d3dba4cf067b4c778f1d8ec3f9aa549a" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=7">Vivian Fowler</a> assigned <a href="/courses?courseCode=COM 224">COM 224</a> to <a href="/lecturers?lecturerId=10">Helen Keller</a>.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5620703441190912">assessment total</a> for <a href="/departments?departmentId=5409597208657920">Animal and Environment</a> 200 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5614106371424256">assessment total</a> for <a href="/departments?departmentId=5403000138891264">English</a> 200 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5616305394679808">assessment total</a> for <a href="/departments?departmentId=5088539813347328">Political Science</a> 300 level  third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5315039208669184">assessment total</a> for <a href="/departments?departmentId=4928011115692032">Geology</a> 300 level  first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5321636278435840">assessment total</a> for <a href="/departments?departmentId=5471169859813376">Plant and Science Biology</a> 400 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5042360324980736">assessment total</a> for <a href="/departments?departmentId=5429388417957888">Mechanical Engineering</a> 200 level third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=4996180836614144">assessment total</a> for <a href="/departments?departmentId=4785074604081152">Computer Science</a> 200 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> created <a href="/courses?courseCode=COM 312">Artificial Intelligence</a> course.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=4998379859869696">assessment total</a> for <a href="/departments?departmentId=4928011115692032">Geology</a> 100 level third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5565727859802112">assessment total</a> for <a href="/departments?departmentId=5306243115646976">Civil Engineering</a> 400 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5004976929636352">assessment total</a> for <a href="/departments?departmentId=5471169859813376">Plant and Science Biology</a> 200 level third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5572324929568768">assessment total</a> for <a href="/departments?departmentId=5361218697035776">History</a> 200 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5011573999403008">assessment total</a> for <a href="/departments?departmentId=4562973255270400">Electrical Engineering</a> 300 level  third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5578921999335424">assessment total</a> for <a href="/departments?departmentId=4928011115692032">Geology</a> 400 level third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5299646045880320">assessment total</a> for <a href="/departments?departmentId=5088539813347328">Political Science</a> 200 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5585519069102080">assessment total</a> for <a href="/departments?departmentId=5471169859813376">Plant and Science Biology</a> 500 level third semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> updated the <a href="/assessment-totals?levelSemesterId=5024768138936320">assessment total</a> for <a href="/departments?departmentId=5306243115646976">Civil Engineering</a> 100 level first semester.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div><div class="event"><div class="label"><img src="/assets/images/no-image.png" alt="label-image"></div><div class="content"><div class="summary"><a href="/users?userId=-1">Guest</a> created <a href="/courses?courseCode=BIM 290">Entrepreneurship and small business management</a> course.<div class="date">Sat, 11:29 AM (3 hours ago)</div></div></div></div>
-     <div id="activity_stream_next_container"> 
-       <div class="ui divider"></div> 
-       <button id="activity_stream_next_button" class="ui mini button" onclick="ce_activity_stream_next();"> Show more </button> 
-      </div>
-                            
-                            
-                            
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h3 class="ui header ce-translate">Performance_report</h3>
+                        </div>
+                        <div class="ui segment">
+                            <style type="text/css">
+                                #pr-chart {
+                                    min-height: 298px; 
+                                    max-height: 298px; 
+                                }
+                            </style>
+                            <div id="pr-chart"></div>                        
                         </div>
                     </div>
                 </div>
 
                 <div class="sixteen wide tablet six wide computer column">
                     <div class="ui segments">
-                        <div class="ui segment">
-                            <h3 class="ui header">Follow Suggestions</h3>
+                        <div class="ui segment"> 
+                            <h3 class="ui header ce-translate">Semester_courses</h3> 
                         </div>
-                        <div class="ui segment">
-                            <div class="ui items">
 
-                                <div class="item">
-                                    <div class="ui tiny rounded image">
-                                        <img src="img/avatar/people/Abraham.png" alt="label-image" />
-                                        <i class="circle mini green icon avt" data-content="Online" data-variation="inverted greenli"></i>
-                                    </div>
-                                    <div class="content">
-                                        <a class="header" href="#">Gwen Randolph</a>
-                                        <div class="meta">
-                                            <span class="cinema">Irure ex aute dolor minim sit. Enim eiusmod cillum incididunt fugiat</span>
-                                        </div>
-                                        <div class="description">
-                                            <p></p>
-                                        </div>
-                                        <div class="extra">
-                                            <button class="ui greenli inverted tiny button follow">Follow</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="ui rounded tiny image">
-                                        <img src="img/avatar/people/carol.png" alt="label-image" />
-                                        <i class="circle mini green icon avt" data-content="Online" data-variation="inverted greenli"></i>
-                                    </div>
-                                    <div class="content">
-                                        <a class="header">Ashley Ross</a>
-                                        <div class="meta">
-                                            <span class="cinema">Ea nostrud adipisicing ut et sint culpa et ut esse minim Lorem ex voluptate ex</span>
-                                        </div>
-                                        <div class="description">
-                                            <p></p>
-                                        </div>
-                                        <div class="extra">
-                                            <button class="ui greenli inverted tiny button follow">Follow</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="ui rounded tiny image">
-                                        <img src="img/avatar/people/Daryl.png" alt="label-image" />
-                                        <i class="circle mini red icon avt" data-content="Offline" data-variation="inverted redli"></i>
-                                    </div>
-                                    <div class="content">
-                                        <a class="header">Trina Marquez</a>
-                                        <div class="meta">
-                                            <span class="cinema">Excepteur ut elit dolor officia consequat do duis cillum culpa pariatur</span>
-                                        </div>
-                                        <div class="description">
-                                            <p></p>
-                                        </div>
-                                        <div class="extra">
-                                            <button class="ui greenli inverted tiny button follow">Follow</button>
-                                        </div>
-                                    </div>
+                        <div class="ui segment">
+                            <div id="semester-courses-container">
+                                <style type="text/css">
+                                    #semester-courses {
+                                        min-height: 298px; 
+                                        max-height: 298px; 
+                                        overflow: scroll;
+                                    }
+                                    #semester-courses > .item {
+                                        padding: 1em;
+                                        cursor: pointer;
+                                    }
+                                    #semester-courses > .item:hover {
+                                        background-color: #F8F8F9;
+                                    }
+                                    #semester-courses > .item .content {
+                                        text-transform: uppercase;
+                                    }
+                                </style>  
+                                <div id="semester-courses" class="ui middle aligned divided list">
+
                                 </div>
                             </div>
                         </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div id="academic-semesters-result">
+                <div class="ui segments">
+                    <div class="ui segment">
+                        <h3 class="ui header ce-translate">Results</h3>
+                    </div>
+                    <div class="ui segment">
+                        <div id='user_suggested_profile_items' class="ui items"></div>
                     </div>
                 </div>
             </div>
 
 
-
-
-
-
-
-
-
-
         </div>
 
-        <div id="ce-page-scripts">
-            <script src="/assets/js/utils.js"></script>
+
+        <div id="ce-page-scripts"> 
+
+            <script type="text/javascript" src="/assets/js/chartist.min.js"></script>
 
             <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
             <script type="text/javascript" src="/assets/js/pages/students.js"></script>

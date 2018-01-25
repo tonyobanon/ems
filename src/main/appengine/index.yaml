@@ -1,0 +1,16 @@
+
+indexes:
+
+- kind: ActivityStreamEntity
+  properties:
+  - name: subject
+    direction: asc
+  - name: date
+    direction: desc
+
+- kind: ActivityStreamEntity
+  properties:
+  - name: person
+    direction: asc
+  - name: date
+    direction: desc

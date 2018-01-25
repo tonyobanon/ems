@@ -8,6 +8,7 @@ import java.util.Map;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameSpec;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.spec.BaseUserSpec;
 import com.ce.ems.base.core.Listable;
@@ -24,7 +25,7 @@ public class BaseUsersList extends Listable<BaseUserSpec>{
 	}
 
 	@Override
-	public boolean authenticate(Long userId, Map<String, Object> filters) {
+	public boolean authenticate(Long userId, List<ListingFilter> listingFilters) {
 		return RoleModel.isAccessAllowed(BaseUserModel.getRole(userId), Functionality.GET_USER_PROFILE);
 	}
 
@@ -57,7 +58,7 @@ public class BaseUsersList extends Listable<BaseUserSpec>{
 			BaseUserSpec spec = new BaseUserSpec()
 					.setId(userId)
 					.setRole(e.getRole())
-					.setNameSpec(nameSpec)
+					.setName(nameSpec)
 					.setDateCreated(e.getDateCreated())
 					.setDateUpdated(e.getDateUpdated());	
 			

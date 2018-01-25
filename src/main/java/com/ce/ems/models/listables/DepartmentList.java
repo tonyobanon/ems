@@ -9,13 +9,13 @@ import java.util.Map;
 import com.ce.ems.base.classes.EntityHelper;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.spec.DepartmentSpec;
 import com.ce.ems.base.core.Listable;
 import com.ce.ems.entites.directory.DepartmentEntity;
 import com.ce.ems.entites.directory.FacultyEntity;
 import com.ce.ems.models.BaseUserModel;
-import com.ce.ems.models.DirectoryModel;
 import com.ce.ems.models.RoleModel;
 import com.kylantis.eaa.core.users.Functionality;
 
@@ -27,7 +27,7 @@ public class DepartmentList extends Listable<DepartmentSpec>{
 	}
 
 	@Override
-	public boolean authenticate(Long userId, Map<String, Object> filters) {
+	public boolean authenticate(Long userId, List<ListingFilter> listingFilters) {
 		return RoleModel.isAccessAllowed(BaseUserModel.getRole(userId), Functionality.VIEW_DEPARTMENT_PROFILES);
 	}
 
@@ -56,9 +56,14 @@ public class DepartmentList extends Listable<DepartmentSpec>{
 		ofy().load().type(DepartmentEntity.class).ids(longKeys).forEach((k,v) -> {
 			
 			String facultyName = ofy().load().type(FacultyEntity.class).id(v.getFaculty()).safe().getName();
-					
+				
 			DepartmentSpec o = EntityHelper.toObjectModel(v)
 					.setFacultyName(facultyName);
+			
+			if(v.getHeadOfDepartment() != null) {
+				o.setHeadOfDepartmentName(BaseUserModel.getPersonName(v.getHeadOfDepartment(), true).toString());
+			}
+			
 			result.put(k, o);
 		});
 

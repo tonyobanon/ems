@@ -17,6 +17,8 @@ public class CacheKeys {
 	public static final String CURRENCY_CODE_$COUNTRY = "CURRENCY_CODE_$COUNTRY";
 
 	public static final String CURRENCY_NAME_$COUNTRY = "CURRENCY_NAME_$COUNTRY";
+	
+	public static final String DIALING_CODE_$COUNTRY = "DIALING_CODE_$COUNTRY";
 
 	public static final String ADDRESS_$ADDRESS = "ADDRESS_$ADDRESS";
 
@@ -39,5 +41,9 @@ public class CacheKeys {
 	public static final String USER_ADDRESSES_$OWNER = "USER_ADDRESSES_$OWNER";
 
 	public static final String ROLE_FUNCTIONALITIES_$ROLE = "ROLE_FUNCTIONALITIES_$ROLE";
+	
+	public static final String DEPARTMENT_LIST = "DEPARTMENT_LIST";
+	
+	public static final String DEPARTMENT_LIST_$FACULTY = "DEPARTMENT_LIST_$FACULTY";
 
 }

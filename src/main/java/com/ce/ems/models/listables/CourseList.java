@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.spec.BaseCourseSpec;
 import com.ce.ems.base.core.Listable;
@@ -23,7 +24,7 @@ public class CourseList extends Listable<BaseCourseSpec>{
 	}
 
 	@Override
-	public boolean authenticate(Long userId, Map<String, Object> filters) {
+	public boolean authenticate(Long userId, List<ListingFilter> listingFilters) {
 		return RoleModel.isAccessAllowed(BaseUserModel.getRole(userId), Functionality.SEARCH_COURSES);
 	}
 

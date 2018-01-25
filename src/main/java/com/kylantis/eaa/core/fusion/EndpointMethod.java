@@ -28,6 +28,8 @@ public @interface EndpointMethod {
 	
 	boolean enableMultipart() default false;
 	
+	boolean cache() default false;
+	
 	HttpMethod method() default HttpMethod.GET;
 
 	Functionality functionality();

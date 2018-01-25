@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.ce.ems.base.classes.FluentArrayList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+@Cache
 @Entity
 public class LecturerEntity {
 

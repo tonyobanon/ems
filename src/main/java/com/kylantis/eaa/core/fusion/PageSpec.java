@@ -1,15 +1,29 @@
 package com.kylantis.eaa.core.fusion;
 
+import java.util.List;
+
 public class PageSpec {
 
-	private String parent;
+	private boolean isParent;
+	private List<PageParentSpec> parents;
 
-	public String getParent() {
-		return parent;
+	
+	public boolean isParent() {
+		return isParent;
 	}
 
-	public PageSpec setParent(String parent) {
-		this.parent = parent;
+	public PageSpec setParent(boolean isParent) {
+		this.isParent = isParent;
+		return this;
+	}
+
+	public List<PageParentSpec> getParents() {
+		return parents;
+	}
+	
+	public PageSpec setParents(List<PageParentSpec> parents) {
+		this.parents = parents;
 		return this;
 	}	
+	
 }

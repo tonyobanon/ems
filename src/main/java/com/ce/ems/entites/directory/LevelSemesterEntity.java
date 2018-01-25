@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+@Cache
 @Entity
 public class LevelSemesterEntity {
 

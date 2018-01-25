@@ -9,7 +9,7 @@ public class StudentSemesterCoursesSpec {
 	private Long id;
 	private Long studentId;
 	private Long academicSemesterId;
-	private Map<String, Short> courses;
+	private Map<String, Integer> courses;
 	private Date dateCreated;
 
 	public StudentSemesterCoursesSpec() {
@@ -43,11 +43,11 @@ public class StudentSemesterCoursesSpec {
 		return this;
 	}
 
-	public Map<String, Short> getCourses() {
+	public Map<String, Integer> getCourses() {
 		return courses;
 	}
 
-	public StudentSemesterCoursesSpec setCourses(Map<String, Short> courses) {
+	public StudentSemesterCoursesSpec setCourses(Map<String, Integer> courses) {
 		this.courses = courses;
 		return this;
 	}

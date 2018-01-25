@@ -1,0 +1,49 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header ce-translate">
+                                Score_grades
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+                            <table id="score-grades-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+
+
+                            <br>
+                        </div>
+
+                        <div id="save-score-grades" style="display: none;" class="ui segment">
+                            <button class="ui primary button large" onclick="save_score_grades_updates();"> Save Changes</button>
+                        </div>
+
+                    </div>
+                </div>
+
+        </div>
+
+        <div id="ce-page-scripts">
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/calculation.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/score-grades-fragment.js"></script>
+
+            <script>
+                                $(window).on('ce-load-page-start', function () {
+                                    initPage();
+                                });
+            </script>
+        </div>
+
+    </body>
+</html> 

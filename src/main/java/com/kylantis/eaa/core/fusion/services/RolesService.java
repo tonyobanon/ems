@@ -1,14 +1,17 @@
 package com.kylantis.eaa.core.fusion.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.ce.ems.base.core.GsonFactory;
-import com.ce.ems.models.CacheModel;
+import com.ce.ems.models.BaseUserModel;
 import com.ce.ems.models.RoleModel;
 import com.kylantis.eaa.core.fusion.BaseService;
+import com.kylantis.eaa.core.fusion.CacheAdapter;
 import com.kylantis.eaa.core.fusion.EndpointClass;
 import com.kylantis.eaa.core.fusion.EndpointMethod;
+import com.kylantis.eaa.core.fusion.FusionHelper;
 import com.kylantis.eaa.core.keys.CacheKeys;
 import com.kylantis.eaa.core.users.Functionality;
 import com.kylantis.eaa.core.users.RoleRealm;
@@ -43,19 +46,19 @@ public class RolesService extends BaseService {
 	
 
 	@EndpointMethod(uri = "/list", requestParams = { "realm" }, method = HttpMethod.GET,
-			functionality = Functionality.MANAGE_ROLES)
+			functionality = Functionality.LIST_ROLES)
 	public void listRoles(RoutingContext ctx) {
 		
 		String realm = ctx.request().getParam("realm");
 		 
 		Map<String, Integer> roles = 
-				realm == null ?
+				realm.equals("undefined") ?
 				RoleModel.listRoles() :
 					RoleModel.listRoles(RoleRealm.from(Integer.parseInt(realm)));
 				
 		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true);
 	}
-	
+	 
 	@EndpointMethod(uri = "/user-count", bodyParams = { "roleNames" }, method = HttpMethod.POST,
 			functionality = Functionality.MANAGE_ROLES)
 	public void getUsersCount(RoutingContext ctx) {
@@ -67,8 +70,28 @@ public class RolesService extends BaseService {
 		ctx.response().write(GsonFactory.newInstance().toJson(result)).setChunked(true);
 	}
 	
+	@EndpointMethod(uri = "/does-user-role-allow", bodyParams = { "functionalities" }, method = HttpMethod.POST,
+			functionality = Functionality.GET_ROLE_FUNCTIONALITIES)
+	public void doesUserRoleAllow(RoutingContext ctx) {
+		
+		Long principal = FusionHelper.getUserId(ctx.request());
+		
+		JsonObject body = ctx.getBodyAsJson();
+		
+		List<Functionality> functionalities = new ArrayList<>();
+		
+		body.getJsonArray("functionalities").getList().forEach(i -> {
+			functionalities.add(Functionality.from((Integer) i));
+		});
+		
+		String roleName = BaseUserModel.getRole(principal);
+		
+		Boolean isAllowed = RoleModel.isAccessAllowed(roleName, functionalities.toArray(new Functionality[functionalities.size()]));
+		ctx.response().write(GsonFactory.newInstance().toJson(isAllowed)).setChunked(true);
+	}
+	
 	@EndpointMethod(uri = "/realms", method = HttpMethod.GET,
-			functionality = Functionality.LIST_ROLE_REALMS)
+			functionality = Functionality.GET_ROLE_REALMS)
 	public void listRealms(RoutingContext ctx) {
 		Map<String, Integer> roles = RoleModel.listRoles();
 		ctx.response().write(GsonFactory.newInstance().toJson(roles)).setChunked(true);
@@ -95,7 +118,7 @@ public class RolesService extends BaseService {
 		String roleName = ctx.request().getParam("roleName");
 		List<Integer> e = RoleModel.getRoleFunctionalities(roleName);
 
-		CacheModel.put(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName),
+		CacheAdapter.put(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName),
 				new JsonArray(e).toString());
 
 		String json = GsonFactory.newInstance().toJson(e);
@@ -114,7 +137,7 @@ public class RolesService extends BaseService {
 
 		RoleModel.updateRoleSpec(roleName, updateAction, functionality);
 
-		CacheModel.del(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName));
+		CacheAdapter.del(CacheKeys.ROLE_FUNCTIONALITIES_$ROLE.replace("$ROLE", roleName));
 	}
 	
 	@EndpointMethod(uri = "/default-role", requestParams = { "realm" },
@@ -123,6 +146,14 @@ public class RolesService extends BaseService {
 		RoleRealm roleRealm = RoleRealm.from(Integer.parseInt(ctx.request().getParam("realm")));
 		String role = RoleModel.getDefaultRole(roleRealm);
 		ctx.response().setChunked(true).write(role);
+	}
+	
+	@EndpointMethod(uri = "/get-role-realm", requestParams = { "role" },
+			functionality = Functionality.GET_ROLE_REALMS)
+	public void getRoleRealm(RoutingContext ctx) {
+		String roleName = ctx.request().getParam("role");
+		RoleRealm realm = RoleModel.getRealm(roleName);
+		ctx.response().setChunked(true).write(GsonFactory.newInstance().toJson(realm));
 	}
 
 }

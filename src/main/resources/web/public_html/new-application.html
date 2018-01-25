@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="HMO Solution">
+        <meta name="author" content="Kylantis, Inc">
+        <link href="/assets/images/icon.png" rel="shortcut icon">
+
+        <link href="/assets/css/semantic.min.css" rel="stylesheet" />
+
+        <title>EMS HQ Application</title>
+
+    </head>
+
+    <body>
+
+        <div class="ui active dimmer" style="visibility: hidden;">
+            <div class="ui active centered loader huge"></div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="ui raised very padded text container segment">
+
+            <form class="ui form">
+
+                <h3>New User</h3>
+                <br>
+                <div class="two fields">
+
+                    <div class="field">
+                        <label>Role</label>
+                        <div class="ui fluid search selection dropdown disabled">
+                            <input type="hidden" name="available_roles"> <i
+                                class="dropdown icon"></i>
+                            <div class="default text">Select Role</div>
+                            <div class="menu"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <br>
+
+                <div class="ui primary button">Continue</div>
+                <div class="ui error message"></div>
+            </form>
+
+        </div>
+
+
+        <script src="/assets/js/jquery.js"></script>
+        <script src="/assets/js/clients/application.js"></script>
+        <script src="/assets/js/clients/roles.js"></script>
+
+        <script src="/assets/js/semantic.min.js"></script>
+
+        <script src="/assets/js/pages/utils.js"></script>
+        <script src="/assets/js/pages/new-application.js" onload="initPage();"></script>
+
+    </body>
+
+</html>

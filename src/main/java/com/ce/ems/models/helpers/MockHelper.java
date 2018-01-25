@@ -1,13 +1,11 @@
 package com.ce.ems.models.helpers;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
-
 import com.ce.ems.base.classes.Gender;
+import com.ce.ems.base.core.AppUtils;
 import com.ce.ems.base.core.Exceptions;
 import com.ce.ems.models.BlobStoreModel;
 import com.ce.ems.utils.Utils;
@@ -15,13 +13,35 @@ import com.kylantis.eaa.core.users.UserProfileSpec;
 
 public class MockHelper {
 
+	
+	public static UserProfileSpec nextMockUser() {
+
+		int rand = new Random().nextInt(6) + 1;
+
+		switch (rand) {
+		case 1:
+			return createMockAdmin();
+		case 2:
+			return createMockExamOfficer();
+		case 3:
+			return createMockDean();
+		case 4:
+			return createMockHod();
+		case 5:
+			return createMockLecturer();
+		case 6:
+			return createMockStudent();
+		}
+		return createMockStudent();
+	}
+	
 	public static UserProfileSpec createMockStudent() {
 		
 		//Create user profile
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/01.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/01.jpeg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -37,9 +57,9 @@ public class MockHelper {
 				.setLastName("Duke")
 				.setPassword("passXYZ")
 				.setGender(Gender.MALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1996, 8, 12));
+				.setDateOfBirth(new Date(1996-1900, 8, 12));
 		
 		return userSpec;
 	}
@@ -48,7 +68,7 @@ public class MockHelper {
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/02.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/02.jpg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -64,9 +84,9 @@ public class MockHelper {
 				.setLastName("Chapman")
 				.setPassword("passXYZ")
 				.setGender(Gender.MALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1950, 11, 30));
+				.setDateOfBirth(new Date(1950-1900, 11, 30));
 		
 		return userSpec;
 	}
@@ -75,7 +95,7 @@ public class MockHelper {
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/03.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/03.jpg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -91,9 +111,9 @@ public class MockHelper {
 				.setLastName("Fowler")
 				.setPassword("passXYZ")
 				.setGender(Gender.FEMALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1972, 8, 3));
+				.setDateOfBirth(new Date(1972-1900, 8, 3));
 		
 		return userSpec;
 	}
@@ -102,7 +122,7 @@ public class MockHelper {
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/04.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/04.jpg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -118,9 +138,9 @@ public class MockHelper {
 				.setLastName("Keller")
 				.setPassword("passXYZ")
 				.setGender(Gender.FEMALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1990, 04, 19));
+				.setDateOfBirth(new Date(1990-1900, 04, 19));
 		
 		return userSpec;
 	}
@@ -129,7 +149,7 @@ public class MockHelper {
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/05.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/05.jpg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -145,9 +165,9 @@ public class MockHelper {
 				.setLastName("Caine")
 				.setPassword("passXYZ")
 				.setGender(Gender.FEMALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1989, 8, 3));
+				.setDateOfBirth(new Date(1989-1900, 8, 3));
 		
 		return userSpec;
 	}
@@ -156,7 +176,7 @@ public class MockHelper {
 		
 		String image = null;
 		try {
-			image = BlobStoreModel.save(FileUtils.openInputStream(new File("/tmp/sample_avatars/06.png")));
+			image = BlobStoreModel.save(AppUtils.getInputStream("mock_data/sample_avatars/06.jpg"));
 		} catch (IOException e) {
 			Exceptions.throwRuntime(e);
 		}
@@ -165,16 +185,16 @@ public class MockHelper {
 				.setCountry("NG")
 				.setTerritory("NG.05")
 				.setCity(2351943)
-				.setAddress("34, Victoria Street")
+				.setAddress("34, Thailand Street")
 				.setEmail("pascal.ezeama." + Utils.newShortRandom() + "@gmail.com")
 				.setFirstName("Pascal")
 				.setMiddleName("Jazzman")
 				.setLastName("Ezeama")
 				.setPassword("passXYZ")
 				.setGender(Gender.MALE)
-				.setPhone(new Random().nextLong())
+				.setPhone(new Random().nextInt(999999999))
 				.setImage(image)
-				.setDateOfBirth(new Date(1996, 04, 19));
+				.setDateOfBirth(new Date(1996-1900, 04, 19));
 		
 		return userSpec;
 	}

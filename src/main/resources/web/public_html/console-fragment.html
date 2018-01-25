@@ -7,14 +7,22 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name=viewport content="width=device-width, initial-scale=1" />
-        <link href="dist/semantic.min.css" rel="stylesheet" />
-        <link href="plugins/ionicons/css/ionicons.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" />
         <link href="css/main.css" rel="stylesheet"/>
         <link href="plugins/pacejs/pace.css" rel="stylesheet" />
         <link rel="shortcut icon" href="assets/images/icon.png" />
+        <style>
+            #activity_stream_events .event a {
+                color: #1b6d85;
+            };
+            .ui.accordion.inverted .title :hover{
+                background: rgba(255,255,255,.08) !important;
+            }
+        </style>
     </head>
 
-    <body>  
+    <body style="display: none;">  
 
         <div id="contextWrap">  
 
@@ -25,282 +33,282 @@
                     <img src="img/thumblogo.png" alt="stagblogo" class="displaynone" />
                 </a>  
                 <div class="ui accordion inverted">
-                    <a class="title item ce-fc-s-1">
+                    <div class="title item ce-fc-s-1">
                         <i class="ion-speedometer titleIcon icon"></i> 
-                        <span class="ce-translate">dashboard</span> <i class="dropdown icon"></i>
-                    </a>
+                        <span class="ce-translate">Dashboard</span> <i class="dropdown icon"></i>
+                    </div>
                     <div class="content">
                         <a class="item" href="/dashboard">
-                            <span class="ce-translate">dashboard</span>
+                            <span class="ce-translate">Dashboard</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-person titleIcon icon"></i>
                         <i class="dropdown icon"></i> 
-                        <span class="ce-translate">accounts</span>
+                        <span class="ce-translate">Accounts</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/users">
-                            <span class="ce-translate">users</span>
+                            <span class="ce-translate">Users</span>
                         </a>
                         <a class="item" href="/roles">
-                            <span class="ce-translate">roles</span>
+                            <span class="ce-translate">Roles</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-grid titleIcon icon"></i>
                         <i class="dropdown icon"></i> 
-                        <span class="ce-translate">courses</span>
+                        <span class="ce-translate">Courses</span>
                     </div>
                     <div class="content">
-                        <a class="item" href="/result-sheet">
-                            <span class="ce-translate">result_sheet</span>
-                        </a>
-                        <a class="item" href="/register-courses">
-                            <span class="ce-translate">registration</span>
+                        <a class="item" href="/course-result-sheet">
+                            <span class="ce-translate">Result_sheet</span>
                         </a>
                         <a class="item" href="/courses">
-                            <span class="ce-translate">course_list</span>
+                            <span class="ce-translate">Course_list</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-folder titleIcon icon"></i>
                         <i class="dropdown icon"></i> 
-                        <span class="ce-translate">directory</span>
+                        <span class="ce-translate">Directory</span>
                     </div>
                     <div class="content">
+                        <a class="item" href="/faculties">
+                            <span class="ce-translate">Faculties</span>
+                        </a>
                         <a class="item" href="/departments">
-                            <span class="ce-translate">departments</span>
+                            <span class="ce-translate">Departments</span>
                         </a>
                         <a class="item" href="/students">
-                            <span class="ce-translate">students</span>
+                            <span class="ce-translate">Students</span>
                         </a>
                         <a class="item" href="/lecturers">
-                            <span class="ce-translate">lecturers</span>
+                            <span class="ce-translate">Lecturers</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-arrow-graph-up-right titleIcon icon"></i>
                         <i class="dropdown icon"></i> 
-                        <span class="ce-translate">result</span>
+                        <span class="ce-translate">Result</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/student-results">
-                            <span class="ce-translate">students_result</span>
+                            <span class="ce-translate">Students_result</span>
                         </a>
                         <a class="item" href="/course-results">
-                            <span class="ce-translate">course_result</span>
+                            <span class="ce-translate">Course_result</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-ios-filing-outline titleIcon icon"></i>
                         <i class="dropdown icon"></i>
-                        <span class="ce-translate">grading</span>
+                        <span class="ce-translate">Grading</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/assessment-totals">
-                            <span class="ce-translate">assessment_totals</span>
+                            <span class="ce-translate">Assessment_totals</span>
                         </a>
                         <a class="item" href="/score-grades">
-                            <span class="ce-translate">score_grades</span>
+                            <span class="ce-translate">Score_grades</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-person-add titleIcon  icon"></i>
                         <i class="dropdown icon"></i>
-                        <span class="ce-translate">applications</span>
+                        <span class="ce-translate">Applications</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/applications?status=2">
-                            <span class="ce-translate">pending</span>
+                            <span class="ce-translate">Pending</span>
                         </a>
                         <a class="item" href="/applications?status=3">
-                            <span class="ce-translate">declined</span>
+                            <span class="ce-translate">Declined</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-paintbrush titleIcon icon"></i>
                         <i class="dropdown icon"></i> 
-                        <span class="ce-translate">forms</span>
+                        <span class="ce-translate">Forms</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/manage-application-form">
-                            <span class="ce-translate">application_forms</span>
+                            <span class="ce-translate">Application_forms</span>
                         </a>
                         <a class="item" href="/manage-system-configuration-form">
-                            <span class="ce-translate">configuration_forms</span>
+                            <span class="ce-translate">Configuration_forms</span>
                         </a>
                     </div>
                     <div class="title item ce-fc-s-1">
                         <i class="ion-settings titleIcon icon"></i>
                         <i class="dropdown icon"></i>
-                        <span class="ce-translate">settings</span>
+                        <span class="ce-translate">Settings</span>
                     </div>
                     <div class="content">
                         <a class="item" href="/system-configuration">
-                            <span class="ce-translate">system_configuration</span>
+                            <span class="ce-translate">System_configuration</span>
                         </a>
                         <a class="item" href="/system-caches">
-                            <span class="ce-translate">cache</span>
+                            <span class="ce-translate">Cache</span>
                         </a>
                         <a class="item" href="/file-storage">
-                            <span class="ce-translate">file_storage</span>
+                            <span class="ce-translate">File_storage</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">dashboard</span></span>
+                    <span><span class="ce-translate">Dashboard</span></span>
                     <i class="ion-speedometer icon"></i>
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">dashboard</span>
+                            <span class="ce-translate">Dashboard</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/dashboard">
-                            <span class="ce-translate">dashboard</span>
+                            <span class="ce-translate">Dashboard</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">accounts</span></span>
+                    <span><span class="ce-translate">Accounts</span></span>
                     <i class="ion-person icon"></i>
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">accounts</span>
+                            <span class="ce-translate">Accounts</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/users">
-                            <span class="ce-translate">users</span>
+                            <span class="ce-translate">Users</span>
                         </a>
                         <a class="item" href="/roles">
-                            <span class="ce-translate">roles</span>
+                            <span class="ce-translate">Roles</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">courses</span></span>
+                    <span><span class="ce-translate">Courses</span></span>
                     <i class="ion-grid icon"></i>
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">courses</span>
+                            <span class="ce-translate">Courses</span>
                         </div>
                         <div class="ui divider"></div>
-                        <a class="item" href="/result-sheet">
-                            <span class="ce-translate">result_sheet</span>
-                        </a>
-                        <a class="item" href="/register-courses">
-                            <span class="ce-translate">registration</span>
+                        <a class="item" href="/course-result-sheet">
+                            <span class="ce-translate">Result_sheet</span>
                         </a>
                         <a class="item" href="/courses">
-                            <span class="ce-translate">course_list</span>
+                            <span class="ce-translate">Course_list</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">directory</span></span>
+                    <span><span class="ce-translate">Directory</span></span>
                     <i class="ion-folder icon"></i> 
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">directory</span>
+                            <span class="ce-translate">Directory</span>
                         </div>
                         <div class="ui divider"></div>
+                        <a class="item" href="/faculties">
+                            <span class="ce-translate">Faculties</span>
+                        </a>
                         <a class="item" href="/departments">
-                            <span class="ce-translate">departments</span>
+                            <span class="ce-translate">Departments</span>
                         </a>
                         <a class="item" href="/students">
-                            <span class="ce-translate">students</span>
+                            <span class="ce-translate">Students</span>
                         </a>
                         <a class="item" href="/lecturers">
-                            <span class="ce-translate">lecturers</span>
+                            <span class="ce-translate">Lecturers</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">result</span></span>
+                    <span><span class="ce-translate">Result</span></span>
                     <i class="ion-arrow-graph-up-right icon"></i>
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">result</span>
+                            <span class="ce-translate">Result</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/student-results">
-                            <span class="ce-translate">students_result</span>
+                            <span class="ce-translate">Students_result</span>
                         </a>
                         <a class="item" href="/course-results">
-                            <span class="ce-translate">course_result</span>
+                            <span class="ce-translate">Course_result</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">grading</span></span>
+                    <span><span class="ce-translate">Grading</span></span>
                     <i class="ion-ios-filing-outline titleIcon icon"></i>
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">grading</span>
+                            <span class="ce-translate">Grading</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/assessment-totals">
-                            <span class="ce-translate">assessment_totals</span>
+                            <span class="ce-translate">Assessment_totals</span>
                         </a>
                         <a class="item" href="/score-grades">
-                            <span class="ce-translate">score_grades</span>
+                            <span class="ce-translate">Score_grades</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">applications</span></span>
+                    <span><span class="ce-translate">Applications</span></span>
                     <i class="ion-person-add icon"></i>
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">applications</span>
+                            <span class="ce-translate">Applications</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/applications?status=2">
-                            <span class="ce-translate">pending</span>
+                            <span class="ce-translate">Pending</span>
                         </a>
                         <a class="item" href="/applications?status=3">
-                            <span class="ce-translate">declined</span>
+                            <span class="ce-translate">Declined</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">forms</span></span>
+                    <span><span class="ce-translate">Forms</span></span>
                     <i class="ion-paintbrush icon"></i>
 
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">forms</span>
+                            <span class="ce-translate">Forms</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/manage-application-form">
-                            <span class="ce-translate">application_forms</span>
+                            <span class="ce-translate">Application_forms</span>
                         </a>
                         <a class="item" href="/manage-system-configuration-form">
-                            <span class="ce-translate">configuration_forms</span>
+                            <span class="ce-translate">Configuration_forms</span>
                         </a>
                     </div>
                 </div>
                 <div class="ui dropdown item displaynone scrolling ce-fc-3c-3">
-                    <span><span class="ce-translate">settings</span></span>
+                    <span><span class="ce-translate">Settings</span></span>
                     <i class="ion-settings icon"></i>
                     <div class="menu">
                         <div class="header">
-                            <span class="ce-translate">settings</span>
+                            <span class="ce-translate">Settings</span>
                         </div>
                         <div class="ui divider"></div>
                         <a class="item" href="/system-configuration">
-                            <span class="ce-translate">system_configuration</span>
+                            <span class="ce-translate">System_configuration</span>
                         </a>
                         <a class="item" href="/system-caches">
-                            <span class="ce-translate">cache</span>
+                            <span class="ce-translate">Cache</span>
                         </a>
                         <a class="item" href="/file-storage">
-                            <span class="ce-translate">file_storage</span>
+                            <span class="ce-translate">File_storage</span>
                         </a>
                     </div>
                 </div>
@@ -317,7 +325,7 @@
                         <div class="ui inverted progress tiny yellow" id="total_users">
                             <div class="bar"></div>
                             <div class="label colhidden" style="margin-top: 10px">
-                                <span class="colhidden"><span class="ce-translate">total_users</span></span>
+                                <span class="colhidden"><span class="ce-translate">Total_users</span></span>
                             </div>
                         </div>
                     </a>
@@ -325,7 +333,7 @@
                         <div class="ui inverted progress tiny teal" id="overall_student_performance">
                             <div class="bar"></div>
                             <div class="label colhidden" style="margin-top: 10px">
-                                <span class="colhidden"> <span class="ce-translate">overall_student_performance</span></span></div>
+                                <span class="colhidden"> <span class="ce-translate">Overall_student_performance</span></span></div>
                         </div>
                     </a>
                     <div class="ui divider"></div>
@@ -333,18 +341,18 @@
                         <div class="ui one tiny inverted statistics">                        
                             <div class="statistic">
                                 <div class="value counter">
-                                    3654
+                                    568
                                 </div>
                                 <div class="label">
-                                    <span class="ce-translate">users</span>
+                                    <span class="ce-translate">Users</span>
                                 </div>
                             </div>                        
                             <div class="statistic">
                                 <div class="value counter">
-                                    1909
+                                    710
                                 </div>
                                 <div class="label">
-                                    <span class="ce-translate">courses</span>
+                                    <span class="ce-translate">Courses</span>
                                 </div>
                             </div>
                             <!--<div class="statistic">
@@ -379,22 +387,16 @@
                 <a class="item" data-tab="fourth"><i class="blue icon ion-gear-a"></i></a>
             </div>
             <div class="ui tab active" data-tab="first">
-                <div id="activity_stream_events" class="ui small feed">
-
-                    <style>
-                        #activity_stream_events .event a {
-                            color: #1b6d85;
-                        };
-                    </style>
-
-                    <h4 class="ui header">Activity Stream</h4>
+                <div>
+                    <div id="activity_stream_events" class="ui small feed">
+                        <h4 class="ui header">Activity Stream</h4>                
+                    </div>
                     <div id="activity_stream_next_container">
                         <div class="ui divider"></div>
-                        <button id="activity_stream_next_button" class="ui mini button" onclick="ce_activity_stream_next();">
+                        <button id="activity_stream_next_button" class="ui mini button" onclick="ce_console_activity_stream_next();">
                             Show more
                         </button>
-                    </div>
-
+                    </div>    
                 </div>
             </div>
 
@@ -470,9 +472,9 @@
                             <div id="available_countries_menu" class="menu"></div>
                         </div>
                         <div class="ui dropdown item">
-                            <img id= "user_avatar" class="ui mini circular image" src="/assets/images/user.png" alt="label-image" />
+                            <img id= "current_user_avatar" class="ui mini circular image" src="/assets/images/user.png" alt="label-image" />
                             <div class="menu">
-                                <a id="user_name" class="item" href="/own_profile"></a>
+                                <a id="user_name" class="item" href="/own-profile"></a>
                                 <div class="ui divider"></div>
                                 <a class="item" href="/help-center"><span class="ce-translate">help_center</span></a>
                                 <a id="signout_button" class="item"><span class="ce-translate">sign_out</span></a>
@@ -491,7 +493,22 @@
             <!--navbar-->
             <!--maincontent-->
             <div class="mainWrap navslide">
-                <div id="ce-page-main-container" class="ui equal width left aligned padded grid stackable" style="min-height: 748px;">
+                <div id="ce-page-main-container" class="ui equal width left aligned padded grid stackable" style="min-height: 768px; display: none;">
+
+                    <br>
+                    <br>
+
+                    <script type="text/javascript">
+                        document.getElementById("ce-page-main-container").setAttribute("style", "min-height: 768px; display: flex;");
+                        window.autoTriggerPageEnd = true;
+                    </script>
+
+                    <div style="padding: 3em;width:  100%;"> 
+                        <h3 style="
+                            text-align:  center;
+                            ">This feature is currently not available in this prototype.</h3> 
+                    </div>
+
 
                 </div>
             </div>
@@ -500,25 +517,25 @@
     </div>
 
     <!--jquery-->
-    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <!--jquery-->
 
     <!--semantic-->
-    <script src="dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>  
     <!--semantic-->
 
     <!--counter number-->
-    <script src="plugins/counterup/jquery.counterup.min.js"></script>
-    <script src="plugins/counterup/waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/2.0.3/waypoints.min.js"></script>
     <!--counter number-->
 
     <!--pace-->
-    <script data-pace-options='{ "ajax": false }' src="plugins/pacejs/pace.js"></script>
+    <script data-pace-options='{ "ajax": false }' src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
     <!--pace-->
 
-    <script src="/assets/js/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
 
-    <script src="/assets/js/utils.js"></script>
+    <script src="/assets/js/pages/utils.js"></script>
     <script type="text/javascript" src="/assets/js/clients/activitystream.js"></script>
     <script type="text/javascript" src="/assets/js/clients/resourcebundle.js"></script>
     <script type="text/javascript" src="/assets/js/clients/user.js"></script>

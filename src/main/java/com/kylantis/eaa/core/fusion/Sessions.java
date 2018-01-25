@@ -1,12 +1,12 @@
 package com.kylantis.eaa.core.fusion;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.core.Logger;
-import com.ce.ems.models.CacheModel;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.kylantis.eaa.core.cron.Scheduler;
@@ -20,36 +20,53 @@ public class Sessions {
 	public static void newSession(Long userId, String sessionToken, int duration, String remoteAddress,
 			TimeUnit timeUnit) {
 
-		// Save token in Redis
-		CacheModel.put(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken), userId);
+		Logger.trace("Creating session: " + sessionToken + " for user: " + userId);
 
+		// Save token in Cache
+		CacheAdapter.put(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken), userId);
+
+		Map<String, String> userSessions = getMap(USER_SESSIONS_HASH);
+		Map<String, String> sessionAddresses = getMap(SESSION_ADDRESSES_HASH);
+		
+		if (userSessions == null) {
+			
+			// Cache was probably cleared, create session maps
+			createMap(USER_SESSIONS_HASH);
+			createMap(SESSION_ADDRESSES_HASH);
+			
+			userSessions = getMap(USER_SESSIONS_HASH);
+			sessionAddresses = getMap(SESSION_ADDRESSES_HASH);
+		}
+		
 		// Store Session Token for this userId
 
-		String currentTokens = getMap(USER_SESSIONS_HASH).get(userId.toString());
+		String currentTokens = userSessions.get(userId.toString());
 		String newTokens = (currentTokens != null ? currentTokens + "," : "") + sessionToken;
 
-		getMap(USER_SESSIONS_HASH).put(userId.toString(), newTokens);
+
+		userSessions.put(userId.toString(), newTokens);
 
 		// Store remote address for this session
-		getMap(SESSION_ADDRESSES_HASH).put(sessionToken, remoteAddress);
+		sessionAddresses.put(sessionToken, remoteAddress);
 
-		//Create map for storing session data
+		// Create map for storing session data
 		String sessionDataKey = CacheKeys.SESSION_DATA_$SESSIONTOKEN.replace("$SESSIONTOKEN", sessionToken);
-		CacheModel.put(sessionDataKey, new FluentHashMap<>());
-		
+		CacheAdapter.put(sessionDataKey, new FluentHashMap<>());
+
 		// Schedule token deletion on expiration
 		Scheduler.schedule(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
+
 				removeSession(userId, sessionToken);
 			}
 		}, duration, timeUnit);
 	}
 
 	protected static Long getUserId(String sessionToken) {
-		String userId = (String) CacheModel.get(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
+		String userId = (String) CacheAdapter
+				.get(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
 		return Long.parseLong(userId);
 	}
 
@@ -59,14 +76,16 @@ public class Sessions {
 
 	protected static void removeSession(Long userId, String sessionToken) {
 
-		CacheModel.del(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
-		
+		CacheAdapter.del(CacheKeys.SESSION_TOKEN_TO_USER_ID_$TOKEN.replace("$TOKEN", sessionToken));
+
+		Logger.trace("Removing session: " + sessionToken + " for user: " + userId);
+
 		// Remove Session Token for this userId
 		List<String> currentTokens = Splitter.on(",").splitToList(getMap(USER_SESSIONS_HASH).get(userId.toString()));
 		currentTokens.remove(sessionToken);
 
 		if (currentTokens.size() > 0) {
-			
+
 			getMap(USER_SESSIONS_HASH).put(userId.toString(), Joiner.on(",").join(currentTokens));
 		} else {
 			getMap(USER_SESSIONS_HASH).remove(userId.toString());
@@ -76,7 +95,7 @@ public class Sessions {
 		getMap(SESSION_ADDRESSES_HASH).remove(sessionToken);
 
 		// Remove Session Data
-		CacheModel.del(CacheKeys.SESSION_DATA_$SESSIONTOKEN.replace("$SESSIONTOKEN", sessionToken));
+		CacheAdapter.del(CacheKeys.SESSION_DATA_$SESSIONTOKEN.replace("$SESSIONTOKEN", sessionToken));
 	}
 
 	protected static void set(String sessionToken, String key, String value) {
@@ -89,16 +108,11 @@ public class Sessions {
 		return getMap(sessionDatahashKey).get(key);
 	}
 
-	private static Map<String, String> getMap(String name) {
-		return (Map<String, String>) CacheModel.getLonglivedCache().get(name);
-	}
-	
-	static {
-		
-		Logger.info("Creating Session Caches");
-		
-		CacheModel.put(USER_SESSIONS_HASH, new FluentHashMap<>());
-		CacheModel.put(SESSION_ADDRESSES_HASH, new FluentHashMap<>());
+	private static void createMap(String name) {
+		CacheAdapter.getLonglivedCache().put(name, new HashMap<>());
 	}
 
+	private static Map<String, String> getMap(String name) {
+		return (Map<String, String>) CacheAdapter.getLonglivedCache().get(name);
+	}
 }

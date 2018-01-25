@@ -63,7 +63,7 @@
 
                 <div class="two fields">
                     <div class="field">
-                        <label>Provider URL: </label> <input placeholder="Provider URL"
+                        <label>Provider URL: </label> <input placeholder="Provider URL e.g mail.google.com"
                                                              name="email_provider_url" type="text">
                     </div>
                     <div class="field">
@@ -98,14 +98,11 @@
 
                     <div class="seven wide field">
                         <label>Current Semester</label>
-                        <div class="ui fluid search selection dropdown">
+                        <div class="ui fluid selection dropdown">
                             <input type="hidden" name="semester_value"> <i
                                 class="dropdown icon"></i>
                             <div class="default text">Select Current Semester</div>
-                            <div class="menu">
-                                <div class="item" data-value="1">First Semester</div>
-                                <div class="item" data-value="2">Second Semester</div>
-                            </div>
+                            <div class="menu"></div>
                         </div>
                     </div>
 
@@ -164,10 +161,13 @@
 
 
         <script src="/assets/js/jquery.js"></script>
-        <script src="/assets/js/clients/location.js"></script>
         <script src="/assets/js/semantic.min.js"></script>
+        
+        <script src="/assets/js/clients/location.js"></script>
+        <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+        
 
-        <script src="/assets/js/utils.js"></script>
+        <script src="/assets/js/pages/utils.js"></script>
         <script src="/assets/js/pages/setup_three.js"></script>
 
 

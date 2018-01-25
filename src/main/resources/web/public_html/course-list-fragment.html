@@ -1,0 +1,55 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">           
+
+            <!--  Course List Table  -->
+
+            <div id="courses-table-container">
+                <div class="row">
+                    <div class="sixteen wide column">
+                        <div class="ui segments">
+                            <div class="ui segment">
+                                <h5 class="ui header">
+                                    <span class="ce_translate">Courses</span>
+                                </h5>
+                            </div>
+                            <div class="ui segment">
+                                <table id="courses-list-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="ui segment">                                
+                                <div id="create-course-btn-container" style="display: none;">
+                                    <a class="ui primary button">Create Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="ce-page-scripts">
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/clients/calculation.js"></script>
+
+            <script type="text/javascript" src="/assets/js/pages/course-list-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

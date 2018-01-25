@@ -3,10 +3,12 @@ package com.ce.ems.entites.directory;
 import java.util.List;
 
 import com.ce.ems.base.classes.FluentArrayList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+@Cache
 @Entity
 public class DepartmentEntity {
 

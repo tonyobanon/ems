@@ -111,7 +111,7 @@ public class RoleModel extends BaseModel {
 		return result;
 	}
 	
-	@ModelMethod(functionality = Functionality.LIST_ROLE_REALMS)
+	@ModelMethod(functionality = Functionality.GET_ROLE_REALMS)
 	public static Map<Integer, String> listRealms() {
 		Map<Integer, String> result = new FluentHashMap<>();
 		for (RoleRealm realm : RoleRealm.values()) {
@@ -138,14 +138,14 @@ public class RoleModel extends BaseModel {
 
 	@ModelMethod(functionality = Functionality.MANAGE_ROLES)
 	public static List<Integer> getRoleFunctionalities(String name) {
-		UserRoleEntity entity = ofy().load().key(Key.create(UserRoleEntity.class, name)).safe();
+		UserRoleEntity entity = ofy().load().type(UserRoleEntity.class).id(name).safe();
 		return entity.getSpec();
 	} 
 	
 	@ModelMethod(functionality = Functionality.MANAGE_ROLES)
 	public static void updateRoleSpec(String name, RoleUpdateAction action, Integer functionality) {
 
-		UserRoleEntity entity = ofy().load().key(Key.create(UserRoleEntity.class, name)).safe();
+		UserRoleEntity entity = ofy().load().type(UserRoleEntity.class).id(name).safe();
 		List<Integer> functions = entity.getSpec();
 
 		switch (action) {
@@ -160,9 +160,9 @@ public class RoleModel extends BaseModel {
 		ofy().save().entity(entity).now();
 	}
 
-
+	@ModelMethod(functionality = Functionality.GET_ROLE_REALMS)
 	public static RoleRealm getRealm(String name) {
-		UserRoleEntity entity = ofy().load().key(Key.create(UserRoleEntity.class, name)).safe();
+		UserRoleEntity entity = ofy().load().type(UserRoleEntity.class).id(name).safe();
 		return RoleRealm.from(entity.getRealm());
 	}
 
@@ -178,7 +178,7 @@ public class RoleModel extends BaseModel {
 	}
 
 	private static boolean isDefaultRole(String name) {
-		UserRoleEntity entity = ofy().load().key(Key.create(UserRoleEntity.class, name)).safe();
+		UserRoleEntity entity = ofy().load().type(UserRoleEntity.class).id(name).safe();
 		return entity.getIsDefault();
 	}
 

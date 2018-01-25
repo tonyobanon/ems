@@ -1,0 +1,47 @@
+<html>
+    <head></head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+            <div class="row">
+                <div class="sixteen wide column">
+                    <div class="ui segments">
+                        <div class="ui segment">
+                            <h5 class="ui header ce-translate">
+                                Departments
+                            </h5>
+                        </div>
+                        <div class="ui segment">
+                            <table id="departments-table" class="ui compact selectable striped celled table tablet stackable" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="ui segment">                            
+                            <div id="create-dpt-btn-container" style="display: none;">
+                                <a class="ui primary button">Create Department</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ce-page-scripts">
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/department-list-fragment.js"></script>
+
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

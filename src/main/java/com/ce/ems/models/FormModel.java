@@ -2,6 +2,7 @@ package com.ce.ems.models;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +29,13 @@ import com.kylantis.eaa.core.pdf.Section;
 import com.kylantis.eaa.core.users.Functionality;
 import com.kylantis.eaa.core.users.RoleRealm;
 
-
 public class FormModel extends BaseModel {
 
 	@Override
 	public String path() {
 		return "core/form";
 	}
-	
+
 	@Override
 	public void preInstall() {
 		FormFieldRepository.createDefaultFields();
@@ -45,30 +45,27 @@ public class FormModel extends BaseModel {
 	}
 
 	@PlatformInternal
-	public
-	static Map<RoleRealm, String> newSection(String name, FormSectionType type) {
+	public static Map<RoleRealm, String> newSection(String name, FormSectionType type) {
 
 		Map<RoleRealm, String> result = new FluentHashMap<>();
-		for(RoleRealm realm : RoleRealm.values()) {
+		for (RoleRealm realm : RoleRealm.values()) {
 			result.put(realm, newSection(name, type, realm));
 		}
 		return result;
 	}
-	
+
 	/**
 	 * This creates a new section, for the given realm
-	*/
-	@ModelMethod(functionality = {Functionality.MANAGE_APPLICATION_FORMS, Functionality.MANAGE_SYSTEM_CONFIGURATION_FORM})
+	 */
+	@ModelMethod(functionality = { Functionality.MANAGE_APPLICATION_FORMS,
+			Functionality.MANAGE_SYSTEM_CONFIGURATION_FORM })
 	public static String newSection(String name, FormSectionType type, RoleRealm realm) {
-		FormSectionEntity e = new FormSectionEntity()
-				.setId(Utils.newShortRandom())
-				.setName(name)
-				.setType(type.getValue())
-				.setRealm(realm != null ? realm.getValue() : null);
+		FormSectionEntity e = new FormSectionEntity().setId(Utils.newShortRandom()).setName(name)
+				.setType(type.getValue()).setRealm(realm != null ? realm.getValue() : null);
 		ofy().save().entity(e).now();
 		return e.getId();
 	}
-	
+
 	private static Integer getSectionType(String sectionId) {
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
 		return e.getType();
@@ -77,18 +74,18 @@ public class FormModel extends BaseModel {
 	/**
 	 * This lists all sections for the given realm
 	 */
-	@ModelMethod(functionality = {Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION})
+	@ModelMethod(functionality = { Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION })
 	public static List<Section> listSections(FormSectionType type, RoleRealm realm) {
 
 		List<QueryFilter> filters = new FluentArrayList<>();
 		filters.add(QueryFilter.get("type = ", type.getValue()));
-		
-		if(realm != null) {
+
+		if (realm != null) {
 			filters.add(QueryFilter.get("realm = ", realm.getValue()));
 		}
-		
+
 		QueryFilter[] filtersArray = filters.toArray(new QueryFilter[filters.size()]);
-		
+
 		List<Section> result = new FluentArrayList<>();
 
 		EntityUtils.query(FormSectionEntity.class, filtersArray).forEach(e -> {
@@ -100,16 +97,16 @@ public class FormModel extends BaseModel {
 
 	@ModelMethod(functionality = Functionality.MANAGE_APPLICATION_FORMS)
 	public static void deleteSection(String sectionId, FormSectionType type) {
-		
+
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
-		
-		if(!e.getType().equals(type.getValue())) {
+
+		if (!e.getType().equals(type.getValue())) {
 			throw new ResourceException(ResourceException.DELETE_NOT_ALLOWED);
 		}
-		
+
 		deleteSection(sectionId);
 	}
-	
+
 	/**
 	 * This deletes a section
 	 */
@@ -123,19 +120,20 @@ public class FormModel extends BaseModel {
 		});
 
 		// Delete entity
-		
+
 		ofy().delete().key(Key.create(FormSectionEntity.class, sectionId)).now();
 	}
 
 	/**
 	 * This creates a new simple field
 	 */
-	protected static String newSimpleField(FormSectionType type, String sectionId, SimpleEntry spec, Boolean isDefault) {
-		
-		if(!getSectionType(sectionId).equals(type.getValue())) {
+	protected static String newSimpleField(FormSectionType type, String sectionId, SimpleEntry spec,
+			Boolean isDefault) {
+
+		if (!getSectionType(sectionId).equals(type.getValue())) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
-		
+
 		// Create field
 
 		FormSimpleFieldEntity e = EntityHelper.fromObjectModel(sectionId, isDefault, spec);
@@ -167,7 +165,29 @@ public class FormModel extends BaseModel {
 	public static String newSimpleField(String sectionId, SimpleEntry spec) {
 		return newSimpleField(FormSectionType.APPLICATION_FORM, sectionId, spec);
 	}
-	
+
+	private static Map<String, String> listSimpleFieldNames(QueryFilter... filters) {
+
+		Map<String, String> entries = new HashMap<>();
+
+		EntityUtils.lazyQuery(FormSimpleFieldEntity.class, filters).forEach(e -> {
+			entries.put(e.getId(), e.getName());
+		});
+
+		return entries;
+	}
+
+	private static Map<String, String> listCompositeFieldNames(QueryFilter... filters) {
+
+		Map<String, String> entries = new HashMap<>();
+
+		EntityUtils.lazyQuery(FormCompositeFieldEntity.class, filters).forEach(e -> {
+			entries.put(e.getId(), e.getName());
+		});
+
+		return entries;
+	}
+
 	/**
 	 * This lists all simple simple fields that matches the specified query filter
 	 */
@@ -185,13 +205,13 @@ public class FormModel extends BaseModel {
 	/**
 	 * This creates a new composite field
 	 */
-	protected static String newCompositeField(FormSectionType type, String sectionId, CompositeEntry spec, Boolean isDefault) {
+	protected static String newCompositeField(FormSectionType type, String sectionId, CompositeEntry spec,
+			Boolean isDefault) {
 
-
-		if(!getSectionType(sectionId).equals(type.getValue())) {
+		if (!getSectionType(sectionId).equals(type.getValue())) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
-		
+
 		// Create field
 
 		FormCompositeFieldEntity e = EntityHelper.fromObjectModel(sectionId, isDefault, spec);
@@ -200,11 +220,11 @@ public class FormModel extends BaseModel {
 
 		// Ensure key uniqueness in FormSimpleFieldEntity
 
-		if (ofy().load().key(Key.create(FormSimpleFieldEntity.class, e.getId())).now() != null) {
+		if (ofy().load().type(FormSimpleFieldEntity.class).id(e.getId()).now() != null) {
 
 			Logger.warn("Duplicate key was created while creating composite form field. Recreating ..");
 
-			ofy().delete().key(Key.create(FormCompositeFieldEntity.class, e.getId())).now();
+			ofy().delete().type(FormCompositeFieldEntity.class).id(e.getId()).now();
 
 			return newCompositeField(type, sectionId, spec, isDefault);
 		}
@@ -219,7 +239,7 @@ public class FormModel extends BaseModel {
 	public static String newCompositeField(FormSectionType type, String sectionId, CompositeEntry spec) {
 		return newCompositeField(type, sectionId, spec, false);
 	}
-	
+
 	// Created for FormFieldRepository
 	public static String newCompositeField(String sectionId, CompositeEntry spec) {
 		return newCompositeField(FormSectionType.APPLICATION_FORM, sectionId, spec);
@@ -232,45 +252,40 @@ public class FormModel extends BaseModel {
 
 		List<CompositeEntry> entries = new FluentArrayList<>();
 
-		EntityUtils.lazyQuery(FormCompositeFieldEntity.class, filters)
-		.forEach(e -> {
+		EntityUtils.lazyQuery(FormCompositeFieldEntity.class, filters).forEach(e -> {
 			entries.add(EntityHelper.toObjectModel(e));
 		});
 
 		return entries;
 	}
-	
+
 	protected static Map<String, Boolean> listAllFieldKeys(FormSectionType type, RoleRealm realm) {
-		
+
 		Map<String, Boolean> keys = new FluentHashMap<>();
-		
+
 		listSections(type, realm).forEach(section -> {
-			
-			System.out.println("Section : " + section.getId());
-			
+
 			Map<String, Boolean> o = new FluentHashMap<>();
-			
-			
-			EntityUtils.lazyQuery(FormSimpleFieldEntity.class, QueryFilter.get("section =", section.getId())).forEach(e -> {
 
-				System.out.println(e.getId() + ": " + e.getName());
-				o.put(e.getId(), e.getIsRequired());
-			});
-			
-			EntityUtils.lazyQuery(FormCompositeFieldEntity.class, QueryFilter.get("section =", section.getId())).forEach(e -> {
+			EntityUtils.lazyQuery(FormSimpleFieldEntity.class, QueryFilter.get("section =", section.getId()))
+					.forEach(e -> {
+						o.put(e.getId(), e.getIsRequired());
+					});
 
-				System.out.println(e.getId() + ": " + e.getName());
-				o.put(e.getId(), e.getIsRequired());
-			});
-					
+			EntityUtils.lazyQuery(FormCompositeFieldEntity.class, QueryFilter.get("section =", section.getId()))
+					.forEach(e -> {
+						o.put(e.getId(), e.getIsRequired());
+					});
+
 			keys.putAll(o);
 		});
-		
+
 		return keys;
 	}
 
 	/**
-	 * This lists the keys for all simple and composite fields that exists in a section
+	 * This lists the keys for all simple and composite fields that exists in a
+	 * section
 	 */
 	private static List<Key<?>> listFieldKeys(String sectionId) {
 
@@ -288,17 +303,42 @@ public class FormModel extends BaseModel {
 	}
 
 	/**
+	 * This gets fields names available in the given section
+	 */
+	@ModelMethod(functionality = { Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION })
+	public static Map<String, String> getFieldNames(FormSectionType type, String sectionId) {
+
+		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
+
+		if (!e.getType().equals(type.getValue())) {
+			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
+		}
+
+		Map<String, String> fields = new HashMap<String, String>();
+
+		QueryFilter filter = QueryFilter.get("section =", sectionId);
+
+		// Add simple fields
+		fields.putAll(listSimpleFieldNames(filter));
+
+		// Add composite fields
+		fields.putAll(listCompositeFieldNames(filter));
+
+		return fields;
+	}
+
+	/**
 	 * This gets fields available in the given section
 	 */
-	@ModelMethod(functionality = {Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION})
+	@ModelMethod(functionality = { Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION })
 	public static List<Question> getFields(FormSectionType type, String sectionId) {
 
 		FormSectionEntity e = ofy().load().type(FormSectionEntity.class).id(sectionId).safe();
-		
-		if(!e.getType().equals(type.getValue())) {
+
+		if (!e.getType().equals(type.getValue())) {
 			throw new ResourceException(ResourceException.ACCESS_NOT_ALLOWED);
 		}
-		
+
 		List<Question> fields = new FluentArrayList<>();
 
 		QueryFilter filter = QueryFilter.get("section =", sectionId);
@@ -315,7 +355,7 @@ public class FormModel extends BaseModel {
 	/**
 	 * This gets all fields available in the given section(s)
 	 */
-	@ModelMethod(functionality = {Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION})
+	@ModelMethod(functionality = { Functionality.VIEW_APPLICATION_FORM, Functionality.VIEW_SYSTEM_CONFIGURATION })
 	public static Map<String, List<Question>> getAllFields(FormSectionType type, List<String> sectionIds) {
 
 		Map<String, List<Question>> result = new FluentHashMap<>();
@@ -335,41 +375,41 @@ public class FormModel extends BaseModel {
 	public static void deleteField(FormSectionType type, String id) {
 
 		boolean isDeleted = false;
-		
+
 		// Delete field entity
 
-		FormSimpleFieldEntity se = ofy().load().key(Key.create(FormSimpleFieldEntity.class, id)).now();
+		FormSimpleFieldEntity se = ofy().load().type(FormSimpleFieldEntity.class).id(id).now();
 		if (se != null && !se.getIsDefault()) {
-			
-			if(!getSectionType(se.getSection()).equals(type.getValue())) {
+
+			if (!getSectionType(se.getSection()).equals(type.getValue())) {
 				throw new ResourceException(ResourceException.DELETE_NOT_ALLOWED);
 			}
-			
+
 			ofy().delete().key(Key.create(FormSimpleFieldEntity.class, id)).now();
 			isDeleted = true;
 		}
 
 		if (se == null) {
-			FormCompositeFieldEntity ce = ofy().load().key(Key.create(FormCompositeFieldEntity.class, id)).now();
-			if(ce != null && !ce.getIsDefault()) {
-				
-				if(!getSectionType(ce.getSection()).equals(type.getValue())) {
+			FormCompositeFieldEntity ce = ofy().load().type(FormCompositeFieldEntity.class).id(id).now();
+			if (ce != null && !ce.getIsDefault()) {
+
+				if (!getSectionType(ce.getSection()).equals(type.getValue())) {
 					throw new ResourceException(ResourceException.DELETE_NOT_ALLOWED);
 				}
-				
+
 				ofy().delete().key(Key.create(FormCompositeFieldEntity.class, id)).now();
 				isDeleted = true;
 			}
 		}
 
 		// Then, delete delete saved values
-		if(isDeleted) {
-			if(type.equals(FormSectionType.APPLICATION_FORM)) {
+		if (isDeleted) {
+			if (type.equals(FormSectionType.APPLICATION_FORM)) {
 				BaseUserModel.deleteFieldValues(id);
 				ApplicationModel.deleteFieldValues(id);
 			}
 		} else {
-			//<id> may be a default field
+			// <id> may be a default field
 			throw new ResourceException(ResourceException.DELETE_NOT_ALLOWED);
 		}
 	}

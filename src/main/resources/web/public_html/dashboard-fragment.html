@@ -1,0 +1,137 @@
+<html>
+    <head>
+
+    </head>
+
+    <body>
+
+        <div id="ce-page-main-container">
+
+            <div class="row">
+                <div class="column">
+                    <div class="ui segments no-padding">
+                        <div class="ui segment basic no-padding-bottom">
+                            <h5 class="ui left floated header">
+                                Student Performance Statistics
+                            </h5>
+                            <h5 class="ui right floated header">
+                                <i class="ion-ios-arrow-up icon link"></i>
+                                <i class="ion-ios-refresh-empty refreshing icon link"></i>
+                                <i class="ion-ios-close-empty icon link"></i>
+                            </h5>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="ui basic segment no-padding">
+                            <div id="chart-curved-line" class="flot-chart" style="width:100%;height:200px">
+                            </div>
+                        </div>
+                        <div class="ui inverted dimmer">
+                            <div class="ui text loader">Loading</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="sixteen wide tablet four wide computer column">
+
+                    <div class="ui segment left aligned">
+
+                        <div class="ui  statistic">
+                            <div class="value counter">
+                                71
+                            </div>
+                            <div class="label">
+                                Applications Pending
+                            </div>
+                            <i class="icon ion-ios-cart teal statisticIcon"></i>
+                        </div>
+                        <div id="flot-order" class="flotchart"></div>
+                    </div>
+                    <div class="ui inverted dimmer">
+                        <div class="ui text loader">Loading</div>
+                    </div>
+                </div>
+
+                <div class="sixteen wide tablet four wide computer column">
+
+                    <div class="ui segment left aligned">
+
+                        <div class="ui  statistic">
+                            <div class="value">
+                                <span class="counter">57.6</span> %
+                            </div>
+                            <div class="label">
+                                Performance Improvement
+                            </div>
+                            <i class="icon ion-ios-timer blue statisticIcon"></i>
+                        </div>
+                        <div id="flot-avarage" class="flotchart"></div>
+                    </div><div class="ui inverted dimmer">
+                        <div class="ui text loader">Loading</div>
+                    </div>
+
+                </div>
+                <div class="sixteen wide tablet four wide computer column">
+
+                    <div class="ui segment left aligned">
+
+                        <div class="ui  statistic">
+                            <div class="value counter">
+                                3,112
+                            </div>
+                            <div class="label">
+                                Activities (per minute)
+                            </div>
+                            <i class="icon ion-magnet purple statisticIcon"></i>
+                        </div>
+                        <div id="flot-saves" class="flotchart"></div>
+                    </div>
+                    <div class="ui inverted dimmer">
+                        <div class="ui text loader">Loading</div>
+                    </div>
+                </div>
+                <div class="sixteen wide tablet four wide computer column">
+
+                    <div class="ui segment left aligned">
+
+                        <div class="ui  statistic">
+
+                            <div class="value counter">
+                                9,582
+                            </div>
+                            <div class="label">
+                                Page Views
+                            </div>
+                            <i class="icon ion-trophy red statisticIcon"></i>
+                        </div>
+                        <div id="flot-view" class="flotchart"></div>
+                    </div>
+                    <div class="ui inverted dimmer">
+                        <div class="ui text loader">Loading</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="ce-page-scripts">
+
+            <!--flot chart-->
+            <script src="plugins/flot/jquery.flot.js"></script>
+            <script src="plugins/flot/jquery.flot.resize.min.js"></script>
+            <script src="plugins/flot/jquery.flot.tooltip.min.js"></script>
+            <script src="plugins/flot/curvedLines.js"></script>
+
+            <script type="text/javascript" src="/assets/js/clients/directory.js"></script>
+            <script type="text/javascript" src="/assets/js/pages/dashboard-fragment.js"></script>
+            <script>
+                $(window).on('ce-load-page-start', function () {
+                    initPage();
+                });
+            </script>
+        </div>
+
+    </body>
+</html> 

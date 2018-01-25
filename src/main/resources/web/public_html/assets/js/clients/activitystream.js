@@ -1,13 +1,13 @@
 
 
- function setActivityStreamTimeline (timeline) {
+ function getActivityStreamTimeline () {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
-			 method : "POST",
+			 method : "GET",
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url: "/api/activity-stream/set-timeline?timeline=" + timeline
+			 url: "/api/activity-stream/get-timeline"
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){
@@ -19,14 +19,14 @@
  }
 
 
- function getActivityStreamTimeline () {
+ function setActivityStreamTimeline (timeline) {
 	 return new Promise(function(resolve, reject) {
 		 $.ajax({
-			 method : "GET",
+			 method : "POST",
 			 async: true,
 			 processData: false,
 			 statusCode: {302: function(jqXHR, status, error) { window.location = jqXHR.getResponseHeader("X-Location");}},
-			 url: "/api/activity-stream/get-timeline"
+			 url: "/api/activity-stream/set-timeline?timeline=" + timeline
 			 }).done(function(o) {
 				 resolve(o);
 			 }).fail(function(jqXHR, status, error){

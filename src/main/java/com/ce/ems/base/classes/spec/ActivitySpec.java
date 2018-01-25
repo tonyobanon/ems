@@ -5,8 +5,10 @@ import java.util.Date;
 public class ActivitySpec {
 
 	private Long id;
-	private String image;
+	private String subjectImage;
+	private String personImage;
 	private String html;
+	private Integer likes;
 	private Date date;
 
 	public Long getId() {
@@ -18,13 +20,23 @@ public class ActivitySpec {
 		return this;
 	}
 
-	public String getImage() {
-		return image;
+
+	public String getSubjectImage() {
+		return subjectImage;
 	}
 
-	public ActivitySpec setImage(String image) {
-		this.image = image;
-		return this; 
+	public ActivitySpec setSubjectImage(String subjectImage) {
+		this.subjectImage = subjectImage;
+		return this;
+	}
+
+	public String getPersonImage() {
+		return personImage;
+	}
+
+	public ActivitySpec setPersonImage(String personImage) {
+		this.personImage = personImage;
+		return this;
 	}
 
 	public String getHtml() {
@@ -42,6 +54,15 @@ public class ActivitySpec {
 
 	public ActivitySpec setDate(Date date) {
 		this.date = date;
+		return this;
+	}
+
+	public Integer getLikes() {
+		return likes;
+	}
+
+	public ActivitySpec setLikes(Integer likes) {
+		this.likes = likes;
 		return this;
 	}
 }

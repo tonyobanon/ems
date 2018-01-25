@@ -9,41 +9,32 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.ce.ems.base.api.event_streams.Preposition;
+import com.ce.ems.base.classes.spec.ScoreGradeSpec;
 import com.ce.ems.base.core.Exceptions;
 import com.ce.ems.utils.Dates;
 import com.ce.ems.utils.Utils;
+import com.google.appengine.repackaged.org.joda.time.chrono.ZonedChronology;
 
 public class Playground {
 
 	public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
 		
-		WatchService watchService
-        = FileSystems.getDefault().newWatchService();
 		
-		Path watchFolder = Paths.get("/Users/anthony.anyanwu/workspace/ems/src/main/resources/web/public_html");
 		
-		// @Dev Watch files:
+		TimeZone.getTimeZone("PST").getRawOffset();
 		
-		watchFolder.register(
-		          watchService, StandardWatchEventKinds.ENTRY_MODIFY);
-		 
-		        WatchKey key;
-		        while ((key = watchService.take()) != null) {
-		            for (WatchEvent<?> event : key.pollEvents()) {
-		                System.out.println(
-		                  "Event kind:" + event.kind() 
-		                    + ". File affected: " + event.context() + ".");
-		            }
-		            key.reset();
-		        }
-		        
+//		
+//		System.out.println(validateGrades(grades));
 		
 		
 //		String o = "WITH, AT, FROM, INTO, DURING, INCLUDING, UNTIL, AGAINST, AMONG, THROUGHOUT, DESPITE, TOWARDS, UPON, CONCERNING, OF, TO, IN, FOR, ON, BY, ABOUT, " + 
@@ -117,6 +108,49 @@ public class Playground {
 //		
 //		System.out.println(pageCount);
 
+	}
+	
+	private static boolean validateGrades(List<ScoreGradeSpec> grades) {
+
+		boolean b = true;
+
+		// First verify length
+		b = ScoreGrade.values().length == grades.size();
+		if (!b) {
+			return false;
+		}
+
+		// Then, verify that all scores are tentatively between 0 and 100
+		b = grades.get(0).getLowerBound() == 0 && grades.get(grades.size() - 1).getUpperBound() == 100;
+		if (!b) {
+			return false;
+		}
+
+		// Then, verify the edges are numerically successive
+		for (int i = 0; i < grades.size() - 1; i++) {
+			b = grades.get(i).getUpperBound() == grades.get(i + 1).getLowerBound() - 1;
+			if (!b) {
+				return false;
+			}
+		}
+
+		// Then verify that from n + 1 [bounds] < .... < n [bounds]
+		List<Integer> vs  = new ArrayList<Integer>(grades.size() * 2);
+		for (int i = 0; i < grades.size(); i++) {
+			ScoreGradeSpec v = grades.get(i);
+			vs.add(v.getLowerBound());
+			vs.add(v.getUpperBound());
+		}
+		int c = -1;
+		for(int i : vs) {
+			if(c < i) {
+				c = i;
+			}else {
+				return false;
+			}
+		}
+		
+		return b;
 	}
 
 	public static ArrayList<ArrayList<Integer>> permute(int[] num) {

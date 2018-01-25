@@ -9,6 +9,7 @@ import java.util.Map;
 import com.ce.ems.base.classes.EntityHelper;
 import com.ce.ems.base.classes.FluentHashMap;
 import com.ce.ems.base.classes.IndexedNameType;
+import com.ce.ems.base.classes.ListingFilter;
 import com.ce.ems.base.classes.SearchableUISpec;
 import com.ce.ems.base.classes.spec.AcademicSemesterSpec;
 import com.ce.ems.base.core.Listable;
@@ -25,7 +26,7 @@ public class AcademicSemesterList extends Listable<AcademicSemesterSpec>{
 	}
 
 	@Override
-	public boolean authenticate(Long userId, Map<String, Object> filters) {
+	public boolean authenticate(Long userId, List<ListingFilter> listingFilters) {
 		return RoleModel.isAccessAllowed(BaseUserModel.getRole(userId), Functionality.VIEW_ALL_SEMESTER_COURSES);
 	}
 

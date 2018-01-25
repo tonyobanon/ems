@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import com.ce.ems.base.classes.FluentArrayList;
+import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+@Cache
 @Entity
 public class ResultRecordSheetEntity {
 
@@ -18,7 +20,7 @@ public class ResultRecordSheetEntity {
 	@Index
 	String studentId;
 	List<Integer> scores;
-	Short total;
+	Integer total;
 	Date lastUpdated;
 	Long lastUpdatedBy;
 
@@ -62,11 +64,11 @@ public class ResultRecordSheetEntity {
 		return this;
 	}
 
-	public Short getTotal() {
+	public Integer getTotal() {
 		return total;
 	}
 
-	public ResultRecordSheetEntity setTotal(Short total) {
+	public ResultRecordSheetEntity setTotal(Integer total) {
 		this.total = total;
 		return this;
 	}

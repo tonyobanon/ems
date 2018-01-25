@@ -17,7 +17,7 @@ public enum SystemErrorCodes {
 	RESULT_SHEET_NOT_CREATED_FOR_SEMESTER_COURSE(108, "No result sheet has been created for this course"),
 	RESULT_SHEET_ALREADY_CREATED_FOR_ASSESSMENT_TOTAL(109, "At least one result sheet has already been created based on the assessment total"),
 	STUDENT_SCORE_EXCEEDS_RESULT_SHEET_TOTAL(110, "Student score exceeds result sheet total"),
-	INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET(111, "You have insuffiecient permission for creating result sheet for this course"),
+	INSUFFIECIENT_PERMISSION_FOR_COURSE_RESULT_SHEET(111, "You have insuffiecient permission for creating or updating the result sheet for this course"),
 	COURSE_RESULT_SHEET_ALREADY_SUBMITTED(130, "Course result sheet has already been submitted"),
 	
 	
